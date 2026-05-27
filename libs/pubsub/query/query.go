@@ -9,7 +9,6 @@
 package query
 
 import (
-	"fmt"
 	"math/big"
 	"regexp"
 	"strings"
@@ -29,97 +28,40 @@ type Query struct {
 }
 
 // New parses and compiles the query expression into an executable query.
-func New(query string) (*Query, error) {
-	ast, err := syntax.Parse(query)
-	if err != nil {
-		return nil, err
-	}
-	return Compile(ast)
-}
+func New(query string) (*Query, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // MustCompile compiles the query expression into an executable query.
 // In case of error, MustCompile will panic.
 //
 // This is intended for use in program initialization; use query.New if you
 // need to check errors.
-func MustCompile(query string) *Query {
-	q, err := New(query)
-	if err != nil {
-		panic(err)
-	}
-	return q
-}
+func MustCompile(query string) *Query { _ = "STUB: not implemented"; return nil }
 
 // Compile compiles the given query AST so it can be used to match events.
-func Compile(ast syntax.Query) (*Query, error) {
-	conds := make([]condition, len(ast))
-	for i, q := range ast {
-		cond, err := compileCondition(q)
-		if err != nil {
-			return nil, fmt.Errorf("compile %s: %w", q, err)
-		}
-		conds[i] = cond
-	}
-	return &Query{ast: ast, conds: conds}, nil
-}
+func Compile(ast syntax.Query) (*Query, error) { _ = "STUB: not implemented"; return nil, nil }
 
 func ExpandEvents(flattenedEvents map[string][]string) []types.Event {
-	events := make([]types.Event, 0) //nolint:prealloc
-
-	for composite, values := range flattenedEvents {
-		tokens := strings.Split(composite, ".")
-
-		attrs := make([]types.EventAttribute, len(values))
-		for i, v := range values {
-			attrs[i] = types.EventAttribute{
-				Key:   tokens[len(tokens)-1],
-				Value: v,
-			}
-		}
-
-		events = append(events, types.Event{
-			Type:       strings.Join(tokens[:len(tokens)-1], "."),
-			Attributes: attrs,
-		})
-	}
-
-	return events
+	_ = "STUB: not implemented"
+	return nil
 }
+
+//nolint:prealloc
 
 // Matches satisfies part of the pubsub.Query interface.  This implementation
 // never reports an error. A nil *Query matches all events.
 func (q *Query) Matches(events map[string][]string) (bool, error) {
-	if q == nil {
-		return true, nil
-	}
-	return q.matchesEvents(ExpandEvents(events)), nil
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
 // String matches part of the pubsub.Query interface.
-func (q *Query) String() string {
-	if q == nil {
-		return "<empty>"
-	}
-	return q.ast.String()
-}
+func (q *Query) String() string { _ = "STUB: not implemented"; return "" }
 
 // Syntax returns the syntax tree representation of q.
-func (q *Query) Syntax() syntax.Query {
-	if q == nil {
-		return nil
-	}
-	return q.ast
-}
+func (q *Query) Syntax() syntax.Query { _ = "STUB: not implemented"; return *new(syntax.Query) }
 
 // matchesEvents reports whether all the conditions match the given events.
-func (q *Query) matchesEvents(events []types.Event) bool {
-	for _, cond := range q.conds {
-		if !cond.matchesAny(events) {
-			return false
-		}
-	}
-	return len(events) != 0
-}
+func (q *Query) matchesEvents(events []types.Event) bool { _ = "STUB: not implemented"; return false }
 
 // A condition is a compiled match condition.  A condition matches an event if
 // the event has the designated type, contains an attribute with the given
@@ -133,109 +75,44 @@ type condition struct {
 // condition tag, and reports whether the event type strictly equals the
 // condition tag.
 func (c condition) findAttr(event types.Event) ([]string, bool) {
-	if !strings.HasPrefix(c.tag, event.Type) {
-		return nil, false // type does not match tag
-	} else if len(c.tag) == len(event.Type) {
-		return nil, true // type == tag
-	}
-	var vals []string
-	for _, attr := range event.Attributes {
-		fullName := event.Type + "." + attr.Key
-		if fullName == c.tag {
-			vals = append(vals, attr.Value)
-		}
-	}
-	return vals, false
+	_ = "STUB: not implemented"
+	return nil, false
 }
+
+// type does not match tag
+
+// type == tag
 
 // matchesAny reports whether c matches at least one of the given events.
-func (c condition) matchesAny(events []types.Event) bool {
-	for _, event := range events {
-		if c.matchesEvent(event) {
-			return true
-		}
-	}
-	return false
-}
+func (c condition) matchesAny(events []types.Event) bool { _ = "STUB: not implemented"; return false }
 
 // matchesEvent reports whether c matches the given event.
-func (c condition) matchesEvent(event types.Event) bool {
-	vs, tagEqualsType := c.findAttr(event)
-	if len(vs) == 0 {
-		// As a special case, a condition tag that exactly matches the event type
-		// is matched against an empty string. This allows existence checks to
-		// work for type-only queries.
-		if tagEqualsType {
-			return c.match("")
-		}
-		return false
-	}
+func (c condition) matchesEvent(event types.Event) bool { _ = "STUB: not implemented"; return false }
 
-	// At this point, we have candidate values.
-	for _, v := range vs {
-		if c.match(v) {
-			return true
-		}
-	}
-	return false
-}
+// As a special case, a condition tag that exactly matches the event type
+// is matched against an empty string. This allows existence checks to
+// work for type-only queries.
+
+// At this point, we have candidate values.
 
 func compileCondition(cond syntax.Condition) (condition, error) {
-	out := condition{tag: cond.Tag}
-
-	// Handle existence checks separately to simplify the logic below for
-	// comparisons that take arguments.
-	if cond.Op == syntax.TExists {
-		out.match = func(string) bool { return true }
-		return out, nil
-	}
-
-	// All the other operators require an argument.
-	if cond.Arg == nil {
-		return condition{}, fmt.Errorf("missing argument for %v", cond.Op)
-	}
-
-	// Precompile the argument value matcher.
-	argType := cond.Arg.Type
-	var argValue interface{}
-
-	switch argType {
-	case syntax.TString:
-		argValue = cond.Arg.Value()
-	case syntax.TNumber:
-		argValue = cond.Arg.Number()
-	case syntax.TTime, syntax.TDate:
-		argValue = cond.Arg.Time()
-	default:
-		return condition{}, fmt.Errorf("unknown argument type %v", argType)
-	}
-
-	mcons := opTypeMap[cond.Op][argType]
-	if mcons == nil {
-		return condition{}, fmt.Errorf("invalid op/arg combination (%v, %v)", cond.Op, argType)
-	}
-	out.match = mcons(argValue)
-	return out, nil
+	_ = "STUB: not implemented"
+	return *new(condition), nil
 }
+
+// Handle existence checks separately to simplify the logic below for
+// comparisons that take arguments.
+
+// All the other operators require an argument.
+
+// Precompile the argument value matcher.
 
 // We use this regex to support queries of the form "8atom", "6.5stake",
 // which are actively used in production.
 // The regex takes care of removing the non-number suffix.
 var extractNum = regexp.MustCompile(`^\d+(\.\d+)?`)
 
-func parseNumber(s string) (*big.Float, error) {
-	intVal := new(big.Int)
-	if _, ok := intVal.SetString(s, 10); !ok {
-		f, _, err := big.ParseFloat(extractNum.FindString(s), 10, 125, big.ToNearestEven)
-		if err != nil {
-			return nil, err
-		}
-		return f, err
-	}
-	f, _, err := big.ParseFloat(extractNum.FindString(s), 10, uint(intVal.BitLen()), big.ToNearestEven)
-	return f, err
-
-}
+func parseNumber(s string) (*big.Float, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // A map of operator ⇒ argtype ⇒ match-constructor.
 // An entry does not exist if the combination is not valid.

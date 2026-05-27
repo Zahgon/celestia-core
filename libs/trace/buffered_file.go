@@ -2,8 +2,6 @@ package trace
 
 import (
 	"bufio"
-	"errors"
-	"io"
 	"os"
 	"sync"
 	"sync/atomic"
@@ -28,74 +26,28 @@ type bufferedFile struct {
 }
 
 // newbufferedFile creates a new buffered file that writes to the given file.
-func newbufferedFile(file *os.File) *bufferedFile {
-	return &bufferedFile{
-		file:    file,
-		wr:      bufio.NewWriter(file),
-		reading: atomic.Bool{},
-		mut:     &sync.Mutex{},
-	}
-}
+func newbufferedFile(file *os.File) *bufferedFile { _ = "STUB: not implemented"; return nil }
 
 // Write writes the given bytes to the file. If the file is currently being read
 // from, the write will be lost.
-func (f *bufferedFile) Write(b []byte) (int, error) {
-	if f.reading.Load() {
-		return 0, nil
-	}
-	f.mut.Lock()
-	defer f.mut.Unlock()
-	return f.wr.Write(b)
-}
+func (f *bufferedFile) Write(b []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (f *bufferedFile) startReading() error {
-	f.reading.Store(true)
-	f.mut.Lock()
-	defer f.mut.Unlock()
+func (f *bufferedFile) startReading() error { _ = "STUB: not implemented"; return nil }
 
-	err := f.wr.Flush()
-	if err != nil {
-		f.reading.Store(false)
-		return err
-	}
-
-	_, err = f.file.Seek(0, io.SeekStart)
-	if err != nil {
-		f.reading.Store(false)
-		return err
-	}
-
-	return nil
-}
-
-func (f *bufferedFile) stopReading() error {
-	f.mut.Lock()
-	defer f.mut.Unlock()
-	_, err := f.file.Seek(0, io.SeekEnd)
-	f.reading.Store(false)
-	return err
-}
+func (f *bufferedFile) stopReading() error { _ = "STUB: not implemented"; return nil }
 
 // File returns the underlying file with the seek point reset. The caller should
 // not close the file. The caller must call the returned function when they are
 // done reading from the file. This function resets the seek point to where it
 // was being written to.
 func (f *bufferedFile) File() (*os.File, func() error, error) {
-	if f.reading.Load() {
-		return nil, func() error { return nil }, errors.New("file is currently being read from")
-	}
-	err := f.startReading()
-	if err != nil {
-		return nil, func() error { return nil }, err
-	}
-	return f.file, f.stopReading, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 // Close closes the file.
 func (f *bufferedFile) Close() error {
+	_ = "STUB: not implemented"
 	// set reading to true to prevent writes while closing the file.
-	f.mut.Lock()
-	defer f.mut.Unlock()
-	f.reading.Store(true)
-	return f.file.Close()
+	return nil
 }

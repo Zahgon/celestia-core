@@ -3,7 +3,6 @@ package mock
 import (
 	"net"
 
-	"github.com/cometbft/cometbft/crypto/ed25519"
 	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/p2p"
 	"github.com/cometbft/cometbft/p2p/conn"
@@ -20,55 +19,28 @@ type Peer struct {
 
 // NewPeer creates and starts a new mock peer. If the ip
 // is nil, random routable address is used.
-func NewPeer(ip net.IP) *Peer {
-	var netAddr *p2p.NetAddress
-	if ip == nil {
-		_, netAddr = p2p.CreateRoutableAddr()
-	} else {
-		netAddr = p2p.NewNetAddressIPPort(ip, 26656)
-	}
-	nodeKey := p2p.NodeKey{PrivKey: ed25519.GenPrivKey()}
-	netAddr.ID = nodeKey.ID()
-	mp := &Peer{
-		ip:   ip,
-		id:   nodeKey.ID(),
-		addr: netAddr,
-		kv:   make(map[string]interface{}),
-	}
-	mp.BaseService = service.NewBaseService(nil, "MockPeer", mp)
-	if err := mp.Start(); err != nil {
-		panic(err)
-	}
-	return mp
-}
+func NewPeer(ip net.IP) *Peer { _ = "STUB: not implemented"; return nil }
 
-func (mp *Peer) FlushStop()                  { mp.Stop() } //nolint:errcheck //ignore error
-func (mp *Peer) TrySend(_ p2p.Envelope) bool { return true }
-func (mp *Peer) Send(_ p2p.Envelope) bool    { return true }
-func (mp *Peer) NodeInfo() p2p.NodeInfo {
-	return p2p.DefaultNodeInfo{
-		DefaultNodeID: mp.addr.ID,
-		ListenAddr:    mp.addr.DialString(),
-	}
-}
-func (mp *Peer) Status() conn.ConnectionStatus { return conn.ConnectionStatus{} }
-func (mp *Peer) ID() p2p.ID                    { return mp.id }
-func (mp *Peer) IsOutbound() bool              { return mp.Outbound }
-func (mp *Peer) IsPersistent() bool            { return mp.Persistent }
-func (mp *Peer) Get(key string) interface{} {
-	if value, ok := mp.kv[key]; ok {
-		return value
-	}
-	return nil
-}
+func (mp *Peer) FlushStop()                  { _ = "STUB: not implemented"; return } //nolint:errcheck //ignore error
+func (mp *Peer) TrySend(_ p2p.Envelope) bool { _ = "STUB: not implemented"; return false }
+func (mp *Peer) Send(_ p2p.Envelope) bool    { _ = "STUB: not implemented"; return false }
+func (mp *Peer) NodeInfo() p2p.NodeInfo      { _ = "STUB: not implemented"; return *new(p2p.NodeInfo) }
 
-func (mp *Peer) Set(key string, value interface{}) {
-	mp.kv[key] = value
+func (mp *Peer) Status() conn.ConnectionStatus {
+	_ = "STUB: not implemented"
+	return *new(conn.ConnectionStatus)
 }
-func (mp *Peer) RemoteIP() net.IP            { return mp.ip }
-func (mp *Peer) SocketAddr() *p2p.NetAddress { return mp.addr }
-func (mp *Peer) RemoteAddr() net.Addr        { return &net.TCPAddr{IP: mp.ip, Port: 8800} }
-func (mp *Peer) CloseConn() error            { return nil }
-func (mp *Peer) SetRemovalFailed()           {}
-func (mp *Peer) GetRemovalFailed() bool      { return false }
-func (*Peer) HasIPChanged() bool             { return false }
+func (mp *Peer) ID() p2p.ID                 { _ = "STUB: not implemented"; return *new(p2p.ID) }
+func (mp *Peer) IsOutbound() bool           { _ = "STUB: not implemented"; return false }
+func (mp *Peer) IsPersistent() bool         { _ = "STUB: not implemented"; return false }
+func (mp *Peer) Get(key string) interface{} { _ = "STUB: not implemented"; return nil }
+
+func (mp *Peer) Set(key string, value interface{}) { _ = "STUB: not implemented"; return }
+
+func (mp *Peer) RemoteIP() net.IP            { _ = "STUB: not implemented"; return *new(net.IP) }
+func (mp *Peer) SocketAddr() *p2p.NetAddress { _ = "STUB: not implemented"; return nil }
+func (mp *Peer) RemoteAddr() net.Addr        { _ = "STUB: not implemented"; return *new(net.Addr) }
+func (mp *Peer) CloseConn() error            { _ = "STUB: not implemented"; return nil }
+func (mp *Peer) SetRemovalFailed()           { _ = "STUB: not implemented"; return }
+func (mp *Peer) GetRemovalFailed() bool      { _ = "STUB: not implemented"; return false }
+func (*Peer) HasIPChanged() bool             { _ = "STUB: not implemented"; return false }

@@ -2,7 +2,6 @@ package blocksync
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/cosmos/gogoproto/proto"
 )
@@ -18,9 +17,7 @@ type ErrInvalidHeight struct {
 	Reason string
 }
 
-func (e ErrInvalidHeight) Error() string {
-	return fmt.Sprintf("invalid height %v: %s", e.Height, e.Reason)
-}
+func (e ErrInvalidHeight) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrInvalidBase is returned when peer informs of a status with invalid base
 type ErrInvalidBase struct {
@@ -28,26 +25,18 @@ type ErrInvalidBase struct {
 	Reason string
 }
 
-func (e ErrInvalidBase) Error() string {
-	return fmt.Sprintf("invalid base %v: %s", e.Base, e.Reason)
-}
+func (e ErrInvalidBase) Error() string { _ = "STUB: not implemented"; return "" }
 
 type ErrUnknownMessageType struct {
 	Msg proto.Message
 }
 
-func (e ErrUnknownMessageType) Error() string {
-	return fmt.Sprintf("unknown message type %T", e.Msg)
-}
+func (e ErrUnknownMessageType) Error() string { _ = "STUB: not implemented"; return "" }
 
 type ErrReactorValidation struct {
 	Err error
 }
 
-func (e ErrReactorValidation) Error() string {
-	return fmt.Sprintf("reactor validation error: %v", e.Err)
-}
+func (e ErrReactorValidation) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrReactorValidation) Unwrap() error {
-	return e.Err
-}
+func (e ErrReactorValidation) Unwrap() error { _ = "STUB: not implemented"; return nil }

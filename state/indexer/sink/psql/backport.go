@@ -15,7 +15,6 @@ package psql
 
 import (
 	"context"
-	"errors"
 
 	"github.com/cometbft/cometbft/libs/log"
 
@@ -31,7 +30,8 @@ const (
 
 // TxIndexer returns a bridge from es to the CometBFT v0.34 transaction indexer.
 func (es *EventSink) TxIndexer() BackportTxIndexer {
-	return BackportTxIndexer{psql: es}
+	_ = "STUB: not implemented"
+	return *new(BackportTxIndexer)
 }
 
 // BackportTxIndexer implements the txindex.TxIndexer interface by delegating
@@ -40,32 +40,38 @@ type BackportTxIndexer struct{ psql *EventSink }
 
 // AddBatch indexes a batch of transactions in Postgres, as part of TxIndexer.
 func (b BackportTxIndexer) AddBatch(batch *txindex.Batch) error {
-	return b.psql.IndexTxEvents(batch.Ops)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Index indexes a single transaction result in Postgres, as part of TxIndexer.
-func (b BackportTxIndexer) Index(txr *abci.TxResult) error {
-	return b.psql.IndexTxEvents([]*abci.TxResult{txr})
-}
+func (b BackportTxIndexer) Index(txr *abci.TxResult) error { _ = "STUB: not implemented"; return nil }
 
 // Get is implemented to satisfy the TxIndexer interface, but is not supported
 // by the psql event sink and reports an error for all inputs.
 func (BackportTxIndexer) Get([]byte) (*abci.TxResult, error) {
-	return nil, errors.New("the TxIndexer.Get method is not supported")
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Search is implemented to satisfy the TxIndexer interface, but it is not
 // supported by the psql event sink and reports an error for all inputs.
 func (BackportTxIndexer) Search(context.Context, *query.Query) ([]*abci.TxResult, error) {
-	return nil, errors.New("the TxIndexer.Search method is not supported")
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (BackportTxIndexer) SetLogger(log.Logger) {}
+func (BackportTxIndexer) SetLogger(log.Logger) {
+	_ = "STUB: not implemented"
 
-// BlockIndexer returns a bridge that implements the CometBFT v0.34 block
-// indexer interface, using the Postgres event sink as a backing store.
+	// BlockIndexer returns a bridge that implements the CometBFT v0.34 block
+	// indexer interface, using the Postgres event sink as a backing store.
+	return
+}
+
 func (es *EventSink) BlockIndexer() BackportBlockIndexer {
-	return BackportBlockIndexer{psql: es}
+	_ = "STUB: not implemented"
+	return *new(BackportBlockIndexer)
 }
 
 // BackportBlockIndexer implements the indexer.BlockIndexer interface by
@@ -75,19 +81,22 @@ type BackportBlockIndexer struct{ psql *EventSink }
 // Has is implemented to satisfy the BlockIndexer interface, but it is not
 // supported by the psql event sink and reports an error for all inputs.
 func (BackportBlockIndexer) Has(_ int64) (bool, error) {
-	return false, errors.New("the BlockIndexer.Has method is not supported")
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
 // Index indexes block begin and end events for the specified block.  It is
 // part of the BlockIndexer interface.
 func (b BackportBlockIndexer) Index(block types.EventDataNewBlockEvents) error {
-	return b.psql.IndexBlockEvents(block)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Search is implemented to satisfy the BlockIndexer interface, but it is not
 // supported by the psql event sink and reports an error for all inputs.
 func (BackportBlockIndexer) Search(context.Context, *query.Query) ([]int64, error) {
-	return nil, errors.New("the BlockIndexer.Search method is not supported")
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (BackportBlockIndexer) SetLogger(log.Logger) {}
+func (BackportBlockIndexer) SetLogger(log.Logger) { _ = "STUB: not implemented"; return }

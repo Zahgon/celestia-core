@@ -1,15 +1,10 @@
 package report
 
 import (
-	"math"
-	"sort"
-	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
-	"gonum.org/v1/gonum/stat"
 
-	"github.com/cometbft/cometbft/test/loadtime/payload"
 	"github.com/cometbft/cometbft/types"
 )
 
@@ -63,167 +58,52 @@ type Reports struct {
 	errorCount int
 }
 
-func (rs *Reports) List() []Report {
-	return rs.l
-}
+func (rs *Reports) List() []Report { _ = "STUB: not implemented"; return nil }
 
-func (rs *Reports) ErrorCount() int {
-	return rs.errorCount
-}
+func (rs *Reports) ErrorCount() int { _ = "STUB: not implemented"; return 0 }
 
 func (rs *Reports) addDataPoint(id uuid.UUID, l time.Duration, bt time.Time, hash []byte, conns, rate, size uint64) {
-	r, ok := rs.s[id]
-	if !ok {
-		r = Report{
-			Max:         0,
-			Min:         math.MaxInt64,
-			ID:          id,
-			Connections: conns,
-			Rate:        rate,
-			Size:        size,
-		}
-		rs.s[id] = r
-	}
-	r.All = append(r.All, DataPoint{Duration: l, BlockTime: bt, Hash: hash})
-	if l > r.Max {
-		r.Max = l
-	}
-	if l < r.Min {
-		r.Min = l
-	}
-	if int64(l) < 0 {
-		r.NegativeCount++
-	}
-	// Using an int64 here makes an assumption about the scale and quantity of the data we are processing.
-	// If all latencies were 2 seconds, we would need around 4 billion records to overflow this.
-	// We are therefore assuming that the data does not exceed these bounds.
-	r.sum += int64(l)
-	rs.s[id] = r
+	_ = "STUB: not implemented"
+	return
 }
 
-func (rs *Reports) calculateAll() {
-	rs.l = make([]Report, 0, len(rs.s))
-	for _, r := range rs.s {
-		if len(r.All) == 0 {
-			r.Min = 0
-			rs.l = append(rs.l, r)
-			continue
-		}
-		r.Avg = time.Duration(r.sum / int64(len(r.All)))
-		r.StdDev = time.Duration(int64(stat.StdDev(toFloat(r.All), nil)))
-		rs.l = append(rs.l, r)
-	}
-	sort.Slice(rs.l, func(i, j int) bool {
-		if rs.l[i].Connections == rs.l[j].Connections {
-			return rs.l[i].Rate < rs.l[j].Rate
-		}
-		return rs.l[i].Connections < rs.l[j].Connections
-	})
+// Using an int64 here makes an assumption about the scale and quantity of the data we are processing.
+// If all latencies were 2 seconds, we would need around 4 billion records to overflow this.
+// We are therefore assuming that the data does not exceed these bounds.
 
-}
+func (rs *Reports) calculateAll() { _ = "STUB: not implemented"; return }
 
 func (rs *Reports) addError() {
-	rs.errorCount++
+	_ = "STUB: not implemented"
+
+	// GenerateFromBlockStore creates a Report using the data in the provided
+	// BlockStore.
+	return
 }
 
-// GenerateFromBlockStore creates a Report using the data in the provided
-// BlockStore.
 func GenerateFromBlockStore(s BlockStore) (*Reports, error) {
-	type payloadData struct {
-		id                      uuid.UUID
-		l                       time.Duration
-		bt                      time.Time
-		hash                    []byte
-		connections, rate, size uint64
-		err                     error
-	}
-	type txData struct {
-		tx types.Tx
-		bt time.Time
-	}
-	reports := &Reports{
-		s: make(map[uuid.UUID]Report),
-	}
-
-	// Deserializing to proto can be slow but does not depend on other data
-	// and can therefore be done in parallel.
-	// Deserializing in parallel does mean that the resulting data is
-	// not guaranteed to be delivered in the same order it was given to the
-	// worker pool.
-	const poolSize = 16
-
-	txc := make(chan txData)
-	pdc := make(chan payloadData, poolSize)
-
-	wg := &sync.WaitGroup{}
-	wg.Add(poolSize)
-	for i := 0; i < poolSize; i++ {
-		go func() {
-			defer wg.Done()
-			for b := range txc {
-				p, err := payload.FromBytes(b.tx)
-				if err != nil {
-					pdc <- payloadData{err: err}
-					continue
-				}
-
-				l := b.bt.Sub(p.Time.AsTime())
-				idb := (*[16]byte)(p.Id)
-				pdc <- payloadData{
-					l:           l,
-					bt:          b.bt,
-					hash:        b.tx.Hash(),
-					id:          uuid.UUID(*idb),
-					connections: p.Connections,
-					rate:        p.Rate,
-					size:        p.Size,
-				}
-			}
-		}()
-	}
-	go func() {
-		wg.Wait()
-		close(pdc)
-	}()
-
-	go func() {
-		base, height := s.Base(), s.Height()
-		prev := s.LoadBlock(base)
-		for i := base + 1; i < height; i++ {
-			// Data from two adjacent block are used here simultaneously,
-			// blocks of height H and H+1. The transactions of the block of
-			// height H are used with the timestamp from the block of height
-			// H+1. This is done because the timestamp from H+1 is calculated
-			// by using the precommits submitted at height H. The timestamp in
-			// block H+1 represents the time at which block H was committed.
-			//
-			// In the (very unlikely) event that the very last block of the
-			// chain contains payload transactions, those transactions will not
-			// be used in the latency calculations because the last block whose
-			// transactions are used is the block one before the last.
-			cur := s.LoadBlock(i)
-			for _, tx := range prev.Data.Txs { //nolint:staticcheck
-				txc <- txData{tx: tx, bt: cur.Time}
-			}
-			prev = cur
-		}
-		close(txc)
-	}()
-	for pd := range pdc {
-		if pd.err != nil {
-			reports.addError()
-			continue
-		}
-		reports.addDataPoint(pd.id, pd.l, pd.bt, pd.hash, pd.connections, pd.rate, pd.size)
-	}
-	reports.calculateAll()
-	return reports, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func toFloat(in []DataPoint) []float64 {
-	r := make([]float64, len(in))
-	for i, v := range in {
-		r[i] = float64(int64(v.Duration))
-	}
-	return r
-}
+// Deserializing to proto can be slow but does not depend on other data
+// and can therefore be done in parallel.
+// Deserializing in parallel does mean that the resulting data is
+// not guaranteed to be delivered in the same order it was given to the
+// worker pool.
+
+// Data from two adjacent block are used here simultaneously,
+// blocks of height H and H+1. The transactions of the block of
+// height H are used with the timestamp from the block of height
+// H+1. This is done because the timestamp from H+1 is calculated
+// by using the precommits submitted at height H. The timestamp in
+// block H+1 represents the time at which block H was committed.
+//
+// In the (very unlikely) event that the very last block of the
+// chain contains payload transactions, those transactions will not
+// be used in the latency calculations because the last block whose
+// transactions are used is the block one before the last.
+
+//nolint:staticcheck
+
+func toFloat(in []DataPoint) []float64 { _ = "STUB: not implemented"; return nil }

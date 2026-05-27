@@ -1,52 +1,34 @@
 package node
 
 import (
-	"bytes"
 	"context"
-	"fmt"
 	"net"
 	"net/http"
-	"os"
-	"time"
 
 	"github.com/cometbft/cometbft/consensus/propagation"
 
 	"github.com/grafana/pyroscope-go"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/rs/cors"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 
-	bc "github.com/cometbft/cometbft/blocksync"
 	cfg "github.com/cometbft/cometbft/config"
 	cs "github.com/cometbft/cometbft/consensus"
 	"github.com/cometbft/cometbft/evidence"
-	"github.com/cometbft/cometbft/light"
-	"github.com/cometbft/cometbft/mempool/cat"
 
 	"github.com/cometbft/cometbft/libs/log"
-	cmtpubsub "github.com/cometbft/cometbft/libs/pubsub"
 	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/libs/trace"
 	mempl "github.com/cometbft/cometbft/mempool"
 	"github.com/cometbft/cometbft/p2p"
 	"github.com/cometbft/cometbft/p2p/pex"
-	"github.com/cometbft/cometbft/privval"
-	privvalproto "github.com/cometbft/cometbft/proto/tendermint/privval"
 	"github.com/cometbft/cometbft/proxy"
 	rpccore "github.com/cometbft/cometbft/rpc/core"
-	grpccore "github.com/cometbft/cometbft/rpc/grpc"
-	rpcserver "github.com/cometbft/cometbft/rpc/jsonrpc/server"
 	sm "github.com/cometbft/cometbft/state"
 	"github.com/cometbft/cometbft/state/indexer"
 	"github.com/cometbft/cometbft/state/txindex"
-	"github.com/cometbft/cometbft/state/txindex/null"
 	"github.com/cometbft/cometbft/statesync"
 	"github.com/cometbft/cometbft/store"
 	"github.com/cometbft/cometbft/types"
-	cmttime "github.com/cometbft/cometbft/types/time"
-	"github.com/cometbft/cometbft/version"
 
 	_ "net/http/pprof" //nolint: gosec
 )
@@ -116,40 +98,21 @@ type Option func(*Node)
 //   - PEX
 //   - STATESYNC
 func CustomReactors(reactors map[string]p2p.Reactor) Option {
-	return func(n *Node) {
-		for name, reactor := range reactors {
-			if existingReactor := n.sw.Reactor(name); existingReactor != nil {
-				n.sw.Logger.Info("Replacing existing reactor with a custom one",
-					"name", name, "existing", existingReactor, "custom", reactor)
-				n.sw.RemoveReactor(name, existingReactor)
-			}
-			n.sw.AddReactor(name, reactor)
-			// register the new channels to the nodeInfo
-			// NOTE: This is a bit messy now with the type casting but is
-			// cleaned up in the following version when NodeInfo is changed from
-			// and interface to a concrete type
-			if ni, ok := n.nodeInfo.(p2p.DefaultNodeInfo); ok {
-				for _, chDesc := range reactor.GetChannels() {
-					if !ni.HasChannel(chDesc.ID) {
-						ni.Channels = append(ni.Channels, chDesc.ID)
-						n.transport.AddChannel(chDesc.ID)
-					}
-				}
-				n.nodeInfo = ni
-			} else {
-				n.Logger.Error("Node info is not of type DefaultNodeInfo. Custom reactor channels can not be added.")
-			}
-		}
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
+
+// register the new channels to the nodeInfo
+// NOTE: This is a bit messy now with the type casting but is
+// cleaned up in the following version when NodeInfo is changed from
+// and interface to a concrete type
 
 // StateProvider overrides the state provider used by state sync to retrieve trusted app hashes and
 // build a State object for bootstrapping the node.
 // WARNING: this interface is considered unstable and subject to change.
 func StateProvider(stateProvider statesync.StateProvider) Option {
-	return func(n *Node) {
-		n.stateSyncProvider = stateProvider
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
 // BootstrapState synchronizes the stores with the application after state sync
@@ -158,7 +121,8 @@ func StateProvider(stateProvider statesync.StateProvider) Option {
 //
 // If the block store is not empty, the function returns an error.
 func BootstrapState(ctx context.Context, config *cfg.Config, dbProvider cfg.DBProvider, height uint64, appHash []byte) error {
-	return BootstrapStateWithGenProvider(ctx, config, dbProvider, DefaultGenesisDocProviderFunc(config), height, appHash)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // BootstrapStateWithGenProvider synchronizes the stores with the application after state sync
@@ -167,117 +131,18 @@ func BootstrapState(ctx context.Context, config *cfg.Config, dbProvider cfg.DBPr
 //
 // If the block store is not empty, the function returns an error.
 func BootstrapStateWithGenProvider(ctx context.Context, config *cfg.Config, dbProvider cfg.DBProvider, genProvider GenesisDocProvider, height uint64, appHash []byte) (err error) {
-	logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
-	if ctx == nil {
-		ctx = context.Background()
-	}
-
-	if config == nil {
-		logger.Info("no config provided, using default configuration")
-		config = cfg.DefaultConfig()
-	}
-
-	if dbProvider == nil {
-		dbProvider = cfg.DefaultDBProvider
-	}
-	blockStore, stateDB, err := initDBs(config, dbProvider, logger)
-
-	defer func() {
-		if derr := blockStore.Close(); derr != nil {
-			logger.Error("Failed to close blockstore", "err", derr)
-			// Set the return value
-			err = derr
-		}
-	}()
-
-	if err != nil {
-		return err
-	}
-
-	if !blockStore.IsEmpty() {
-		return fmt.Errorf("blockstore not empty, trying to initialize non empty state")
-	}
-
-	stateStore := sm.NewStore(stateDB, sm.StoreOptions{
-		DiscardABCIResponses: config.Storage.DiscardABCIResponses,
-	})
-
-	defer func() {
-		if derr := stateStore.Close(); derr != nil {
-			logger.Error("Failed to close statestore", "err", derr)
-			// Set the return value
-			err = derr
-		}
-	}()
-	state, err := stateStore.Load()
-	if err != nil {
-		return err
-	}
-
-	if !state.IsEmpty() {
-		return fmt.Errorf("state not empty, trying to initialize non empty state")
-	}
-
-	genState, _, err := LoadStateFromDBOrGenesisDocProvider(stateDB, genProvider)
-	if err != nil {
-		return err
-	}
-
-	stateProvider, err := statesync.NewLightClientStateProvider(
-		ctx,
-		genState.ChainID, genState.Version, genState.InitialHeight,
-		config.StateSync.RPCServers, light.TrustOptions{
-			Period: config.StateSync.TrustPeriod,
-			Height: config.StateSync.TrustHeight,
-			Hash:   config.StateSync.TrustHashBytes(),
-		}, logger.With("module", "light"))
-	if err != nil {
-		return fmt.Errorf("failed to set up light client state provider: %w", err)
-	}
-
-	state, err = stateProvider.State(ctx, height)
-	if err != nil {
-		return err
-	}
-	if appHash == nil {
-		logger.Info("warning: cannot verify appHash. Verification will happen when node boots up!")
-	} else {
-		if !bytes.Equal(appHash, state.AppHash) {
-			if err := blockStore.Close(); err != nil {
-				logger.Error("failed to close blockstore: %w", err)
-			}
-			if err := stateStore.Close(); err != nil {
-				logger.Error("failed to close statestore: %w", err)
-			}
-			return fmt.Errorf("the app hash returned by the light client does not match the provided appHash, expected %X, got %X", state.AppHash, appHash)
-		}
-	}
-
-	commit, err := stateProvider.Commit(ctx, height)
-	if err != nil {
-		return err
-	}
-
-	if err = stateStore.Bootstrap(state); err != nil {
-		return err
-	}
-
-	err = blockStore.SaveSeenCommit(state.LastBlockHeight, commit)
-	if err != nil {
-		return err
-	}
-
-	// Once the stores are bootstrapped, we need to set the height at which the node has finished
-	// statesyncing. This will allow the blocksync reactor to fetch blocks at a proper height.
-	// In case this operation fails, it is equivalent to a failure in  online state sync where the operator
-	// needs to manually delete the state and blockstores and rerun the bootstrapping process.
-	err = stateStore.SetOfflineStateSyncHeight(state.LastBlockHeight)
-	if err != nil {
-		return fmt.Errorf("failed to set synced height: %w", err)
-	}
-
-	return err
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Set the return value
+
+// Set the return value
+
+// Once the stores are bootstrapped, we need to set the height at which the node has finished
+// statesyncing. This will allow the blocksync reactor to fetch blocks at a proper height.
+// In case this operation fails, it is equivalent to a failure in  online state sync where the operator
+// needs to manually delete the state and blockstores and rerun the bootstrapping process.
 
 //------------------------------------------------------------------------------
 
@@ -292,9 +157,8 @@ func NewNode(config *cfg.Config,
 	logger log.Logger,
 	options ...Option,
 ) (*Node, error) {
-	return NewNodeWithContext(context.TODO(), config, privValidator,
-		nodeKey, clientCreator, genesisDocProvider, dbProvider,
-		metricsProvider, logger, options...)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // NewNodeWithContext is cancellable version of NewNode.
@@ -309,757 +173,204 @@ func NewNodeWithContext(ctx context.Context,
 	logger log.Logger,
 	options ...Option,
 ) (*Node, error) {
-	blockStore, stateDB, err := initDBs(config, dbProvider, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	stateStore := sm.NewStore(stateDB, sm.StoreOptions{
-		DiscardABCIResponses: config.Storage.DiscardABCIResponses,
-		Compact:              config.Storage.Compact,
-		CompactionInterval:   config.Storage.CompactionInterval,
-		Logger:               logger.With("module", "state"),
-	})
-
-	state, genDoc, err := LoadStateFromDBOrGenesisDocProvider(stateDB, genesisDocProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	csMetrics, p2pMetrics, memplMetrics, smMetrics, abciMetrics, bsMetrics, ssMetrics := metricsProvider(genDoc.ChainID)
-
-	// Create the proxyApp and establish connections to the ABCI app (consensus, mempool, query).
-	proxyApp, err := createAndStartProxyAppConns(clientCreator, logger, abciMetrics)
-	if err != nil {
-		return nil, err
-	}
-
-	// EventBus and IndexerService must be started before the handshake because
-	// we might need to index the txs of the replayed block as this might not have happened
-	// when the node stopped last time (i.e. the node stopped after it saved the block
-	// but before it indexed the txs)
-	eventBus, err := createAndStartEventBus(logger)
-	if err != nil {
-		return nil, err
-	}
-
-	indexerService, txIndexer, blockIndexer, err := createAndStartIndexerService(config,
-		genDoc.ChainID, dbProvider, eventBus, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	// create an optional tracer client to collect trace data.
-	tracer, err := trace.NewTracer(
-		config,
-		logger,
-		genDoc.ChainID,
-		string(nodeKey.ID()),
-	)
-	if err != nil {
-		return nil, err
-	}
-
-	// If an address is provided, listen on the socket for a connection from an
-	// external signing process.
-	if config.PrivValidatorListenAddr != "" {
-		// FIXME: we should start services inside OnStart
-		privValidator, err = createAndStartPrivValidatorSocketClient(config.PrivValidatorListenAddr, genDoc.ChainID, logger, tracer)
-		if err != nil {
-			return nil, fmt.Errorf("error with private validator socket client: %w", err)
-		}
-	}
-
-	pubKey, err := privValidator.GetPubKey()
-	if err != nil {
-		return nil, fmt.Errorf("can't get pubkey: %w", err)
-	}
-	localAddr := pubKey.Address()
-
-	// Determine whether we should attempt state sync.
-	stateSync := config.StateSync.Enable && !onlyValidatorIsUs(state, localAddr)
-	if stateSync && state.LastBlockHeight > 0 {
-		logger.Info("Found local state with non-zero height, skipping state sync")
-		stateSync = false
-	}
-
-	// Create the handshaker, which calls RequestInfo, sets the AppVersion on the state,
-	// and replays any blocks as necessary to sync CometBFT with the app.
-	consensusLogger := logger.With("module", "consensus")
-	var softwareVersion string
-	if !stateSync {
-		softwareVersion, err = doHandshake(ctx, stateStore, state, blockStore, genDoc, eventBus, proxyApp, consensusLogger)
-		if err != nil {
-			return nil, err
-		}
-
-		// Reload the state. It will have the Version.Consensus.App set by the
-		// Handshake, and may have other modifications as well (ie. depending on
-		// what happened during block replay).
-		state, err = stateStore.Load()
-		if err != nil {
-			return nil, fmt.Errorf("cannot load state: %w", err)
-		}
-	}
-
-	// Determine whether we should do block sync. This must happen after the handshake, since the
-	// app may modify the validator set, specifying ourself as the only validator.
-	blockSync := !onlyValidatorIsUs(state, localAddr)
-
-	logNodeStartupInfo(state, pubKey, logger, consensusLogger)
-
-	mempool, mempoolReactor := createMempoolAndMempoolReactor(config, proxyApp, state, memplMetrics, logger, tracer)
-	if catReactor, ok := mempoolReactor.(*cat.Reactor); ok {
-		if len(nodeKey.ID()) == 0 {
-			catReactor.SetStickySalt(nil)
-		} else {
-			catReactor.SetStickySalt([]byte(nodeKey.ID()))
-		}
-	}
-
-	evidenceReactor, evidencePool, err := createEvidenceReactor(config, dbProvider, stateStore, blockStore, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	// make block executor for consensus and blocksync reactors to execute blocks
-	blockExec := sm.NewBlockExecutor(
-		stateStore,
-		logger.With("module", "state"),
-		proxyApp.Consensus(),
-		mempool,
-		evidencePool,
-		blockStore,
-		sm.BlockExecutorWithMetrics(smMetrics),
-		sm.BlockExecutorWithRootDir(config.RootDir),
-		sm.BlockExecutorWithTracer(tracer),
-	)
-
-	offlineStateSyncHeight := int64(0)
-	if blockStore.Height() == 0 {
-		offlineStateSyncHeight, err = blockExec.Store().GetOfflineStateSyncHeight()
-		if err != nil && err.Error() != "value empty" {
-			panic(fmt.Sprintf("failed to retrieve statesynced height from store %s; expected state store height to be %v", err, state.LastBlockHeight))
-		}
-	}
-	// Don't start block sync if we're doing a state sync first.
-	bcReactor, err := createBlocksyncReactor(config, state, blockExec, blockStore, blockSync && !stateSync, localAddr, logger, bsMetrics, offlineStateSyncHeight, tracer)
-	if err != nil {
-		return nil, fmt.Errorf("could not create blocksync reactor: %w", err)
-	}
-
-	propagationReactor := propagation.NewReactor(
-		nodeKey.ID(),
-		propagation.Config{
-			Store:         blockStore,
-			Mempool:       mempool,
-			Privval:       privValidator,
-			ChainID:       state.ChainID,
-			BlockMaxBytes: state.ConsensusParams.Block.MaxBytes,
-		},
-		propagation.WithTracer(tracer),
-	)
-
-	var propagator propagation.Propagator
-	propagator = propagationReactor
-
-	if config.Consensus.EnableLegacyBlockProp {
-		types.MaxBlockSizeBytes = types.ReducedMaxBlockSizeBytes // reduce the max block size to avoid overloading the legacy block prop mechanism
-	}
-	if config.Consensus.DisablePropagationReactor {
-		if !config.Consensus.EnableLegacyBlockProp {
-			return nil, fmt.Errorf("cannot have both propagation reactor and legacy block propagation disabled")
-		}
-		propagator = propagation.NewNoOpPropagator()
-		propagationReactor = nil
-	} else {
-		if !stateSync && !blockSync {
-			propagationReactor.StartProcessing()
-		}
-	}
-
-	consensusReactor, consensusState := createConsensusReactor(
-		config, state, blockExec, blockStore, mempool, evidencePool,
-		privValidator, csMetrics, propagator, stateSync || blockSync, eventBus, consensusLogger, offlineStateSyncHeight, tracer,
-	)
-
-	err = stateStore.SetOfflineStateSyncHeight(0)
-	if err != nil {
-		panic(fmt.Sprintf("failed to reset the offline state sync height %s", err))
-	}
-	if propagationReactor != nil {
-		propagationReactor.SetLogger(logger.With("module", "propagation"))
-	}
-
-	logger.Info("Consensus reactor created")
-	// Set up state sync reactor, and schedule a sync if requested.
-	// FIXME The way we do phased startups (e.g. replay -> block sync -> consensus) is very messy,
-	// we should clean this whole thing up. See:
-	// https://github.com/tendermint/tendermint/issues/4644
-	stateSyncReactor := statesync.NewReactor(
-		*config.StateSync,
-		proxyApp.Snapshot(),
-		proxyApp.Query(),
-		ssMetrics,
-	)
-	stateSyncReactor.SetLogger(logger.With("module", "statesync"))
-
-	nodeInfo, err := makeNodeInfo(config, nodeKey, txIndexer, genDoc, state, softwareVersion)
-	if err != nil {
-		return nil, err
-	}
-
-	transport, peerFilters := createTransport(config, nodeInfo, nodeKey, proxyApp, tracer)
-
-	p2pLogger := logger.With("module", "p2p")
-	sw := createSwitch(
-		config, transport, p2pMetrics, peerFilters, mempoolReactor, bcReactor,
-		stateSyncReactor, consensusReactor, evidenceReactor, propagationReactor, nodeInfo, nodeKey, p2pLogger, tracer,
-	)
-
-	err = sw.AddPersistentPeers(splitAndTrimEmpty(config.P2P.PersistentPeers, ",", " "))
-	if err != nil {
-		return nil, fmt.Errorf("could not add peers from persistent_peers field: %w", err)
-	}
-
-	err = sw.AddUnconditionalPeerIDs(splitAndTrimEmpty(config.P2P.UnconditionalPeerIDs, ",", " "))
-	if err != nil {
-		return nil, fmt.Errorf("could not add peer ids from unconditional_peer_ids field: %w", err)
-	}
-
-	addrBook, err := createAddrBookAndSetOnSwitch(config, sw, p2pLogger, nodeKey)
-	if err != nil {
-		return nil, fmt.Errorf("could not create addrbook: %w", err)
-	}
-
-	// Optionally, start the pex reactor
-	//
-	// TODO:
-	//
-	// We need to set Seeds and PersistentPeers on the switch,
-	// since it needs to be able to use these (and their DNS names)
-	// even if the PEX is off. We can include the DNS name in the NetAddress,
-	// but it would still be nice to have a clear list of the current "PersistentPeers"
-	// somewhere that we can return with net_info.
-	//
-	// If PEX is on, it should handle dialing the seeds. Otherwise the switch does it.
-	// Note we currently use the addrBook regardless at least for AddOurAddress
-	var pexReactor *pex.Reactor
-	if config.P2P.PexReactor {
-		pexReactor = createPEXReactorAndAddToSwitch(addrBook, config, sw, logger)
-	}
-
-	// Add private IDs to addrbook to block those peers being added
-	addrBook.AddPrivateIDs(splitAndTrimEmpty(config.P2P.PrivatePeerIDs, ",", " "))
-
-	node := &Node{
-		config:        config,
-		genesisDoc:    genDoc,
-		privValidator: privValidator,
-
-		transport: transport,
-		sw:        sw,
-		addrBook:  addrBook,
-		nodeInfo:  nodeInfo,
-		nodeKey:   nodeKey,
-
-		stateStore:       stateStore,
-		blockStore:       blockStore,
-		bcReactor:        bcReactor,
-		mempoolReactor:   mempoolReactor,
-		mempool:          mempool,
-		consensusState:   consensusState,
-		consensusReactor: consensusReactor,
-		stateSyncReactor: stateSyncReactor,
-		stateSync:        stateSync,
-		stateSyncGenesis: state, // Shouldn't be necessary, but need a way to pass the genesis state
-		pexReactor:       pexReactor,
-		blockPropReactor: propagationReactor,
-		evidencePool:     evidencePool,
-		proxyApp:         proxyApp,
-		txIndexer:        txIndexer,
-		indexerService:   indexerService,
-		blockIndexer:     blockIndexer,
-		eventBus:         eventBus,
-	}
-	node.BaseService = *service.NewBaseService(logger, "Node", node)
-
-	consensusState.SetAfterPanicFn(func() {
-		node.Logger.Error("Initiating full node shutdown due to consensus panic")
-		if err := node.Stop(); err != nil {
-			node.Logger.Error("Failed to stop node after consensus panic", "err", err)
-		}
-		os.Exit(1)
-	})
-
-	for _, option := range options {
-		option(node)
-	}
-
-	return node, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Create the proxyApp and establish connections to the ABCI app (consensus, mempool, query).
+
+// EventBus and IndexerService must be started before the handshake because
+// we might need to index the txs of the replayed block as this might not have happened
+// when the node stopped last time (i.e. the node stopped after it saved the block
+// but before it indexed the txs)
+
+// create an optional tracer client to collect trace data.
+
+// If an address is provided, listen on the socket for a connection from an
+// external signing process.
+
+// FIXME: we should start services inside OnStart
+
+// Determine whether we should attempt state sync.
+
+// Create the handshaker, which calls RequestInfo, sets the AppVersion on the state,
+// and replays any blocks as necessary to sync CometBFT with the app.
+
+// Reload the state. It will have the Version.Consensus.App set by the
+// Handshake, and may have other modifications as well (ie. depending on
+// what happened during block replay).
+
+// Determine whether we should do block sync. This must happen after the handshake, since the
+// app may modify the validator set, specifying ourself as the only validator.
+
+// make block executor for consensus and blocksync reactors to execute blocks
+
+// Don't start block sync if we're doing a state sync first.
+
+// reduce the max block size to avoid overloading the legacy block prop mechanism
+
+// Set up state sync reactor, and schedule a sync if requested.
+// FIXME The way we do phased startups (e.g. replay -> block sync -> consensus) is very messy,
+// we should clean this whole thing up. See:
+// https://github.com/tendermint/tendermint/issues/4644
+
+// Optionally, start the pex reactor
+//
+// TODO:
+//
+// We need to set Seeds and PersistentPeers on the switch,
+// since it needs to be able to use these (and their DNS names)
+// even if the PEX is off. We can include the DNS name in the NetAddress,
+// but it would still be nice to have a clear list of the current "PersistentPeers"
+// somewhere that we can return with net_info.
+//
+// If PEX is on, it should handle dialing the seeds. Otherwise the switch does it.
+// Note we currently use the addrBook regardless at least for AddOurAddress
+
+// Add private IDs to addrbook to block those peers being added
+
+// Shouldn't be necessary, but need a way to pass the genesis state
 
 // OnStart starts the Node. It implements service.Service.
-func (n *Node) OnStart() error {
-	now := cmttime.Now()
-	genTime := n.genesisDoc.GenesisTime
-	if genTime.After(now) {
-		n.Logger.Info("Genesis time is in the future. Sleeping until then...", "genTime", genTime)
-		time.Sleep(genTime.Sub(now))
-	}
+func (n *Node) OnStart() error { _ = "STUB: not implemented"; return nil }
 
-	// run pprof server if it is enabled
-	if n.config.RPC.IsPprofEnabled() {
-		n.pprofSrv = n.startPprofServer()
-	}
+// run pprof server if it is enabled
 
-	// begin prometheus metrics gathering if it is enabled
-	if n.config.Instrumentation.IsPrometheusEnabled() {
-		n.prometheusSrv = n.startPrometheusServer()
-	}
+// begin prometheus metrics gathering if it is enabled
 
-	// Start the RPC server before the P2P server
-	// so we can eg. receive txs for the first block
-	if n.config.RPC.ListenAddress != "" {
-		listeners, err := n.startRPC()
-		if err != nil {
-			return err
-		}
-		n.rpcListeners = listeners
-	}
+// Start the RPC server before the P2P server
+// so we can eg. receive txs for the first block
 
-	// Start the gRPC PrivValidator server if configured.
-	if n.config.PrivValidatorGRPCListenAddr != "" {
-		lis, err := net.Listen("tcp", n.config.PrivValidatorGRPCListenAddr)
-		if err != nil {
-			return fmt.Errorf("failed to listen for privval gRPC: %w", err)
-		}
-		grpcServer := grpc.NewServer()
-		privvalproto.RegisterPrivValidatorAPIServer(grpcServer, privval.NewPrivValidatorGRPCServer(
-			n.privValidator,
-			n.Logger.With("module", "privval-grpc"),
-		))
-		n.privvalGRPCServer = grpcServer
-		go func() {
-			if err := grpcServer.Serve(lis); err != nil {
-				n.Logger.Error("privval gRPC server error", "err", err)
-			}
-		}()
-		n.Logger.Info("Started privval gRPC server", "addr", n.config.PrivValidatorGRPCListenAddr)
-	}
+// Start the gRPC PrivValidator server if configured.
 
-	if n.config.Instrumentation.PyroscopeURL != "" {
-		profiler, tracer, err := setupPyroscope(
-			n.config.Instrumentation,
-			string(n.nodeKey.ID()),
-		)
-		if err != nil {
-			return err
-		}
-		n.pyroscopeProfiler = profiler
-		n.pyroscopeTracer = tracer
-	}
+// Start the transport.
 
-	// Start the transport.
-	addr, err := p2p.NewNetAddressString(p2p.IDAddressString(n.nodeKey.ID(), n.config.P2P.ListenAddress))
-	if err != nil {
-		return err
-	}
-	if err := n.transport.Listen(*addr); err != nil {
-		return err
-	}
+// Start the switch (the P2P server).
 
-	n.isListening = true
+// Always connect to persistent peers
 
-	// Start the switch (the P2P server).
-	err = n.sw.Start()
-	if err != nil {
-		return err
-	}
-
-	// Always connect to persistent peers
-	err = n.sw.DialPeersAsync(splitAndTrimEmpty(n.config.P2P.PersistentPeers, ",", " "))
-	if err != nil {
-		return fmt.Errorf("could not dial peers from persistent_peers field: %w", err)
-	}
-
-	// Run state sync
-	if n.stateSync {
-		bcR, ok := n.bcReactor.(blockSyncReactor)
-		if !ok {
-			return fmt.Errorf("this blocksync reactor does not support switching from state sync")
-		}
-		err := startStateSync(n.stateSyncReactor, bcR, n.stateSyncProvider,
-			n.config.StateSync, n.stateStore, n.blockStore, n.stateSyncGenesis)
-		if err != nil {
-			return fmt.Errorf("failed to start state sync: %w", err)
-		}
-	}
-
-	return nil
-}
+// Run state sync
 
 // OnStop stops the Node. It implements service.Service.
-func (n *Node) OnStop() {
-	n.BaseService.OnStop()
+func (n *Node) OnStop() { _ = "STUB: not implemented"; return }
 
-	n.Logger.Info("Stopping Node")
+// first stop the non-reactor services
 
-	// first stop the non-reactor services
-	if err := n.eventBus.Stop(); err != nil {
-		n.Logger.Error("Error closing eventBus", "err", err)
-	}
-	if n.indexerService != nil {
-		if err := n.indexerService.Stop(); err != nil {
-			n.Logger.Error("Error closing indexerService", "err", err)
-		}
-	}
-	// now stop the reactors
-	if err := n.sw.Stop(); err != nil {
-		n.Logger.Error("Error closing switch", "err", err)
-	}
+// now stop the reactors
 
-	if err := n.transport.Close(); err != nil {
-		n.Logger.Error("Error closing transport", "err", err)
-	}
+// finally stop the listeners / external services
 
-	n.isListening = false
-
-	// finally stop the listeners / external services
-	for _, l := range n.rpcListeners {
-		n.Logger.Info("Closing rpc listener", "listener", l)
-		if err := l.Close(); err != nil {
-			n.Logger.Error("Error closing listener", "listener", l, "err", err)
-		}
-	}
-
-	if n.privvalGRPCServer != nil {
-		n.privvalGRPCServer.GracefulStop()
-	}
-
-	if pvsc, ok := n.privValidator.(service.Service); ok {
-		if err := pvsc.Stop(); err != nil {
-			n.Logger.Error("Error closing private validator", "err", err)
-		}
-	}
-
-	if n.prometheusSrv != nil {
-		if err := n.prometheusSrv.Shutdown(context.Background()); err != nil {
-			// Error from closing listeners, or context timeout:
-			n.Logger.Error("Prometheus HTTP server Shutdown", "err", err)
-		}
-	}
-	if n.pprofSrv != nil {
-		if err := n.pprofSrv.Shutdown(context.Background()); err != nil {
-			n.Logger.Error("Pprof HTTP server Shutdown", "err", err)
-		}
-	}
-	if n.tracer != nil {
-		n.tracer.Stop()
-	}
-
-	if n.pyroscopeProfiler != nil {
-		if err := n.pyroscopeProfiler.Stop(); err != nil {
-			n.Logger.Error("Pyroscope profiler Stop", "err", err)
-		}
-	}
-
-	if n.pyroscopeTracer != nil {
-		if err := n.pyroscopeTracer.Shutdown(context.Background()); err != nil {
-			n.Logger.Error("Pyroscope tracer Shutdown", "err", err)
-		}
-	}
-	if n.blockStore != nil {
-		n.Logger.Info("Closing blockstore")
-		if err := n.blockStore.Close(); err != nil {
-			n.Logger.Error("problem closing blockstore", "err", err)
-		}
-	}
-	if n.stateStore != nil {
-		n.Logger.Info("Closing statestore")
-		if err := n.stateStore.Close(); err != nil {
-			n.Logger.Error("problem closing statestore", "err", err)
-		}
-	}
-	if n.evidencePool != nil {
-		n.Logger.Info("Closing evidencestore")
-		if err := n.EvidencePool().Close(); err != nil {
-			n.Logger.Error("problem closing evidencestore", "err", err)
-		}
-	}
-}
+// Error from closing listeners, or context timeout:
 
 // ConfigureRPC makes sure RPC has all the objects it needs to operate.
 func (n *Node) ConfigureRPC() (*rpccore.Environment, error) {
-	pubKey, err := n.privValidator.GetPubKey()
-	if pubKey == nil || err != nil {
-		return nil, fmt.Errorf("can't get pubkey: %w", err)
-	}
-	rpcCoreEnv := rpccore.Environment{
-		ProxyAppQuery:   n.proxyApp.Query(),
-		ProxyAppMempool: n.proxyApp.Mempool(),
-
-		StateStore:     n.stateStore,
-		BlockStore:     n.blockStore,
-		EvidencePool:   n.evidencePool,
-		ConsensusState: n.consensusState,
-		P2PPeers:       n.sw,
-		P2PTransport:   n,
-		PubKey:         pubKey,
-
-		GenDoc:           n.genesisDoc,
-		TxIndexer:        n.txIndexer,
-		BlockIndexer:     n.blockIndexer,
-		ConsensusReactor: n.consensusReactor,
-		EventBus:         n.eventBus,
-		Mempool:          n.mempool,
-
-		Logger: n.Logger.With("module", "rpc"),
-
-		Config: *n.config.RPC,
-	}
-	if err := rpcCoreEnv.InitGenesisChunks(); err != nil {
-		return nil, err
-	}
-	return &rpcCoreEnv, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (n *Node) startRPC() ([]net.Listener, error) {
-	env, err := n.ConfigureRPC()
-	if err != nil {
-		return nil, err
-	}
+func (n *Node) startRPC() ([]net.Listener, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	listenAddrs := splitAndTrimEmpty(n.config.RPC.ListenAddress, ",", " ")
-	routes := env.GetRoutes()
+// If necessary adjust global WriteTimeout to ensure it's greater than
+// TimeoutBroadcastTxCommit.
+// See https://github.com/tendermint/tendermint/issues/3435
 
-	if n.config.RPC.Unsafe {
-		env.AddUnsafeRoutes(routes)
-	}
+// we may expose the rpc over both a unix and tcp socket
 
-	config := rpcserver.DefaultConfig()
-	config.MaxRequestBatchSize = n.config.RPC.MaxRequestBatchSize
-	config.MaxBodyBytes = n.config.RPC.MaxBodyBytes
-	config.MaxHeaderBytes = n.config.RPC.MaxHeaderBytes
-	config.MaxOpenConnections = n.config.RPC.MaxOpenConnections
-	// If necessary adjust global WriteTimeout to ensure it's greater than
-	// TimeoutBroadcastTxCommit.
-	// See https://github.com/tendermint/tendermint/issues/3435
-	if config.WriteTimeout <= n.config.RPC.TimeoutBroadcastTxCommit {
-		config.WriteTimeout = n.config.RPC.TimeoutBroadcastTxCommit + 1*time.Second
-	}
+// we expose a simplified api over grpc for convenience to app devs
 
-	// we may expose the rpc over both a unix and tcp socket
-	listeners := make([]net.Listener, len(listenAddrs))
-	for i, listenAddr := range listenAddrs {
-		mux := http.NewServeMux()
-		rpcLogger := n.Logger.With("module", "rpc-server")
-		wmLogger := rpcLogger.With("protocol", "websocket")
-		wm := rpcserver.NewWebsocketManager(routes,
-			rpcserver.OnDisconnect(func(remoteAddr string) {
-				err := n.eventBus.UnsubscribeAll(context.Background(), remoteAddr)
-				if err != nil && err != cmtpubsub.ErrSubscriptionNotFound {
-					wmLogger.Error("Failed to unsubscribe addr from events", "addr", remoteAddr, "err", err)
-				}
-			}),
-			rpcserver.ReadLimit(config.MaxBodyBytes),
-			rpcserver.WriteChanCapacity(n.config.RPC.WebSocketWriteBufferSize),
-		)
-		wm.SetLogger(wmLogger)
-		mux.HandleFunc("/websocket", wm.WebsocketHandler)
-		rpcserver.RegisterRPCFuncs(mux, routes, rpcLogger)
-		listener, err := rpcserver.Listen(
-			listenAddr,
-			config.MaxOpenConnections,
-		)
-		if err != nil {
-			return nil, err
-		}
+// NOTE: GRPCMaxOpenConnections is used, not MaxOpenConnections
 
-		var rootHandler http.Handler = mux
-		if n.config.RPC.IsCorsEnabled() {
-			corsMiddleware := cors.New(cors.Options{
-				AllowedOrigins: n.config.RPC.CORSAllowedOrigins,
-				AllowedMethods: n.config.RPC.CORSAllowedMethods,
-				AllowedHeaders: n.config.RPC.CORSAllowedHeaders,
-			})
-			rootHandler = corsMiddleware.Handler(mux)
-		}
-		if n.config.RPC.IsTLSEnabled() {
-			go func() {
-				if err := rpcserver.ServeTLS(
-					listener,
-					rootHandler,
-					n.config.RPC.CertFile(),
-					n.config.RPC.KeyFile(),
-					rpcLogger,
-					config,
-				); err != nil {
-					n.Logger.Error("Error serving server with TLS", "err", err)
-				}
-			}()
-		} else {
-			go func() {
-				if err := rpcserver.Serve(
-					listener,
-					rootHandler,
-					rpcLogger,
-					config,
-				); err != nil {
-					n.Logger.Error("Error serving server", "err", err)
-				}
-			}()
-		}
+// If necessary adjust global WriteTimeout to ensure it's greater than
+// TimeoutBroadcastTxCommit.
+// See https://github.com/tendermint/tendermint/issues/3435
 
-		listeners[i] = listener
-	}
-
-	// we expose a simplified api over grpc for convenience to app devs
-	grpcListenAddr := n.config.RPC.GRPCListenAddress
-	if grpcListenAddr != "" {
-		config := rpcserver.DefaultConfig()
-		config.MaxBodyBytes = n.config.RPC.MaxBodyBytes
-		config.MaxHeaderBytes = n.config.RPC.MaxHeaderBytes
-		// NOTE: GRPCMaxOpenConnections is used, not MaxOpenConnections
-		config.MaxOpenConnections = n.config.RPC.GRPCMaxOpenConnections
-		// If necessary adjust global WriteTimeout to ensure it's greater than
-		// TimeoutBroadcastTxCommit.
-		// See https://github.com/tendermint/tendermint/issues/3435
-		if config.WriteTimeout <= n.config.RPC.TimeoutBroadcastTxCommit {
-			config.WriteTimeout = n.config.RPC.TimeoutBroadcastTxCommit + 1*time.Second
-		}
-		listener, err := rpcserver.Listen(grpcListenAddr, config.MaxOpenConnections)
-		if err != nil {
-			return nil, err
-		}
-		go func() {
-			//nolint:staticcheck // SA1019: core_grpc.StartGRPCClient is deprecated: A new gRPC API will be introduced after v0.38.
-			if err := grpccore.StartGRPCServer(env, listener); err != nil {
-				n.Logger.Error("Error starting gRPC server", "err", err)
-			}
-		}()
-		listeners = append(listeners, listener)
-
-	}
-
-	return listeners, nil
-}
+//nolint:staticcheck // SA1019: core_grpc.StartGRPCClient is deprecated: A new gRPC API will be introduced after v0.38.
 
 // startPrometheusServer starts a Prometheus HTTP server, listening for metrics
 // collectors on addr.
-func (n *Node) startPrometheusServer() *http.Server {
-	srv := &http.Server{
-		Addr: n.config.Instrumentation.PrometheusListenAddr,
-		Handler: promhttp.InstrumentMetricHandler(
-			prometheus.DefaultRegisterer, promhttp.HandlerFor(
-				prometheus.DefaultGatherer,
-				promhttp.HandlerOpts{MaxRequestsInFlight: n.config.Instrumentation.MaxOpenConnections},
-			),
-		),
-		ReadHeaderTimeout: readHeaderTimeout,
-	}
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			// Error starting or closing listener:
-			n.Logger.Error("Prometheus HTTP server ListenAndServe", "err", err)
-		}
-	}()
-	return srv
-}
+func (n *Node) startPrometheusServer() *http.Server { _ = "STUB: not implemented"; return nil }
+
+// Error starting or closing listener:
 
 // starts a ppro
-func (n *Node) startPprofServer() *http.Server {
-	srv := &http.Server{
-		Addr:              n.config.RPC.PprofListenAddress,
-		Handler:           nil,
-		ReadHeaderTimeout: readHeaderTimeout,
-	}
-	go func() {
-		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-			// Error starting or closing listener:
-			n.Logger.Error("pprof HTTP server ListenAndServe", "err", err)
-		}
-	}()
-	return srv
-}
+func (n *Node) startPprofServer() *http.Server { _ = "STUB: not implemented"; return nil }
+
+// Error starting or closing listener:
 
 // Switch returns the Node's Switch.
 func (n *Node) Switch() *p2p.Switch {
-	return n.sw
+	_ = "STUB: not implemented"
+
+	// BlockStore returns the Node's BlockStore.
+	return nil
 }
 
-// BlockStore returns the Node's BlockStore.
-func (n *Node) BlockStore() *store.BlockStore {
-	return n.blockStore
-}
+func (n *Node) BlockStore() *store.BlockStore { _ = "STUB: not implemented"; return nil }
 
 // ConsensusReactor returns the Node's ConsensusReactor.
-func (n *Node) ConsensusReactor() *cs.Reactor {
-	return n.consensusReactor
-}
+func (n *Node) ConsensusReactor() *cs.Reactor { _ = "STUB: not implemented"; return nil }
 
 // MempoolReactor returns the Node's mempool reactor.
 func (n *Node) MempoolReactor() p2p.Reactor {
-	return n.mempoolReactor
+	_ = "STUB: not implemented"
+	return *
+
+	// Mempool returns the Node's mempool.
+	new(p2p.Reactor)
 }
 
-// Mempool returns the Node's mempool.
 func (n *Node) Mempool() mempl.Mempool {
-	return n.mempool
+	_ = "STUB: not implemented"
+
+	// PEXReactor returns the Node's PEXReactor. It returns nil if PEX is disabled.
+	return *new(mempl.Mempool)
 }
 
-// PEXReactor returns the Node's PEXReactor. It returns nil if PEX is disabled.
-func (n *Node) PEXReactor() *pex.Reactor {
-	return n.pexReactor
-}
+func (n *Node) PEXReactor() *pex.Reactor { _ = "STUB: not implemented"; return nil }
 
 // EvidencePool returns the Node's EvidencePool.
-func (n *Node) EvidencePool() *evidence.Pool {
-	return n.evidencePool
-}
+func (n *Node) EvidencePool() *evidence.Pool { _ = "STUB: not implemented"; return nil }
 
 // EventBus returns the Node's EventBus.
 func (n *Node) EventBus() *types.EventBus {
-	return n.eventBus
+	_ = "STUB: not implemented"
+
+	// PrivValidator returns the Node's PrivValidator.
+	// XXX: for convenience only!
+	return nil
 }
 
-// PrivValidator returns the Node's PrivValidator.
-// XXX: for convenience only!
 func (n *Node) PrivValidator() types.PrivValidator {
-	return n.privValidator
+	_ = "STUB: not implemented"
+	return *
+
+	// GenesisDoc returns the Node's GenesisDoc.
+	new(types.PrivValidator)
 }
 
-// GenesisDoc returns the Node's GenesisDoc.
-func (n *Node) GenesisDoc() *types.GenesisDoc {
-	return n.genesisDoc
-}
+func (n *Node) GenesisDoc() *types.GenesisDoc { _ = "STUB: not implemented"; return nil }
 
 // ProxyApp returns the Node's AppConns, representing its connections to the ABCI application.
 func (n *Node) ProxyApp() proxy.AppConns {
-	return n.proxyApp
+	_ = "STUB: not implemented"
+
+	// Config returns the Node's config.
+	return *new(proxy.AppConns)
 }
 
-// Config returns the Node's config.
 func (n *Node) Config() *cfg.Config {
-	return n.config
+	_ = "STUB: not implemented"
+
+	// ------------------------------------------------------------------------------
+	return nil
 }
 
-//------------------------------------------------------------------------------
+func (n *Node) Listeners() []string { _ = "STUB: not implemented"; return nil }
 
-func (n *Node) Listeners() []string {
-	return []string{
-		fmt.Sprintf("Listener(@%v)", n.config.P2P.ExternalAddress),
-	}
-}
-
-func (n *Node) IsListening() bool {
-	return n.isListening
-}
+func (n *Node) IsListening() bool { _ = "STUB: not implemented"; return false }
 
 // NodeInfo returns the Node's Info from the Switch.
-func (n *Node) NodeInfo() p2p.NodeInfo {
-	return n.nodeInfo
-}
+func (n *Node) NodeInfo() p2p.NodeInfo { _ = "STUB: not implemented"; return *new(p2p.NodeInfo) }
 
 func makeNodeInfo(
 	config *cfg.Config,
@@ -1069,57 +380,8 @@ func makeNodeInfo(
 	state sm.State,
 	softwareVersion string,
 ) (p2p.DefaultNodeInfo, error) {
-	txIndexerStatus := "on"
-	if _, ok := txIndexer.(*null.TxIndex); ok {
-		txIndexerStatus = "off"
-	}
-
-	channels := []byte{
-		bc.BlocksyncChannel,
-		cs.StateChannel, cs.VoteChannel, cs.VoteSetBitsChannel,
-		mempl.MempoolChannel,
-		evidence.EvidenceChannel,
-		statesync.SnapshotChannel, statesync.ChunkChannel,
-	}
-	if config.Consensus.EnableLegacyBlockProp {
-		channels = append(channels, cs.DataChannel)
-	}
-	if config.Mempool.Type == cfg.MempoolTypeCAT {
-		channels = append(channels, cat.MempoolWantsChannel, cat.MempoolDataChannel)
-	}
-	if !config.Consensus.DisablePropagationReactor {
-		channels = append(channels, propagation.DataChannel, propagation.WantChannel)
-	}
-
-	nodeInfo := p2p.DefaultNodeInfo{
-		ProtocolVersion: p2p.NewProtocolVersion(
-			version.P2PProtocol, // global
-			state.Version.Consensus.Block,
-			state.Version.Consensus.App,
-		),
-		DefaultNodeID: nodeKey.ID(),
-		Network:       genDoc.ChainID,
-		Version:       version.TMCoreSemVer,
-		Channels:      channels,
-		Moniker:       config.Moniker,
-		Other: p2p.DefaultNodeInfoOther{
-			TxIndex:    txIndexerStatus,
-			RPCAddress: config.RPC.ListenAddress,
-		},
-	}
-
-	if config.P2P.PexReactor {
-		nodeInfo.Channels = append(nodeInfo.Channels, pex.PexChannel)
-	}
-
-	lAddr := config.P2P.ExternalAddress
-
-	if lAddr == "" {
-		lAddr = config.P2P.ListenAddress
-	}
-
-	nodeInfo.ListenAddr = lAddr
-
-	err := nodeInfo.Validate()
-	return nodeInfo, err
+	_ = "STUB: not implemented"
+	return *new(p2p.DefaultNodeInfo), nil
 }
+
+// global

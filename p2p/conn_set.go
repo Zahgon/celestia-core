@@ -27,56 +27,14 @@ type connSet struct {
 }
 
 // NewConnSet returns a ConnSet implementation.
-func NewConnSet() ConnSet {
-	return &connSet{
-		conns: map[string]connSetItem{},
-	}
-}
+func NewConnSet() ConnSet { _ = "STUB: not implemented"; return *new(ConnSet) }
 
-func (cs *connSet) Has(c net.Conn) bool {
-	cs.RLock()
-	defer cs.RUnlock()
+func (cs *connSet) Has(c net.Conn) bool { _ = "STUB: not implemented"; return false }
 
-	_, ok := cs.conns[c.RemoteAddr().String()]
+func (cs *connSet) HasIP(ip net.IP) bool { _ = "STUB: not implemented"; return false }
 
-	return ok
-}
+func (cs *connSet) Remove(c net.Conn) { _ = "STUB: not implemented"; return }
 
-func (cs *connSet) HasIP(ip net.IP) bool {
-	cs.RLock()
-	defer cs.RUnlock()
+func (cs *connSet) RemoveAddr(addr net.Addr) { _ = "STUB: not implemented"; return }
 
-	for _, c := range cs.conns {
-		for _, known := range c.ips {
-			if known.Equal(ip) {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-func (cs *connSet) Remove(c net.Conn) {
-	cs.Lock()
-	defer cs.Unlock()
-
-	delete(cs.conns, c.RemoteAddr().String())
-}
-
-func (cs *connSet) RemoveAddr(addr net.Addr) {
-	cs.Lock()
-	defer cs.Unlock()
-
-	delete(cs.conns, addr.String())
-}
-
-func (cs *connSet) Set(c net.Conn, ips []net.IP) {
-	cs.Lock()
-	defer cs.Unlock()
-
-	cs.conns[c.RemoteAddr().String()] = connSetItem{
-		conn: c,
-		ips:  ips,
-	}
-}
+func (cs *connSet) Set(c net.Conn, ips []net.IP) { _ = "STUB: not implemented"; return }

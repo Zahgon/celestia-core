@@ -3,24 +3,15 @@
 package main
 
 import (
-	"bytes"
 	"flag"
 	"fmt"
 	"go/ast"
-	"go/format"
-	"go/parser"
-	"go/token"
-	"go/types"
 	"io"
 	"io/fs"
 	"log"
 	"os"
-	"path"
 	"path/filepath"
-	"reflect"
 	"regexp"
-	"strconv"
-	"strings"
 	"text/template"
 )
 
@@ -146,204 +137,56 @@ func main() {
 	}
 }
 
-func ignoreTestFiles(f fs.FileInfo) bool {
-	return !strings.Contains(f.Name(), "_test.go")
-}
+func ignoreTestFiles(f fs.FileInfo) bool { _ = "STUB: not implemented"; return false }
 
 // ParseMetricsDir parses the dir and scans for a struct matching structName,
 // ignoring all test files. ParseMetricsDir iterates the fields of the metrics
 // struct and builds a TemplateData using the data obtained from the abstract syntax tree.
 func ParseMetricsDir(dir string, structName string) (TemplateData, error) {
-	fs := token.NewFileSet()
-	d, err := parser.ParseDir(fs, dir, ignoreTestFiles, parser.ParseComments)
-	if err != nil {
-		return TemplateData{}, err
-	}
-	if len(d) > 1 {
-		return TemplateData{}, fmt.Errorf("multiple packages found in %s", dir)
-	}
-	if len(d) == 0 {
-		return TemplateData{}, fmt.Errorf("no go pacakges found in %s", dir)
-	}
-
-	// Grab the package name and files.
-	var pkgName string
-	var files map[string]*ast.File
-	for name, pkg := range d {
-		pkgName = name
-		files = pkg.Files
-		break
-	}
-	td := TemplateData{
-		Package: pkgName,
-	}
-	// Grab the metrics struct
-	m, mPkgName, err := findMetricsStruct(files, structName)
-	if err != nil {
-		return TemplateData{}, err
-	}
-	for _, f := range m.Fields.List {
-		if !isMetric(f.Type, mPkgName) {
-			continue
-		}
-		pmf := parseMetricField(f)
-		td.ParsedMetrics = append(td.ParsedMetrics, pmf)
-	}
-
-	return td, err
+	_ = "STUB: not implemented"
+	return *new(TemplateData), nil
 }
+
+// Grab the package name and files.
+
+// Grab the metrics struct
 
 // GenerateMetricsFile executes the metrics file template, writing the result
 // into the io.Writer.
-func GenerateMetricsFile(w io.Writer, td TemplateData) error {
-	b := []byte{}
-	buf := bytes.NewBuffer(b)
-	err := tmpl.Execute(buf, td)
-	if err != nil {
-		return err
-	}
-	b, err = format.Source(buf.Bytes())
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(w, bytes.NewBuffer(b))
-	if err != nil {
-		return err
-	}
-	return nil
-}
+func GenerateMetricsFile(w io.Writer, td TemplateData) error { _ = "STUB: not implemented"; return nil }
 
 func findMetricsStruct(files map[string]*ast.File, structName string) (*ast.StructType, string, error) {
-	var st *ast.StructType
-	for _, file := range files {
-		mPkgName, err := extractMetricsPackageName(file.Imports)
-		if err != nil {
-			return nil, "", fmt.Errorf("unable to determine metrics package name: %v", err)
-		}
-		if !ast.FilterFile(file, func(name string) bool {
-			return name == structName
-		}) {
-			continue
-		}
-		ast.Inspect(file, func(n ast.Node) bool {
-			switch f := n.(type) {
-			case *ast.TypeSpec:
-				if f.Name.Name == structName {
-					var ok bool
-					st, ok = f.Type.(*ast.StructType)
-					if !ok {
-						err = fmt.Errorf("found identifier for %q of wrong type", structName)
-					}
-				}
-				return false
-			default:
-				return true
-			}
-		})
-		if err != nil {
-			return nil, "", err
-		}
-		if st != nil {
-			return st, mPkgName, nil
-		}
-	}
-	return nil, "", fmt.Errorf("target struct %q not found in dir", structName)
+	_ = "STUB: not implemented"
+	return nil, "", nil
 }
 
 func parseMetricField(f *ast.Field) ParsedMetricField {
-	pmf := ParsedMetricField{
-		Description: extractHelpMessage(f.Doc),
-		MetricName:  extractFieldName(f.Names[0].String(), f.Tag),
-		FieldName:   f.Names[0].String(),
-		TypeName:    extractTypeName(f.Type),
-		Labels:      extractLabels(f.Tag),
-	}
-	if pmf.TypeName == "Histogram" {
-		pmf.HistogramOptions = extractHistogramOptions(f.Tag)
-	}
-	return pmf
+	_ = "STUB: not implemented"
+	return *new(ParsedMetricField)
 }
 
-func extractTypeName(e ast.Expr) string {
-	return strings.TrimPrefix(path.Ext(types.ExprString(e)), ".")
-}
+func extractTypeName(e ast.Expr) string { _ = "STUB: not implemented"; return "" }
 
-func extractHelpMessage(cg *ast.CommentGroup) string {
-	if cg == nil {
-		return ""
-	}
-	var help []string
-	for _, c := range cg.List {
-		mt := strings.TrimPrefix(c.Text, "//metrics:")
-		if mt != c.Text {
-			return strings.TrimSpace(mt)
-		}
-		help = append(help, strings.TrimSpace(strings.TrimPrefix(c.Text, "//")))
-	}
-	return strings.Join(help, " ")
-}
+func extractHelpMessage(cg *ast.CommentGroup) string { _ = "STUB: not implemented"; return "" }
 
-func isMetric(e ast.Expr, mPkgName string) bool {
-	return strings.Contains(types.ExprString(e), fmt.Sprintf("%s.", mPkgName))
-}
+func isMetric(e ast.Expr, mPkgName string) bool { _ = "STUB: not implemented"; return false }
 
-func extractLabels(bl *ast.BasicLit) string {
-	if bl != nil {
-		t := reflect.StructTag(strings.Trim(bl.Value, "`"))
-		if v := t.Get(labelsTag); v != "" {
-			var res []string //nolint:prealloc
-			for _, s := range strings.Split(v, ",") {
-				res = append(res, strconv.Quote(strings.TrimSpace(s)))
-			}
-			return strings.Join(res, ",")
-		}
-	}
-	return ""
-}
+func extractLabels(bl *ast.BasicLit) string { _ = "STUB: not implemented"; return "" }
 
-func extractFieldName(name string, tag *ast.BasicLit) string {
-	if tag != nil {
-		t := reflect.StructTag(strings.Trim(tag.Value, "`"))
-		if v := t.Get(metricNameTag); v != "" {
-			return v
-		}
-	}
-	return toSnakeCase(name)
-}
+//nolint:prealloc
+
+func extractFieldName(name string, tag *ast.BasicLit) string { _ = "STUB: not implemented"; return "" }
 
 func extractHistogramOptions(tag *ast.BasicLit) HistogramOpts {
-	h := HistogramOpts{}
-	if tag != nil {
-		t := reflect.StructTag(strings.Trim(tag.Value, "`"))
-		if v := t.Get(bucketTypeTag); v != "" {
-			h.BucketType = bucketType[v]
-		}
-		if v := t.Get(bucketSizeTag); v != "" {
-			h.BucketSizes = v
-		}
-	}
-	return h
+	_ = "STUB: not implemented"
+	return *new(HistogramOpts)
 }
 
 func extractMetricsPackageName(imports []*ast.ImportSpec) (string, error) {
-	for _, i := range imports {
-		u, err := strconv.Unquote(i.Path.Value)
-		if err != nil {
-			return "", err
-		}
-		if u == metricsPackageName {
-			if i.Name != nil {
-				return i.Name.Name, nil
-			}
-			return path.Base(u), nil
-		}
-	}
+	_ = "STUB: not implemented"
 	return "", nil
 }
 
 var capitalChange = regexp.MustCompile("([a-z0-9])([A-Z])")
 
-func toSnakeCase(str string) string {
-	snake := capitalChange.ReplaceAllString(str, "${1}_${2}")
-	return strings.ToLower(snake)
-}
+func toSnakeCase(str string) string { _ = "STUB: not implemented"; return "" }

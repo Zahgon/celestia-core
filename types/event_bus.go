@@ -2,7 +2,6 @@ package types
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cometbft/cometbft/abci/types"
 	"github.com/cometbft/cometbft/libs/log"
@@ -36,41 +35,24 @@ type EventBus struct {
 }
 
 // NewEventBus returns a new event bus.
-func NewEventBus() *EventBus {
-	return NewEventBusWithBufferCapacity(defaultCapacity)
-}
+func NewEventBus() *EventBus { _ = "STUB: not implemented"; return nil }
 
 // NewEventBusWithBufferCapacity returns a new event bus with the given buffer capacity.
 func NewEventBusWithBufferCapacity(cap int) *EventBus {
+	_ = "STUB: not implemented"
 	// capacity could be exposed later if needed
-	pubsub := cmtpubsub.NewServer(cmtpubsub.BufferCapacity(cap))
-	b := &EventBus{pubsub: pubsub}
-	b.BaseService = *service.NewBaseService(nil, "EventBus", b)
-	return b
+	return nil
 }
 
-func (b *EventBus) SetLogger(l log.Logger) {
-	b.BaseService.SetLogger(l)
-	b.pubsub.SetLogger(l.With("module", "pubsub"))
-}
+func (b *EventBus) SetLogger(l log.Logger) { _ = "STUB: not implemented"; return }
 
-func (b *EventBus) OnStart() error {
-	return b.pubsub.Start()
-}
+func (b *EventBus) OnStart() error { _ = "STUB: not implemented"; return nil }
 
-func (b *EventBus) OnStop() {
-	if err := b.pubsub.Stop(); err != nil {
-		b.pubsub.Logger.Error("error trying to stop eventBus", "error", err)
-	}
-}
+func (b *EventBus) OnStop() { _ = "STUB: not implemented"; return }
 
-func (b *EventBus) NumClients() int {
-	return b.pubsub.NumClients()
-}
+func (b *EventBus) NumClients() int { _ = "STUB: not implemented"; return 0 }
 
-func (b *EventBus) NumClientSubscriptions(clientID string) int {
-	return b.pubsub.NumClientSubscriptions(clientID)
-}
+func (b *EventBus) NumClientSubscriptions(clientID string) int { _ = "STUB: not implemented"; return 0 }
 
 func (b *EventBus) Subscribe(
 	ctx context.Context,
@@ -78,7 +60,8 @@ func (b *EventBus) Subscribe(
 	query cmtpubsub.Query,
 	outCapacity ...int,
 ) (Subscription, error) {
-	return b.pubsub.Subscribe(ctx, subscriber, query, outCapacity...)
+	_ = "STUB: not implemented"
+	return *new(Subscription), nil
 }
 
 // This method can be used for a local consensus explorer and synchronous
@@ -88,21 +71,24 @@ func (b *EventBus) SubscribeUnbuffered(
 	subscriber string,
 	query cmtpubsub.Query,
 ) (Subscription, error) {
-	return b.pubsub.SubscribeUnbuffered(ctx, subscriber, query)
+	_ = "STUB: not implemented"
+	return *new(Subscription), nil
 }
 
 func (b *EventBus) Unsubscribe(ctx context.Context, subscriber string, query cmtpubsub.Query) error {
-	return b.pubsub.Unsubscribe(ctx, subscriber, query)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) UnsubscribeAll(ctx context.Context, subscriber string) error {
-	return b.pubsub.UnsubscribeAll(ctx, subscriber)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) Publish(eventType string, eventData TMEventData) error {
+	_ = "STUB: not implemented"
 	// no explicit deadline for publishing events
-	ctx := context.Background()
-	return b.pubsub.PublishWithEvents(ctx, eventData, map[string][]string{EventTypeKey: {eventType}})
+	return nil
 }
 
 // validateAndStringifyEvents takes a slice of event objects and creates a
@@ -110,123 +96,110 @@ func (b *EventBus) Publish(eventType string, eventData TMEventData) error {
 // type and each of the event's attributes keys in the form of
 // "{event.Type}.{attribute.Key}" and the value is each attribute's value.
 func (*EventBus) validateAndStringifyEvents(events []types.Event) map[string][]string {
-	result := make(map[string][]string)
-	for _, event := range events {
-		if len(event.Type) == 0 {
-			continue
-		}
-
-		for _, attr := range event.Attributes {
-			if len(attr.Key) == 0 {
-				continue
-			}
-
-			compositeTag := fmt.Sprintf("%s.%s", event.Type, attr.Key)
-			result[compositeTag] = append(result[compositeTag], attr.Value)
-		}
-	}
-
-	return result
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventNewBlock(data EventDataNewBlock) error {
+	_ = "STUB: not implemented"
 	// no explicit deadline for publishing events
-	ctx := context.Background()
-	events := b.validateAndStringifyEvents(data.ResultFinalizeBlock.Events)
-
-	// add predefined new block event
-	events[EventTypeKey] = append(events[EventTypeKey], EventNewBlock)
-
-	return b.pubsub.PublishWithEvents(ctx, data, events)
+	return nil
 }
 
+// add predefined new block event
+
 func (b *EventBus) PublishEventSignedBlock(data EventDataSignedBlock) error {
-	return b.Publish(EventSignedBlock, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventNewBlockEvents(data EventDataNewBlockEvents) error {
+	_ = "STUB: not implemented"
 	// no explicit deadline for publishing events
-	ctx := context.Background()
-
-	events := b.validateAndStringifyEvents(data.Events)
-
-	// add predefined new block event
-	events[EventTypeKey] = append(events[EventTypeKey], EventNewBlockEvents)
-
-	return b.pubsub.PublishWithEvents(ctx, data, events)
+	return nil
 }
 
+// add predefined new block event
+
 func (b *EventBus) PublishEventNewBlockHeader(data EventDataNewBlockHeader) error {
-	return b.Publish(EventNewBlockHeader, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventNewEvidence(evidence EventDataNewEvidence) error {
-	return b.Publish(EventNewEvidence, evidence)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventVote(data EventDataVote) error {
-	return b.Publish(EventVote, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventValidBlock(data EventDataRoundState) error {
-	return b.Publish(EventValidBlock, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // PublishEventTx publishes tx event with events from Result. Note it will add
 // predefined keys (EventTypeKey, TxHashKey). Existing events with the same keys
 // will be overwritten.
 func (b *EventBus) PublishEventTx(data EventDataTx) error {
+	_ = "STUB: not implemented"
 	// no explicit deadline for publishing events
-	ctx := context.Background()
-
-	events := b.validateAndStringifyEvents(data.Result.Events)
-
-	// add predefined compositeKeys
-	events[EventTypeKey] = append(events[EventTypeKey], EventTx)
-	events[TxHashKey] = append(events[TxHashKey], fmt.Sprintf("%X", Tx(data.Tx).Hash()))
-	events[TxHeightKey] = append(events[TxHeightKey], fmt.Sprintf("%d", data.Height))
-
-	return b.pubsub.PublishWithEvents(ctx, data, events)
+	return nil
 }
 
+// add predefined compositeKeys
+
 func (b *EventBus) PublishEventNewRoundStep(data EventDataRoundState) error {
-	return b.Publish(EventNewRoundStep, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventTimeoutPropose(data EventDataRoundState) error {
-	return b.Publish(EventTimeoutPropose, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventTimeoutWait(data EventDataRoundState) error {
-	return b.Publish(EventTimeoutWait, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventNewRound(data EventDataNewRound) error {
-	return b.Publish(EventNewRound, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventCompleteProposal(data EventDataCompleteProposal) error {
-	return b.Publish(EventCompleteProposal, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventPolka(data EventDataRoundState) error {
-	return b.Publish(EventPolka, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventUnlock(data EventDataRoundState) error {
-	return b.Publish(EventUnlock, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventRelock(data EventDataRoundState) error {
-	return b.Publish(EventRelock, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventLock(data EventDataRoundState) error {
-	return b.Publish(EventLock, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (b *EventBus) PublishEventValidatorSetUpdates(data EventDataValidatorSetUpdates) error {
-	return b.Publish(EventValidatorSetUpdates, data)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // -----------------------------------------------------------------------------
@@ -238,81 +211,95 @@ func (NopEventBus) Subscribe(
 	cmtpubsub.Query,
 	chan<- interface{},
 ) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) Unsubscribe(context.Context, string, cmtpubsub.Query) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) UnsubscribeAll(context.Context, string) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventNewBlock(EventDataNewBlock) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventNewBlockHeader(EventDataNewBlockHeader) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventNewBlockEvents(EventDataNewBlockEvents) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventSignedBlock(EventDataSignedBlock) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventNewEvidence(EventDataNewEvidence) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (NopEventBus) PublishEventVote(EventDataVote) error {
-	return nil
-}
+func (NopEventBus) PublishEventVote(EventDataVote) error { _ = "STUB: not implemented"; return nil }
 
-func (NopEventBus) PublishEventTx(EventDataTx) error {
-	return nil
-}
+func (NopEventBus) PublishEventTx(EventDataTx) error { _ = "STUB: not implemented"; return nil }
 
 func (NopEventBus) PublishEventNewRoundStep(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventTimeoutPropose(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventTimeoutWait(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventNewRound(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventCompleteProposal(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventPolka(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventUnlock(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventRelock(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventLock(EventDataRoundState) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (NopEventBus) PublishEventValidatorSetUpdates(EventDataValidatorSetUpdates) error {
+	_ = "STUB: not implemented"
 	return nil
 }

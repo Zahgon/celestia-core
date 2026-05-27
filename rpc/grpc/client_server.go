@@ -4,15 +4,9 @@ import (
 	"context"
 	"net"
 	"regexp"
-	"strings"
-	"time"
 
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/reflection"
 
-	cmtnet "github.com/cometbft/cometbft/libs/net"
 	"github.com/cometbft/cometbft/rpc/core"
 )
 
@@ -33,105 +27,47 @@ type Config struct {
 //
 // Deprecated: A new gRPC API will be introduced after v0.38.
 func StartGRPCServer(env *core.Environment, ln net.Listener) error {
-	grpcServer := grpc.NewServer(
-		grpc.KeepaliveParams(keepalive.ServerParameters{
-			// Send a keepalive ping every 30s of inactivity.
-			Time: 30 * time.Second,
-			// Close the connection if the ping is not ACKed within 10s.
-			Timeout: 10 * time.Second,
-		}),
-		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
-			// Do not require the client to have an active stream to ping.
-			PermitWithoutStream: true,
-			// Allow client pings as frequent as every 10s. Clients that
-			// ping faster will be disconnected.
-			MinTime: 10 * time.Second,
-		}),
-	)
-	RegisterBroadcastAPIServer(grpcServer, &broadcastAPI{env: env})
-
-	api := NewBlockAPI(env)
-	RegisterBlockAPIServer(grpcServer, api)
-
-	blobstreamAPI := NewBlobstreamAPI(env)
-	RegisterBlobstreamAPIServer(grpcServer, blobstreamAPI)
-
-	reflection.Register(grpcServer)
-
-	errCh := make(chan error, 2)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	go func() {
-		errCh <- api.StartNewBlockEventListener(ctx)
-	}()
-	go func() {
-		errCh <- grpcServer.Serve(ln)
-	}()
-	defer grpcServer.GracefulStop()
-	defer func(api *BlockAPI, ctx context.Context) {
-		err := api.Stop(ctx)
-		if err != nil {
-			env.Logger.Error("error stopping block api", "err", err)
-		}
-	}(api, ctx)
-	// blocks until one errors or returns nil
-	return <-errCh
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Send a keepalive ping every 30s of inactivity.
+
+// Close the connection if the ping is not ACKed within 10s.
+
+// Do not require the client to have an active stream to ping.
+
+// Allow client pings as frequent as every 10s. Clients that
+// ping faster will be disconnected.
+
+// blocks until one errors or returns nil
 
 // StartGRPCClient dials the gRPC server using protoAddr and returns a new
 // BroadcastAPIClient.
 //
 // Deprecated: A new gRPC API will be introduced after v0.38.
 func StartGRPCClient(protoAddr string) BroadcastAPIClient {
-	parsedAddr := CanonicalGRPCAddress(protoAddr)
-
-	conn, err := grpc.NewClient(parsedAddr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(dialerFunc))
-	if err != nil {
-		panic(err)
-	}
-	return NewBroadcastAPIClient(conn)
+	_ = "STUB: not implemented"
+	return *new(BroadcastAPIClient)
 }
 
 func dialerFunc(_ context.Context, addr string) (net.Conn, error) {
-	return cmtnet.Connect(addr)
+	_ = "STUB: not implemented"
+	return *new(net.Conn), nil
 }
 
 // StartBlockAPIGRPCClient dials the gRPC server using protoAddr and returns a new
 // BlockAPIClient.
 func StartBlockAPIGRPCClient(protoAddr string, opts ...grpc.DialOption) (BlockAPIClient, error) {
-	parsedAddr := CanonicalGRPCAddress(protoAddr)
-
-	if len(opts) == 0 {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	}
-	opts = append(opts, grpc.WithContextDialer(dialerFunc))
-	conn, err := grpc.NewClient(
-		parsedAddr,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return NewBlockAPIClient(conn), nil
+	_ = "STUB: not implemented"
+	return *new(BlockAPIClient), nil
 }
 
 // StartBlobstreamAPIGRPCClient dials the gRPC server using protoAddr and returns a new
 // BlobstreamAPIClient.
 func StartBlobstreamAPIGRPCClient(protoAddr string, opts ...grpc.DialOption) (BlobstreamAPIClient, error) {
-	parsedAddr := CanonicalGRPCAddress(protoAddr)
-
-	if len(opts) == 0 {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	}
-	opts = append(opts, grpc.WithContextDialer(dialerFunc))
-	conn, err := grpc.NewClient(
-		parsedAddr,
-		opts...,
-	)
-	if err != nil {
-		return nil, err
-	}
-	return NewBlobstreamAPIClient(conn), nil
+	_ = "STUB: not implemented"
+	return *new(BlobstreamAPIClient), nil
 }
 
 // CanonicalGRPCAddress parses the protoAddr and returns the address, preserving gRPC-supported
@@ -143,11 +79,9 @@ func StartBlobstreamAPIGRPCClient(protoAddr string, opts ...grpc.DialOption) (Bl
 //   - tcp://host:port -> host:port (stripped)
 //   - http://host:port -> host:port (stripped)
 func CanonicalGRPCAddress(protoAddr string) string {
+	_ = "STUB: not implemented"
 	// Check if it starts with gRPC-supported schemes - preserve them
-	if strings.HasPrefix(protoAddr, "dns://") || strings.HasPrefix(protoAddr, "unix://") {
-		return protoAddr
-	}
-
-	// Strip other URI schemes
-	return strippedSchemeRegex.ReplaceAllString(protoAddr, "")
+	return ""
 }
+
+// Strip other URI schemes

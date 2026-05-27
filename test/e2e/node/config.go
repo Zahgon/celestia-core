@@ -1,13 +1,7 @@
 package main
 
 import (
-	"errors"
-	"fmt"
-
-	"github.com/BurntSushi/toml"
-
 	"github.com/cometbft/cometbft/test/e2e/app"
-	e2e "github.com/cometbft/cometbft/test/e2e/pkg"
 )
 
 // Config is the application configuration.
@@ -30,42 +24,11 @@ type Config struct {
 }
 
 // App extracts out the application specific configuration parameters
-func (cfg *Config) App() *app.Config {
-	return &app.Config{
-		Dir:                        cfg.Dir,
-		SnapshotInterval:           cfg.SnapshotInterval,
-		RetainBlocks:               cfg.RetainBlocks,
-		KeyType:                    cfg.KeyType,
-		ValidatorUpdates:           cfg.ValidatorUpdates,
-		PersistInterval:            cfg.PersistInterval,
-		VoteExtensionsEnableHeight: cfg.VoteExtensionsEnableHeight,
-		VoteExtensionsUpdateHeight: cfg.VoteExtensionsUpdateHeight,
-	}
-}
+func (cfg *Config) App() *app.Config { _ = "STUB: not implemented"; return nil }
 
 // LoadConfig loads the configuration from disk.
-func LoadConfig(file string) (*Config, error) {
-	cfg := &Config{
-		Listen:          "unix:///var/run/app.sock",
-		Protocol:        "socket",
-		PersistInterval: 1,
-	}
-	_, err := toml.DecodeFile(file, &cfg)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load config from %q: %w", file, err)
-	}
-	return cfg, cfg.Validate()
-}
+func LoadConfig(file string) (*Config, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // Validate validates the configuration. We don't do exhaustive config
 // validation here, instead relying on Testnet.Validate() to handle it.
-func (cfg Config) Validate() error {
-	switch {
-	case cfg.ChainID == "":
-		return errors.New("chain_id parameter is required")
-	case cfg.Listen == "" && cfg.Protocol != string(e2e.ProtocolBuiltin) && cfg.Protocol != string(e2e.ProtocolBuiltinConnSync):
-		return errors.New("listen parameter is required")
-	default:
-		return nil
-	}
-}
+func (cfg Config) Validate() error { _ = "STUB: not implemented"; return nil }

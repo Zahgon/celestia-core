@@ -10,68 +10,20 @@ type CMap struct {
 	l cmtsync.Mutex
 }
 
-func NewCMap() *CMap {
-	return &CMap{
-		m: make(map[string]interface{}),
-	}
-}
+func NewCMap() *CMap { _ = "STUB: not implemented"; return nil }
 
-func (cm *CMap) Set(key string, value interface{}) {
-	cm.l.Lock()
-	cm.m[key] = value
-	cm.l.Unlock()
-}
+func (cm *CMap) Set(key string, value interface{}) { _ = "STUB: not implemented"; return }
 
-func (cm *CMap) Get(key string) interface{} {
-	cm.l.Lock()
-	val := cm.m[key]
-	cm.l.Unlock()
-	return val
-}
+func (cm *CMap) Get(key string) interface{} { _ = "STUB: not implemented"; return nil }
 
-func (cm *CMap) Has(key string) bool {
-	cm.l.Lock()
-	_, ok := cm.m[key]
-	cm.l.Unlock()
-	return ok
-}
+func (cm *CMap) Has(key string) bool { _ = "STUB: not implemented"; return false }
 
-func (cm *CMap) Delete(key string) {
-	cm.l.Lock()
-	delete(cm.m, key)
-	cm.l.Unlock()
-}
+func (cm *CMap) Delete(key string) { _ = "STUB: not implemented"; return }
 
-func (cm *CMap) Size() int {
-	cm.l.Lock()
-	size := len(cm.m)
-	cm.l.Unlock()
-	return size
-}
+func (cm *CMap) Size() int { _ = "STUB: not implemented"; return 0 }
 
-func (cm *CMap) Clear() {
-	cm.l.Lock()
-	cm.m = make(map[string]interface{})
-	cm.l.Unlock()
-}
+func (cm *CMap) Clear() { _ = "STUB: not implemented"; return }
 
-func (cm *CMap) Keys() []string {
-	cm.l.Lock()
+func (cm *CMap) Keys() []string { _ = "STUB: not implemented"; return nil }
 
-	keys := make([]string, 0, len(cm.m))
-	for k := range cm.m {
-		keys = append(keys, k)
-	}
-	cm.l.Unlock()
-	return keys
-}
-
-func (cm *CMap) Values() []interface{} {
-	cm.l.Lock()
-	items := make([]interface{}, 0, len(cm.m))
-	for _, v := range cm.m {
-		items = append(items, v)
-	}
-	cm.l.Unlock()
-	return items
-}
+func (cm *CMap) Values() []interface{} { _ = "STUB: not implemented"; return nil }

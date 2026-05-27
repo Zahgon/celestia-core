@@ -25,10 +25,6 @@ type DBProvider func(*DBContext) (dbm.DB, error)
 // DefaultDBProvider returns a database using the DBBackend and DBDir
 // specified in the Config.
 func DefaultDBProvider(ctx *DBContext) (dbm.DB, error) {
-	dbType := dbm.BackendType(ctx.Config.DBBackend)
-	path := ctx.Path
-	if path == "" {
-		path = ctx.Config.DBDir()
-	}
-	return dbm.NewDB(ctx.ID, dbType, path)
+	_ = "STUB: not implemented"
+	return *new(dbm.DB), nil
 }

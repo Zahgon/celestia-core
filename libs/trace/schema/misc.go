@@ -29,14 +29,13 @@ type ABCI struct {
 // Table returns the table name for the ABCI struct and fulfills the
 // trace.Entry interface.
 func (ABCI) Table() string {
-	return ABCITable
+	_ = "STUB: not implemented"
+
+	// WriteABCI writes a trace for an ABCI method.
+	return ""
 }
 
-// WriteABCI writes a trace for an ABCI method.
 func WriteABCI(client trace.Tracer, traceType ABCIUpdate, height int64, round int32) {
-	client.Write(ABCI{
-		TraceType: string(traceType),
-		Height:    height,
-		Round:     round,
-	})
+	_ = "STUB: not implemented"
+	return
 }

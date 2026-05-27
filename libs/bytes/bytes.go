@@ -1,10 +1,7 @@
 package bytes
 
 import (
-	"encoding/binary"
-	"encoding/hex"
 	"fmt"
-	"strings"
 )
 
 // HexBytes enables HEX-encoding for json/encoding.
@@ -12,67 +9,34 @@ type HexBytes []byte
 
 // Marshal needed for protobuf compatibility
 func (bz HexBytes) Marshal() ([]byte, error) {
-	return bz, nil
+	_ = "STUB: not implemented"
+
+	// Unmarshal needed for protobuf compatibility
+	return nil, nil
 }
 
-// Unmarshal needed for protobuf compatibility
-func (bz *HexBytes) Unmarshal(data []byte) error {
-	*bz = data
-	return nil
-}
-
-// This is the point of Bytes.
-func (bz HexBytes) MarshalJSON() ([]byte, error) {
-	s := strings.ToUpper(hex.EncodeToString(bz))
-	jbz := make([]byte, len(s)+2)
-	jbz[0] = '"'
-	copy(jbz[1:], s)
-	jbz[len(jbz)-1] = '"'
-	return jbz, nil
-}
-
-func (bz HexBytes) MarshalDelimited() ([]byte, error) {
-	lenBuf := make([]byte, binary.MaxVarintLen64)
-	length := uint64(len(bz))
-	n := binary.PutUvarint(lenBuf, length)
-
-	return append(lenBuf[:n], bz...), nil
-}
+func (bz *HexBytes) Unmarshal(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // This is the point of Bytes.
-func (bz *HexBytes) UnmarshalJSON(data []byte) error {
-	if len(data) < 2 || data[0] != '"' || data[len(data)-1] != '"' {
-		return fmt.Errorf("invalid hex string: %s", data)
-	}
-	bz2, err := hex.DecodeString(string(data[1 : len(data)-1]))
-	if err != nil {
-		return err
-	}
-	*bz = bz2
-	return nil
-}
+func (bz HexBytes) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
+
+func (bz HexBytes) MarshalDelimited() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
+
+// This is the point of Bytes.
+func (bz *HexBytes) UnmarshalJSON(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 // Bytes fulfills various interfaces in light-client, etc...
-func (bz HexBytes) Bytes() []byte {
-	return bz
-}
+func (bz HexBytes) Bytes() []byte { _ = "STUB: not implemented"; return nil }
 
-func (bz HexBytes) String() string {
-	return strings.ToUpper(hex.EncodeToString(bz))
-}
+func (bz HexBytes) String() string { _ = "STUB: not implemented"; return "" }
 
 // Format writes either address of 0th element in a slice in base 16 notation,
 // with leading 0x (%p), or casts HexBytes to bytes and writes as hexadecimal
 // string to s.
-func (bz HexBytes) Format(s fmt.State, verb rune) {
-	switch verb {
-	case 'p':
-		s.Write([]byte(fmt.Sprintf("%p", bz))) //nolint: errcheck,staticcheck
-	default:
-		s.Write([]byte(fmt.Sprintf("%X", []byte(bz)))) //nolint:errcheck,staticcheck
-	}
-}
+func (bz HexBytes) Format(s fmt.State, verb rune) { _ = "STUB: not implemented"; return }
 
-func FromBytes(b []byte) []HexBytes {
-	return []HexBytes{b}
-}
+//nolint: errcheck,staticcheck
+
+//nolint:errcheck,staticcheck
+
+func FromBytes(b []byte) []HexBytes { _ = "STUB: not implemented"; return nil }

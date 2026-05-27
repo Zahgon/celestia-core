@@ -1,13 +1,9 @@
 package proxy
 
 import (
-	"fmt"
-
 	abcicli "github.com/cometbft/cometbft/abci/client"
-	"github.com/cometbft/cometbft/abci/example/kvstore"
 	"github.com/cometbft/cometbft/abci/types"
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
-	e2e "github.com/cometbft/cometbft/test/e2e/app"
 )
 
 //go:generate ../scripts/mockery_generate.sh ClientCreator
@@ -33,14 +29,13 @@ type localClientCreator struct {
 // a local client creator that uses a single mutex per new client, rather use
 // [NewConnSyncLocalClientCreator].
 func NewLocalClientCreator(app types.Application) ClientCreator {
-	return &localClientCreator{
-		mtx: new(cmtsync.Mutex),
-		app: app,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientCreator)
 }
 
 func (l *localClientCreator) NewABCIClient() (abcicli.Client, error) {
-	return abcicli.NewLocalClient(l.mtx, l.app), nil
+	_ = "STUB: not implemented"
+	return *new(abcicli.Client), nil
 }
 
 //----------------------------------------------------
@@ -58,15 +53,15 @@ type connSyncLocalClientCreator struct {
 // that maintains its own mutex over the application (i.e. it is
 // per-"connection" synchronized).
 func NewConnSyncLocalClientCreator(app types.Application) ClientCreator {
-	return &connSyncLocalClientCreator{
-		app: app,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientCreator)
 }
 
 func (c *connSyncLocalClientCreator) NewABCIClient() (abcicli.Client, error) {
+	_ = "STUB: not implemented"
 	// Specifying nil for the mutex causes each instance to create its own
 	// mutex.
-	return abcicli.NewLocalClient(nil, c.app), nil
+	return *new(abcicli.Client), nil
 }
 
 //---------------------------------------------------------------
@@ -82,20 +77,13 @@ type remoteClientCreator struct {
 // "192.168.0.1") and transport (e.g. "tcp"). Set mustConnect to true if you
 // want the client to connect before reporting success.
 func NewRemoteClientCreator(addr, transport string, mustConnect bool) ClientCreator {
-	return &remoteClientCreator{
-		addr:        addr,
-		transport:   transport,
-		mustConnect: mustConnect,
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientCreator)
 }
 
 func (r *remoteClientCreator) NewABCIClient() (abcicli.Client, error) {
-	remoteApp, err := abcicli.NewClient(r.addr, r.transport, r.mustConnect)
-	if err != nil {
-		return nil, fmt.Errorf("failed to connect to proxy: %w", err)
-	}
-
-	return remoteApp, nil
+	_ = "STUB: not implemented"
+	return *new(abcicli.Client), nil
 }
 
 // DefaultClientCreator returns a default [ClientCreator], which will create a
@@ -108,31 +96,8 @@ func (r *remoteClientCreator) NewABCIClient() (abcicli.Client, error) {
 // "_connsync" variant (i.e. "kvstore_connsync", etc.), which attempts to
 // replicate the same concurrency model as the remote client.
 func DefaultClientCreator(addr, transport, dbDir string) ClientCreator {
-	switch addr {
-	case "kvstore":
-		return NewLocalClientCreator(kvstore.NewInMemoryApplication())
-	case "kvstore_connsync":
-		return NewConnSyncLocalClientCreator(kvstore.NewInMemoryApplication())
-	case "persistent_kvstore":
-		return NewLocalClientCreator(kvstore.NewPersistentApplication(dbDir))
-	case "persistent_kvstore_connsync":
-		return NewConnSyncLocalClientCreator(kvstore.NewPersistentApplication(dbDir))
-	case "e2e":
-		app, err := e2e.NewApplication(e2e.DefaultConfig(dbDir))
-		if err != nil {
-			panic(err)
-		}
-		return NewLocalClientCreator(app)
-	case "e2e_connsync":
-		app, err := e2e.NewApplication(e2e.DefaultConfig(dbDir))
-		if err != nil {
-			panic(err)
-		}
-		return NewConnSyncLocalClientCreator(app)
-	case "noop":
-		return NewLocalClientCreator(types.NewBaseApplication())
-	default:
-		mustConnect := false // loop retrying
-		return NewRemoteClientCreator(addr, transport, mustConnect)
-	}
+	_ = "STUB: not implemented"
+	return *new(ClientCreator)
 }
+
+// loop retrying

@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/cometbft/cometbft/libs/bits"
@@ -42,27 +41,10 @@ type PeerRoundState struct {
 }
 
 // String returns a string representation of the PeerRoundState
-func (prs PeerRoundState) String() string {
-	return prs.StringIndented("")
-}
+func (prs PeerRoundState) String() string { _ = "STUB: not implemented"; return "" }
 
 // StringIndented returns a string representation of the PeerRoundState
 func (prs PeerRoundState) StringIndented(indent string) string {
-	return fmt.Sprintf(`PeerRoundState{
-%s  %v/%v/%v @%v
-%s  Proposal %v -> %v
-%s  POL      %v (round %v)
-%s  Prevotes   %v
-%s  Precommits %v
-%s  LastCommit %v (round %v)
-%s  Catchup    %v (round %v)
-%s}`,
-		indent, prs.Height, prs.Round, prs.Step, prs.StartTime,
-		indent, prs.ProposalBlockPartSetHeader, prs.ProposalBlockParts,
-		indent, prs.ProposalPOL, prs.ProposalPOLRound,
-		indent, prs.Prevotes,
-		indent, prs.Precommits,
-		indent, prs.LastCommit, prs.LastCommitRound,
-		indent, prs.CatchupCommit, prs.CatchupCommitRound,
-		indent)
+	_ = "STUB: not implemented"
+	return ""
 }

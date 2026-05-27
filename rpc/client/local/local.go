@@ -2,13 +2,10 @@ package local
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/cometbft/cometbft/libs/bytes"
 	"github.com/cometbft/cometbft/libs/log"
 	cmtpubsub "github.com/cometbft/cometbft/libs/pubsub"
-	cmtquery "github.com/cometbft/cometbft/libs/pubsub/query"
 	nm "github.com/cometbft/cometbft/node"
 	rpcclient "github.com/cometbft/cometbft/rpc/client"
 	"github.com/cometbft/cometbft/rpc/core"
@@ -45,36 +42,26 @@ type Local struct {
 }
 
 // NewLocal configures a client that calls the Node directly.
-func New(node *nm.Node) *Local {
-	env, err := node.ConfigureRPC()
-	if err != nil {
-		node.Logger.Error("Error configuring RPC", "err", err)
-	}
-	return &Local{
-		EventBus: node.EventBus(),
-		Logger:   log.NewNopLogger(),
-		ctx:      &rpctypes.Context{},
-		env:      env,
-	}
-}
+func New(node *nm.Node) *Local { _ = "STUB: not implemented"; return nil }
 
 var _ rpcclient.Client = (*Local)(nil)
 
 // SetLogger allows to set a logger on the client.
-func (c *Local) SetLogger(l log.Logger) {
-	c.Logger = l
-}
+func (c *Local) SetLogger(l log.Logger) { _ = "STUB: not implemented"; return }
 
 func (c *Local) Status(context.Context) (*ctypes.ResultStatus, error) {
-	return c.env.Status(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) ABCIInfo(context.Context) (*ctypes.ResultABCIInfo, error) {
-	return c.env.ABCIInfo(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) ABCIQuery(ctx context.Context, path string, data bytes.HexBytes) (*ctypes.ResultABCIQuery, error) {
-	return c.ABCIQueryWithOptions(ctx, path, data, rpcclient.DefaultABCIQueryOptions)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) ABCIQueryWithOptions(
@@ -83,55 +70,68 @@ func (c *Local) ABCIQueryWithOptions(
 	data bytes.HexBytes,
 	opts rpcclient.ABCIQueryOptions,
 ) (*ctypes.ResultABCIQuery, error) {
-	return c.env.ABCIQuery(c.ctx, path, data, opts.Height, opts.Prove)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BroadcastTxCommit(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTxCommit, error) {
-	return c.env.BroadcastTxCommit(c.ctx, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BroadcastTxAsync(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	return c.env.BroadcastTxAsync(c.ctx, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BroadcastTxSync(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	return c.env.BroadcastTxSync(c.ctx, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) UnconfirmedTxs(_ context.Context, limit *int) (*ctypes.ResultUnconfirmedTxs, error) {
-	return c.env.UnconfirmedTxs(c.ctx, limit)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) NumUnconfirmedTxs(context.Context) (*ctypes.ResultUnconfirmedTxs, error) {
-	return c.env.NumUnconfirmedTxs(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) CheckTx(_ context.Context, tx types.Tx) (*ctypes.ResultCheckTx, error) {
-	return c.env.CheckTx(c.ctx, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) NetInfo(context.Context) (*ctypes.ResultNetInfo, error) {
-	return c.env.NetInfo(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) DumpConsensusState(context.Context) (*ctypes.ResultDumpConsensusState, error) {
-	return c.env.DumpConsensusState(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) ConsensusState(context.Context) (*ctypes.ResultConsensusState, error) {
-	return c.env.GetConsensusState(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) ConsensusParams(_ context.Context, height *int64) (*ctypes.ResultConsensusParams, error) {
-	return c.env.ConsensusParams(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Health(context.Context) (*ctypes.ResultHealth, error) {
-	return c.env.Health(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) DialSeeds(_ context.Context, seeds []string) (*ctypes.ResultDialSeeds, error) {
-	return c.env.UnsafeDialSeeds(c.ctx, seeds)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) DialPeers(
@@ -141,52 +141,64 @@ func (c *Local) DialPeers(
 	unconditional,
 	private bool,
 ) (*ctypes.ResultDialPeers, error) {
-	return c.env.UnsafeDialPeers(c.ctx, peers, persistent, unconditional, private)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BlockchainInfo(_ context.Context, minHeight, maxHeight int64) (*ctypes.ResultBlockchainInfo, error) {
-	return c.env.BlockchainInfo(c.ctx, minHeight, maxHeight)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Genesis(context.Context) (*ctypes.ResultGenesis, error) {
-	return c.env.Genesis(c.ctx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) GenesisChunked(_ context.Context, id uint) (*ctypes.ResultGenesisChunk, error) {
-	return c.env.GenesisChunked(c.ctx, id)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Block(_ context.Context, height *int64) (*ctypes.ResultBlock, error) {
-	return c.env.Block(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BlockByHash(_ context.Context, hash []byte) (*ctypes.ResultBlock, error) {
-	return c.env.BlockByHash(c.ctx, hash)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BlockResults(_ context.Context, height *int64) (*ctypes.ResultBlockResults, error) {
-	return c.env.BlockResults(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Header(_ context.Context, height *int64) (*ctypes.ResultHeader, error) {
-	return c.env.Header(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) HeaderByHash(_ context.Context, hash bytes.HexBytes) (*ctypes.ResultHeader, error) {
-	return c.env.HeaderByHash(c.ctx, hash)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Commit(_ context.Context, height *int64) (*ctypes.ResultCommit, error) {
-	return c.env.Commit(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Validators(_ context.Context, height *int64, page, perPage *int) (*ctypes.ResultValidators, error) {
-	return c.env.Validators(c.ctx, height, page, perPage)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Deprecated: The tx endpoint is deprecated and will be removed in a future release.
 func (c *Local) Tx(_ context.Context, hash []byte, prove bool) (*ctypes.ResultTx, error) {
-	return c.env.Tx(c.ctx, hash, prove)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Deprecated: The tx_search endpoint is deprecated and will be removed in a future release.
@@ -198,7 +210,8 @@ func (c *Local) TxSearch(
 	perPage *int,
 	orderBy string,
 ) (*ctypes.ResultTxSearch, error) {
-	return c.env.TxSearch(c.ctx, query, prove, page, perPage, orderBy)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Deprecated: The block_search endpoint is deprecated and will be removed in a future release.
@@ -208,11 +221,13 @@ func (c *Local) BlockSearch(
 	page, perPage *int,
 	orderBy string,
 ) (*ctypes.ResultBlockSearch, error) {
-	return c.env.BlockSearch(c.ctx, query, page, perPage, orderBy)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) BroadcastEvidence(_ context.Context, ev types.Evidence) (*ctypes.ResultBroadcastEvidence, error) {
-	return c.env.BroadcastEvidence(c.ctx, ev)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) Subscribe(
@@ -221,31 +236,11 @@ func (c *Local) Subscribe(
 	query string,
 	outCapacity ...int,
 ) (out <-chan ctypes.ResultEvent, err error) {
-	q, err := cmtquery.New(query)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse query: %w", err)
-	}
-
-	outCap := 1
-	if len(outCapacity) > 0 {
-		outCap = outCapacity[0]
-	}
-
-	var sub types.Subscription
-	if outCap > 0 {
-		sub, err = c.EventBus.Subscribe(ctx, subscriber, q, outCap)
-	} else {
-		sub, err = c.EventBus.SubscribeUnbuffered(ctx, subscriber, q) //nolint:staticcheck
-	}
-	if err != nil {
-		return nil, fmt.Errorf("failed to subscribe: %w", err)
-	}
-
-	outc := make(chan ctypes.ResultEvent, outCap)
-	go c.eventsRoutine(sub, subscriber, q, outc)
-
-	return outc, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+//nolint:staticcheck
 
 func (c *Local) eventsRoutine(
 	sub types.Subscription,
@@ -253,67 +248,33 @@ func (c *Local) eventsRoutine(
 	q cmtpubsub.Query,
 	outc chan<- ctypes.ResultEvent,
 ) {
-	for {
-		select {
-		case msg := <-sub.Out():
-			result := ctypes.ResultEvent{Query: q.String(), Data: msg.Data(), Events: msg.Events()}
-			if cap(outc) == 0 {
-				outc <- result
-			} else {
-				select {
-				case outc <- result:
-				default:
-					c.Logger.Error("wanted to publish ResultEvent, but out channel is full", "result", result, "query", result.Query)
-				}
-			}
-		case <-sub.Canceled():
-			if sub.Err() == cmtpubsub.ErrUnsubscribed {
-				return
-			}
-
-			c.Logger.Error("subscription was canceled, resubscribing...", "err", sub.Err(), "query", q.String())
-			sub = c.resubscribe(subscriber, q)
-			if sub == nil { // client was stopped
-				return
-			}
-		case <-c.Quit():
-			return
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// client was stopped
 
 // Try to resubscribe with exponential backoff.
 func (c *Local) resubscribe(subscriber string, q cmtpubsub.Query) types.Subscription {
-	attempts := 0
-	for {
-		if !c.IsRunning() {
-			return nil
-		}
-
-		sub, err := c.EventBus.Subscribe(context.Background(), subscriber, q)
-		if err == nil {
-			return sub
-		}
-
-		attempts++
-		time.Sleep((10 << uint(attempts)) * time.Millisecond) // 10ms -> 20ms -> 40ms
-	}
+	_ = "STUB: not implemented"
+	return *new(types.Subscription)
 }
 
+// 10ms -> 20ms -> 40ms
+
 func (c *Local) Unsubscribe(ctx context.Context, subscriber, query string) error {
-	q, err := cmtquery.New(query)
-	if err != nil {
-		return fmt.Errorf("failed to parse query: %w", err)
-	}
-	return c.EventBus.Unsubscribe(ctx, subscriber, q)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (c *Local) UnsubscribeAll(ctx context.Context, subscriber string) error {
-	return c.EventBus.UnsubscribeAll(ctx, subscriber)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func (c *Local) SignedBlock(ctx context.Context, height *int64) (*ctypes.ResultSignedBlock, error) {
-	return c.env.SignedBlock(c.ctx, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) DataCommitment(
@@ -321,7 +282,8 @@ func (c *Local) DataCommitment(
 	start uint64,
 	end uint64,
 ) (*ctypes.ResultDataCommitment, error) {
-	return c.env.DataCommitment(c.ctx, start, end)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) DataRootInclusionProof(
@@ -330,8 +292,9 @@ func (c *Local) DataRootInclusionProof(
 	start uint64,
 	end uint64,
 ) (*ctypes.ResultDataRootInclusionProof, error) {
+	_ = "STUB: not implemented"
 	//nolint:gosec
-	return c.env.DataRootInclusionProof(c.ctx, int64(height), start, end)
+	return nil, nil
 }
 
 // ProveShares
@@ -342,8 +305,9 @@ func (c *Local) ProveShares(
 	startShare uint64,
 	endShare uint64,
 ) (types.ShareProof, error) {
+	_ = "STUB: not implemented"
 	//nolint:gosec
-	return c.env.ProveShares(c.ctx, int64(height), startShare, endShare)
+	return *new(types.ShareProof), nil
 }
 
 func (c *Local) ProveSharesV2(
@@ -352,14 +316,17 @@ func (c *Local) ProveSharesV2(
 	startShare uint64,
 	endShare uint64,
 ) (*ctypes.ResultShareProof, error) {
+	_ = "STUB: not implemented"
 	//nolint:gosec
-	return c.env.ProveSharesV2(c.ctx, int64(height), startShare, endShare)
+	return nil, nil
 }
 
 func (c *Local) TxStatus(ctx context.Context, hash []byte) (*ctypes.ResultTxStatus, error) {
-	return c.env.TxStatus(c.ctx, hash)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c *Local) TxStatusBatch(ctx context.Context, hashes [][]byte) (*ctypes.ResultTxStatusBatch, error) {
-	return c.env.TxStatusBatch(c.ctx, hashes)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

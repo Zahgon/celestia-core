@@ -2,8 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
-	"sync/atomic"
 
 	"github.com/cometbft/cometbft/libs/log"
 )
@@ -107,135 +105,76 @@ type BaseService struct {
 
 // NewBaseService creates a new BaseService.
 func NewBaseService(logger log.Logger, name string, impl Service) *BaseService {
-	if logger == nil {
-		logger = log.NewNopLogger()
-	}
-
-	return &BaseService{
-		Logger: logger,
-		name:   name,
-		quit:   make(chan struct{}),
-		impl:   impl,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // SetLogger implements Service by setting a logger.
 func (bs *BaseService) SetLogger(l log.Logger) {
-	bs.Logger = l
+	_ = "STUB: not implemented"
+
+	// Start implements Service by calling OnStart (if defined). An error will be
+	// returned if the service is already running or stopped. Not to start the
+	// stopped service, you need to call Reset.
+	return
 }
 
-// Start implements Service by calling OnStart (if defined). An error will be
-// returned if the service is already running or stopped. Not to start the
-// stopped service, you need to call Reset.
-func (bs *BaseService) Start() error {
-	if atomic.CompareAndSwapUint32(&bs.started, 0, 1) {
-		if atomic.LoadUint32(&bs.stopped) == 1 {
-			bs.Logger.Error(fmt.Sprintf("Not starting %v service -- already stopped", bs.name),
-				"impl", bs.impl)
-			// revert flag
-			atomic.StoreUint32(&bs.started, 0)
-			return ErrAlreadyStopped
-		}
-		bs.Logger.Info("service start",
-			"msg",
-			log.NewLazySprintf("Starting %v service", bs.name),
-			"impl",
-			bs.impl.String())
-		err := bs.impl.OnStart()
-		if err != nil {
-			// revert flag
-			atomic.StoreUint32(&bs.started, 0)
-			return err
-		}
-		return nil
-	}
-	bs.Logger.Trace("service start",
-		"msg",
-		log.NewLazySprintf("Not starting %v service -- already started", bs.name),
-		"impl",
-		bs.impl)
-	return ErrAlreadyStarted
-}
+func (bs *BaseService) Start() error { _ = "STUB: not implemented"; return nil }
+
+// revert flag
+
+// revert flag
 
 // OnStart implements Service by doing nothing.
 // NOTE: Do not put anything in here,
 // that way users don't need to call BaseService.OnStart()
-func (bs *BaseService) OnStart() error { return nil }
+func (bs *BaseService) OnStart() error {
+	_ = "STUB: not implemented"
 
-// Stop implements Service by calling OnStop (if defined) and closing quit
-// channel. An error will be returned if the service is already stopped.
-func (bs *BaseService) Stop() error {
-	if atomic.CompareAndSwapUint32(&bs.stopped, 0, 1) {
-		if atomic.LoadUint32(&bs.started) == 0 {
-			bs.Logger.Error(fmt.Sprintf("Not stopping %v service -- has not been started yet", bs.name),
-				"impl", bs.impl)
-			// revert flag
-			atomic.StoreUint32(&bs.stopped, 0)
-			return ErrNotStarted
-		}
-		bs.Logger.Info("service stop",
-			"msg",
-			log.NewLazySprintf("Stopping %v service", bs.name),
-			"impl",
-			bs.impl)
-		bs.impl.OnStop()
-		close(bs.quit)
-		return nil
-	}
-	bs.Logger.Trace("service stop",
-		"msg",
-		log.NewLazySprintf("Stopping %v service (already stopped)", bs.name),
-		"impl",
-		bs.impl)
-	return ErrAlreadyStopped
+	// Stop implements Service by calling OnStop (if defined) and closing quit
+	// channel. An error will be returned if the service is already stopped.
+	return nil
 }
+
+func (bs *BaseService) Stop() error { _ = "STUB: not implemented"; return nil }
+
+// revert flag
 
 // OnStop implements Service by doing nothing.
 // NOTE: Do not put anything in here,
 // that way users don't need to call BaseService.OnStop()
-func (bs *BaseService) OnStop() {}
+func (bs *BaseService) OnStop() {
+	_ = "STUB: not implemented"
 
-// Reset implements Service by calling OnReset callback (if defined). An error
-// will be returned if the service is running.
-func (bs *BaseService) Reset() error {
-	if !atomic.CompareAndSwapUint32(&bs.stopped, 1, 0) {
-		bs.Logger.Trace("service reset",
-			"msg",
-			log.NewLazySprintf("Can't reset %v service. Not stopped", bs.name),
-			"impl",
-			bs.impl)
-		return fmt.Errorf("can't reset running %s", bs.name)
-	}
-
-	// whether or not we've started, we can reset
-	atomic.CompareAndSwapUint32(&bs.started, 1, 0)
-
-	bs.quit = make(chan struct{})
-	return bs.impl.OnReset()
+	// Reset implements Service by calling OnReset callback (if defined). An error
+	// will be returned if the service is running.
+	return
 }
+
+func (bs *BaseService) Reset() error { _ = "STUB: not implemented"; return nil }
+
+// whether or not we've started, we can reset
 
 // OnReset implements Service by panicking.
-func (bs *BaseService) OnReset() error {
-	panic("The service cannot be reset")
-}
+func (bs *BaseService) OnReset() error { _ = "STUB: not implemented"; return nil }
 
 // IsRunning implements Service by returning true or false depending on the
 // service's state.
-func (bs *BaseService) IsRunning() bool {
-	return atomic.LoadUint32(&bs.started) == 1 && atomic.LoadUint32(&bs.stopped) == 0
-}
+func (bs *BaseService) IsRunning() bool { _ = "STUB: not implemented"; return false }
 
 // Wait blocks until the service is stopped.
 func (bs *BaseService) Wait() {
-	<-bs.quit
+	_ = "STUB: not implemented"
+
+	// String implements Service by returning a string representation of the service.
+	return
 }
 
-// String implements Service by returning a string representation of the service.
 func (bs *BaseService) String() string {
-	return bs.name
+	_ = "STUB: not implemented"
+
+	// Quit Implements Service by returning a quit channel.
+	return ""
 }
 
-// Quit Implements Service by returning a quit channel.
-func (bs *BaseService) Quit() <-chan struct{} {
-	return bs.quit
-}
+func (bs *BaseService) Quit() <-chan struct{} { _ = "STUB: not implemented"; return nil }

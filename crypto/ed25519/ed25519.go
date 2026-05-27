@@ -1,17 +1,12 @@
 package ed25519
 
 import (
-	"bytes"
-	"crypto/subtle"
-	"errors"
-	"fmt"
 	"io"
 
 	"github.com/oasisprotocol/curve25519-voi/primitives/ed25519"
 	"github.com/oasisprotocol/curve25519-voi/primitives/ed25519/extra/cache"
 
 	"github.com/cometbft/cometbft/crypto"
-	"github.com/cometbft/cometbft/crypto/tmhash"
 	cmtjson "github.com/cometbft/cometbft/libs/json"
 )
 
@@ -65,9 +60,7 @@ func init() {
 type PrivKey []byte
 
 // Bytes returns the privkey byte format.
-func (privKey PrivKey) Bytes() []byte {
-	return []byte(privKey)
-}
+func (privKey PrivKey) Bytes() []byte { _ = "STUB: not implemented"; return nil }
 
 // Sign produces a signature on the provided message.
 // This assumes the privkey is wellformed in the golang format.
@@ -76,74 +69,43 @@ func (privKey PrivKey) Bytes() []byte {
 // The latter 32 bytes should be the compressed public key.
 // If these conditions aren't met, Sign will panic or produce an
 // incorrect signature.
-func (privKey PrivKey) Sign(msg []byte) ([]byte, error) {
-	signatureBytes := ed25519.Sign(ed25519.PrivateKey(privKey), msg)
-	return signatureBytes, nil
-}
+func (privKey PrivKey) Sign(msg []byte) ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }
 
 // PubKey gets the corresponding public key from the private key.
 //
 // Panics if the private key is not initialized.
 func (privKey PrivKey) PubKey() crypto.PubKey {
+	_ = "STUB: not implemented"
 	// If the latter 32 bytes of the privkey are all zero, privkey is not
 	// initialized.
-	initialized := false
-	for _, v := range privKey[32:] {
-		if v != 0 {
-			initialized = true
-			break
-		}
-	}
-
-	if !initialized {
-		panic("Expected ed25519 PrivKey to include concatenated pubkey bytes")
-	}
-
-	pubkeyBytes := make([]byte, PubKeySize)
-	copy(pubkeyBytes, privKey[32:])
-	return PubKey(pubkeyBytes)
+	return *new(crypto.PubKey)
 }
 
 // Equals - you probably don't need to use this.
 // Runs in constant time based on length of the keys.
-func (privKey PrivKey) Equals(other crypto.PrivKey) bool {
-	if otherEd, ok := other.(PrivKey); ok {
-		return subtle.ConstantTimeCompare(privKey[:], otherEd[:]) == 1
-	}
-
-	return false
-}
+func (privKey PrivKey) Equals(other crypto.PrivKey) bool { _ = "STUB: not implemented"; return false }
 
 func (privKey PrivKey) Type() string {
-	return KeyType
+	_ = "STUB: not implemented"
+
+	// GenPrivKey generates a new ed25519 private key.
+	// It uses OS randomness in conjunction with the current global random seed
+	// in cometbft/libs/rand to generate the private key.
+	return ""
 }
 
-// GenPrivKey generates a new ed25519 private key.
-// It uses OS randomness in conjunction with the current global random seed
-// in cometbft/libs/rand to generate the private key.
-func GenPrivKey() PrivKey {
-	return genPrivKey(crypto.CReader())
-}
+func GenPrivKey() PrivKey { _ = "STUB: not implemented"; return *new(PrivKey) }
 
 // genPrivKey generates a new ed25519 private key using the provided reader.
-func genPrivKey(rand io.Reader) PrivKey {
-	_, priv, err := ed25519.GenerateKey(rand)
-	if err != nil {
-		panic(err)
-	}
-
-	return PrivKey(priv)
-}
+func genPrivKey(rand io.Reader) PrivKey { _ = "STUB: not implemented"; return *new(PrivKey) }
 
 // GenPrivKeyFromSecret hashes the secret with SHA2, and uses
 // that 32 byte output to create the private key.
 // NOTE: secret should be the output of a KDF like bcrypt,
 // if it's derived from user input.
-func GenPrivKeyFromSecret(secret []byte) PrivKey {
-	seed := crypto.Sha256(secret) // Not Ripemd160 because we want 32 bytes.
+func GenPrivKeyFromSecret(secret []byte) PrivKey { _ = "STUB: not implemented"; return *new(PrivKey) }
 
-	return PrivKey(ed25519.NewKeyFromSeed(seed))
-}
+// Not Ripemd160 because we want 32 bytes.
 
 //-------------------------------------
 
@@ -154,41 +116,24 @@ type PubKey []byte
 
 // Address is the SHA256-20 of the raw pubkey bytes.
 func (pubKey PubKey) Address() crypto.Address {
-	if len(pubKey) != PubKeySize {
-		panic("pubkey is incorrect size")
-	}
-	return crypto.Address(tmhash.SumTruncated(pubKey))
+	_ = "STUB: not implemented"
+	return *new(crypto.Address)
 }
 
 // Bytes returns the PubKey byte format.
-func (pubKey PubKey) Bytes() []byte {
-	return []byte(pubKey)
-}
+func (pubKey PubKey) Bytes() []byte { _ = "STUB: not implemented"; return nil }
 
 func (pubKey PubKey) VerifySignature(msg []byte, sig []byte) bool {
+	_ = "STUB: not implemented"
 	// make sure we use the same algorithm to sign
-	if len(sig) != SignatureSize {
-		return false
-	}
-
-	return cachingVerifier.VerifyWithOptions(ed25519.PublicKey(pubKey), msg, sig, verifyOptions)
-}
-
-func (pubKey PubKey) String() string {
-	return fmt.Sprintf("PubKeyEd25519{%X}", []byte(pubKey))
-}
-
-func (pubKey PubKey) Type() string {
-	return KeyType
-}
-
-func (pubKey PubKey) Equals(other crypto.PubKey) bool {
-	if otherEd, ok := other.(PubKey); ok {
-		return bytes.Equal(pubKey[:], otherEd[:])
-	}
-
 	return false
 }
+
+func (pubKey PubKey) String() string { _ = "STUB: not implemented"; return "" }
+
+func (pubKey PubKey) Type() string { _ = "STUB: not implemented"; return "" }
+
+func (pubKey PubKey) Equals(other crypto.PubKey) bool { _ = "STUB: not implemented"; return false }
 
 //-------------------------------------
 
@@ -198,31 +143,15 @@ type BatchVerifier struct {
 }
 
 func NewBatchVerifier() crypto.BatchVerifier {
-	return &BatchVerifier{ed25519.NewBatchVerifier()}
+	_ = "STUB: not implemented"
+	return *new(crypto.BatchVerifier)
 }
 
 func (b *BatchVerifier) Add(key crypto.PubKey, msg, signature []byte) error {
-	pkEd, ok := key.(PubKey)
-	if !ok {
-		return fmt.Errorf("pubkey is not Ed25519")
-	}
-
-	pkBytes := pkEd.Bytes()
-
-	if l := len(pkBytes); l != PubKeySize {
-		return fmt.Errorf("pubkey size is incorrect; expected: %d, got %d", PubKeySize, l)
-	}
-
-	// check that the signature is the correct length
-	if len(signature) != SignatureSize {
-		return errors.New("invalid signature")
-	}
-
-	cachingVerifier.AddWithOptions(b.BatchVerifier, ed25519.PublicKey(pkBytes), msg, signature, verifyOptions)
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (b *BatchVerifier) Verify() (bool, []bool) {
-	return b.BatchVerifier.Verify(crypto.CReader())
-}
+// check that the signature is the correct length
+
+func (b *BatchVerifier) Verify() (bool, []bool) { _ = "STUB: not implemented"; return false, nil }

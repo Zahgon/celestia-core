@@ -1,14 +1,10 @@
 package pex
 
 import (
-	"errors"
-	"fmt"
 	"sync"
 	"time"
 
 	"github.com/cometbft/cometbft/libs/cmap"
-	cmtrand "github.com/cometbft/cometbft/libs/rand"
-	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/p2p"
 	"github.com/cometbft/cometbft/p2p/conn"
 	tmp2p "github.com/cometbft/cometbft/proto/tendermint/p2p"
@@ -56,20 +52,14 @@ const (
 
 type errMaxAttemptsToDial struct{}
 
-func (e errMaxAttemptsToDial) Error() string {
-	return fmt.Sprintf("reached max attempts %d to dial", maxAttemptsToDial)
-}
+func (e errMaxAttemptsToDial) Error() string { _ = "STUB: not implemented"; return "" }
 
 type errTooEarlyToDial struct {
 	backoffDuration time.Duration
 	lastDialed      time.Time
 }
 
-func (e errTooEarlyToDial) Error() string {
-	return fmt.Sprintf(
-		"too early to dial (backoff duration: %d, last dialed: %v, time since: %v)",
-		e.backoffDuration, e.lastDialed, time.Since(e.lastDialed))
-}
+func (e errTooEarlyToDial) Error() string { _ = "STUB: not implemented"; return "" }
 
 // Reactor handles PEX (peer exchange) and ensures that an
 // adequate number of peers are connected to the switch.
@@ -101,12 +91,13 @@ type Reactor struct {
 }
 
 func (r *Reactor) minReceiveRequestInterval() time.Duration {
+	_ = "STUB: not implemented"
 	// NOTE: must be less than ensurePeersPeriod, otherwise we'll request
 	// peers too quickly from others and they'll think we're bad!
 	// According to the spec, the minimum accepted interval should be
 	// ensurePeersPeriod / 3 to allow for timing variations while still
 	// preventing abuse.
-	return r.ensurePeersPeriod / 3
+	return *new(time.Duration)
 }
 
 // ReactorConfig holds reactor specific configuration data.
@@ -133,414 +124,142 @@ type _attemptsToDial struct {
 }
 
 // NewReactor creates new PEX reactor.
-func NewReactor(b AddrBook, config *ReactorConfig) *Reactor {
-	r := &Reactor{
-		book:                 b,
-		config:               config,
-		ensurePeersCh:        make(chan struct{}),
-		ensurePeersPeriod:    defaultEnsurePeersPeriod,
-		requestsSent:         cmap.NewCMap(),
-		lastReceivedRequests: cmap.NewCMap(),
-		crawlPeerInfos:       make(map[p2p.ID]crawlPeerInfo),
-	}
-	r.BaseReactor = *p2p.NewBaseReactor("PEX", r, p2p.WithIncomingQueueSize(ReactorIncomingMessageQueueSize))
-	return r
-}
+func NewReactor(b AddrBook, config *ReactorConfig) *Reactor { _ = "STUB: not implemented"; return nil }
 
 // OnStart implements BaseService
-func (r *Reactor) OnStart() error {
-	err := r.book.Start()
-	if err != nil && err != service.ErrAlreadyStarted {
-		return err
-	}
+func (r *Reactor) OnStart() error { _ = "STUB: not implemented"; return nil }
 
-	numOnline, seedAddrs, err := r.checkSeeds()
-	if err != nil {
-		return err
-	} else if numOnline == 0 && r.book.Empty() {
-		return errors.New("address book is empty and couldn't resolve any seed nodes")
-	}
-
-	r.seedAddrs = seedAddrs
-
-	// Check if this node should run
-	// in seed/crawler mode
-	if r.config.SeedMode {
-		go r.crawlPeersRoutine()
-	} else {
-		go r.ensurePeersRoutine()
-	}
-	return nil
-}
+// Check if this node should run
+// in seed/crawler mode
 
 // OnStop implements BaseService
-func (r *Reactor) OnStop() {
-	if err := r.book.Stop(); err != nil {
-		r.Logger.Error("Error stopping address book", "err", err)
-	}
-}
+func (r *Reactor) OnStop() { _ = "STUB: not implemented"; return }
 
 // GetChannels implements Reactor
-func (r *Reactor) GetChannels() []*conn.ChannelDescriptor {
-	return []*conn.ChannelDescriptor{
-		{
-			ID:                  PexChannel,
-			Priority:            1,
-			SendQueueCapacity:   10,
-			RecvMessageCapacity: maxMsgSize,
-			MessageType:         &tmp2p.Message{},
-		},
-	}
-}
+func (r *Reactor) GetChannels() []*conn.ChannelDescriptor { _ = "STUB: not implemented"; return nil }
 
 // AddPeer implements Reactor by adding peer to the address book (if inbound)
 // or by requesting more addresses (if outbound).
 func (r *Reactor) AddPeer(p Peer) {
-	if p.IsOutbound() {
-		// For outbound peers, the address is already in the books -
-		// either via DialPeersAsync or r.Receive.
-		// Ask it for more peers if we need.
-		if r.book.NeedMoreAddrs() {
-			r.RequestAddrs(p)
-		}
-	} else {
-		// inbound peer is its own source
-		addr, err := p.NodeInfo().NetAddress()
-		if err != nil {
-			r.Logger.Error("Failed to get peer NetAddress", "err", err, "peer", p)
-			return
-		}
+	_ = "STUB: not implemented"
 
-		// Make it explicit that addr and src are the same for an inbound peer.
-		src := addr
-
-		// add to book. dont RequestAddrs right away because
-		// we don't trust inbound as much - let ensurePeersRoutine handle it.
-		err = r.book.AddAddress(addr, src)
-		r.logErrAddrBook(err)
-	}
+	// For outbound peers, the address is already in the books -
+	// either via DialPeersAsync or r.Receive.
+	// Ask it for more peers if we need.
+	return
 }
+
+// inbound peer is its own source
+
+// Make it explicit that addr and src are the same for an inbound peer.
+
+// add to book. dont RequestAddrs right away because
+// we don't trust inbound as much - let ensurePeersRoutine handle it.
 
 // RemovePeer implements Reactor by resetting peer's requests info.
-func (r *Reactor) RemovePeer(p Peer, _ interface{}) {
-	id := string(p.ID())
-	r.requestsSent.Delete(id)
-	r.lastReceivedRequests.Delete(id)
-}
+func (r *Reactor) RemovePeer(p Peer, _ interface{}) { _ = "STUB: not implemented"; return }
 
-func (r *Reactor) logErrAddrBook(err error) {
-	if err != nil {
-		switch err.(type) {
-		case ErrAddrBookNilAddr:
-			r.Logger.Error("Failed to add new address", "err", err)
-		default:
-			// non-routable, self, full book, private, etc.
-			r.Logger.Debug("Failed to add new address", "err", err)
-		}
-	}
-}
+func (r *Reactor) logErrAddrBook(err error) { _ = "STUB: not implemented"; return }
+
+// non-routable, self, full book, private, etc.
 
 // Receive implements Reactor by handling incoming PEX messages.
-func (r *Reactor) Receive(e p2p.Envelope) {
-	r.Logger.Trace("Received message", "src", e.Src, "chId", e.ChannelID, "msg", e.Message)
+func (r *Reactor) Receive(e p2p.Envelope) { _ = "STUB: not implemented"; return }
 
-	switch msg := e.Message.(type) {
-	case *tmp2p.PexRequest:
+// NOTE: this is a prime candidate for amplification attacks,
+// so it's important we
+// 1) restrict how frequently peers can request
+// 2) limit the output size
 
-		// NOTE: this is a prime candidate for amplification attacks,
-		// so it's important we
-		// 1) restrict how frequently peers can request
-		// 2) limit the output size
+// If we're a seed and this is an inbound peer,
+// respond once and disconnect.
 
-		// If we're a seed and this is an inbound peer,
-		// respond once and disconnect.
-		if r.config.SeedMode && !e.Src.IsOutbound() {
-			id := string(e.Src.ID())
-			v := r.lastReceivedRequests.Get(id)
-			if v != nil {
-				// FlushStop/StopPeer are already
-				// running in a go-routine.
-				return
-			}
-			r.lastReceivedRequests.Set(id, time.Now())
+// FlushStop/StopPeer are already
+// running in a go-routine.
 
-			// Send addrs and disconnect
-			r.SendAddrs(e.Src, r.book.GetSelectionWithBias(biasToSelectNewPeers))
-			go func() {
-				// In a go-routine so it doesn't block .Receive.
-				e.Src.FlushStop()
-				r.Switch.StopPeerGracefully(e.Src, r.String())
-			}()
+// Send addrs and disconnect
 
-		} else {
-			// Check we're not receiving requests too frequently.
-			if err := r.receiveRequest(e.Src); err != nil {
-				r.Switch.StopPeerForError(e.Src, err, r.String())
-				r.book.MarkBad(e.Src.SocketAddr(), defaultBanTime)
-				return
-			}
-			r.SendAddrs(e.Src, r.book.GetSelection())
-		}
+// In a go-routine so it doesn't block .Receive.
 
-	case *tmp2p.PexAddrs:
-		// If we asked for addresses, add them to the book
-		addrs, err := p2p.NetAddressesFromProto(msg.Addrs)
-		if err != nil {
-			r.Switch.StopPeerForError(e.Src, err, r.String())
-			r.book.MarkBad(e.Src.SocketAddr(), defaultBanTime)
-			return
-		}
-		err = r.ReceiveAddrs(addrs, e.Src)
-		if err != nil {
-			r.Switch.StopPeerForError(e.Src, err, r.String())
-			if err == ErrUnsolicitedList {
-				r.book.MarkBad(e.Src.SocketAddr(), defaultBanTime)
-			}
-			return
-		}
+// Check we're not receiving requests too frequently.
 
-	default:
-		r.Logger.Error(fmt.Sprintf("Unknown message type %T", msg))
-	}
-}
+// If we asked for addresses, add them to the book
 
 // enforces a minimum amount of time between requests
-func (r *Reactor) receiveRequest(src Peer) error {
-	id := string(src.ID())
-	v := r.lastReceivedRequests.Get(id)
-	if v == nil {
-		// initialize with empty time
-		lastReceived := time.Time{}
-		r.lastReceivedRequests.Set(id, lastReceived)
-		return nil
-	}
+func (r *Reactor) receiveRequest(src Peer) error { _ = "STUB: not implemented"; return nil }
 
-	lastReceived := v.(time.Time)
-	if lastReceived.Equal(time.Time{}) {
-		// first time gets a free pass. then we start tracking the time
-		lastReceived = time.Now()
-		r.lastReceivedRequests.Set(id, lastReceived)
-		return nil
-	}
+// initialize with empty time
 
-	now := time.Now()
-	minInterval := r.minReceiveRequestInterval()
-	if now.Sub(lastReceived) < minInterval {
-		return fmt.Errorf(
-			"peer (%v) sent next PEX request too soon. lastReceived: %v, now: %v, minInterval: %v. Disconnecting",
-			src.ID(),
-			lastReceived,
-			now,
-			minInterval,
-		)
-	}
-	r.lastReceivedRequests.Set(id, now)
-	return nil
-}
+// first time gets a free pass. then we start tracking the time
 
 // RequestAddrs asks peer for more addresses if we do not already have a
 // request out for this peer.
-func (r *Reactor) RequestAddrs(p Peer) {
-	id := string(p.ID())
-	if r.requestsSent.Has(id) {
-		return
-	}
-	r.Logger.Trace("Request addrs", "from", p)
-	r.requestsSent.Set(id, struct{}{})
-	p.Send(p2p.Envelope{
-		ChannelID: PexChannel,
-		Message:   &tmp2p.PexRequest{},
-	})
-}
+func (r *Reactor) RequestAddrs(p Peer) { _ = "STUB: not implemented"; return }
 
 // ReceiveAddrs adds the given addrs to the addrbook if theres an open
 // request for this peer and deletes the open request.
 // If there's no open request for the src peer, it returns an error.
 func (r *Reactor) ReceiveAddrs(addrs []*p2p.NetAddress, src Peer) error {
-	id := string(src.ID())
-	if !r.requestsSent.Has(id) {
-		return ErrUnsolicitedList
-	}
-	r.requestsSent.Delete(id)
-
-	srcAddr, err := src.NodeInfo().NetAddress()
-	if err != nil {
-		return err
-	}
-
-	for _, netAddr := range addrs {
-		// NOTE: we check netAddr validity and routability in book#AddAddress.
-		err = r.book.AddAddress(netAddr, srcAddr)
-		if err != nil {
-			r.logErrAddrBook(err)
-			// XXX: should we be strict about incoming data and disconnect from a
-			// peer here too?
-			continue
-		}
-	}
-
-	// Try to connect to addresses coming from a seed node without waiting (#2093)
-	for _, seedAddr := range r.seedAddrs {
-		if seedAddr.Equals(srcAddr) {
-			select {
-			case r.ensurePeersCh <- struct{}{}:
-			default:
-			}
-			break
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
+// NOTE: we check netAddr validity and routability in book#AddAddress.
+
+// XXX: should we be strict about incoming data and disconnect from a
+// peer here too?
+
+// Try to connect to addresses coming from a seed node without waiting (#2093)
+
 // SendAddrs sends addrs to the peer.
-func (r *Reactor) SendAddrs(p Peer, netAddrs []*p2p.NetAddress) {
-	msg := capAddresses(netAddrs)
-	e := p2p.Envelope{
-		ChannelID: PexChannel,
-		Message:   msg,
-	}
-	p.Send(e)
-}
+func (r *Reactor) SendAddrs(p Peer, netAddrs []*p2p.NetAddress) { _ = "STUB: not implemented"; return }
 
 // safeMaxAddressEstimationMargin is a factor used to estimate the maximum number of addresses fitting into a size limit.
 const safeMaxAddressEstimationMargin = 0.9
 
 // capAddresses transforms a slice of NetAddress into PexAddrs while ensuring the resulting message size doesn't exceed maxMsgSize.
 func capAddresses(netAddrs []*p2p.NetAddress) *tmp2p.PexAddrs {
-	msg := tmp2p.PexAddrs{Addrs: p2p.NetAddressesToProto(netAddrs)}
-	if msg.Size() > maxMsgSize {
-		// Calculate how many addresses we can fit based on the ratio
-		avgAddrSize := msg.Size() / len(netAddrs)
-		estimatedMaxAddrs := (maxMsgSize * safeMaxAddressEstimationMargin) / avgAddrSize
-
-		if estimatedMaxAddrs <= 0 {
-			estimatedMaxAddrs = 1
-		}
-
-		msg = tmp2p.PexAddrs{Addrs: p2p.NetAddressesToProto(netAddrs[:estimatedMaxAddrs])}
-	}
-
-	return &msg
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Calculate how many addresses we can fit based on the ratio
 
 // SetEnsurePeersPeriod sets period to ensure peers connected.
-func (r *Reactor) SetEnsurePeersPeriod(d time.Duration) {
-	r.ensurePeersPeriod = d
-}
+func (r *Reactor) SetEnsurePeersPeriod(d time.Duration) { _ = "STUB: not implemented"; return }
 
 // Ensures that sufficient peers are connected. (continuous)
-func (r *Reactor) ensurePeersRoutine() {
-	var (
-		seed   = cmtrand.NewRand()
-		jitter = seed.Int63n(r.ensurePeersPeriod.Nanoseconds())
-	)
+func (r *Reactor) ensurePeersRoutine() { _ = "STUB: not implemented"; return }
 
-	// Randomize first round of communication to avoid thundering herd.
-	// If no peers are present directly start connecting so we guarantee swift
-	// setup with the help of configured seeds.
-	if r.nodeHasSomePeersOrDialingAny() {
-		time.Sleep(time.Duration(jitter))
-	}
+// Randomize first round of communication to avoid thundering herd.
+// If no peers are present directly start connecting so we guarantee swift
+// setup with the help of configured seeds.
 
-	// fire once immediately.
-	// ensures we dial the seeds right away if the book is empty
-	r.ensurePeers(true)
+// fire once immediately.
+// ensures we dial the seeds right away if the book is empty
 
-	// fire periodically
-	ticker := time.NewTicker(r.ensurePeersPeriod)
-	for {
-		select {
-		case <-ticker.C:
-			r.ensurePeers(true)
-		case <-r.ensurePeersCh:
-			r.ensurePeers(false)
-		case <-r.Quit():
-			ticker.Stop()
-			return
-		}
-	}
-}
+// fire periodically
 
 // ensurePeers ensures that sufficient peers are connected. (once)
 //
 // heuristic that we haven't perfected yet, or, perhaps is manually edited by
 // the node operator. It should not be used to compute what addresses are
 // already connected or not.
-func (r *Reactor) ensurePeers(ensurePeersPeriodElapsed bool) {
-	var (
-		out, in, dial = r.Switch.NumPeers()
-		numToDial     = r.Switch.MaxNumOutboundPeers() - (out + dial)
-	)
-	r.Logger.Debug(
-		"Ensure peers",
-		"numOutPeers", out,
-		"numInPeers", in,
-		"numDialing", dial,
-		"numToDial", numToDial,
-	)
+func (r *Reactor) ensurePeers(ensurePeersPeriodElapsed bool) { _ = "STUB: not implemented"; return }
 
-	if numToDial <= 0 {
-		return
-	}
+// check if the addressbook is smaller than maxDials
 
-	addrBook := r.book.GetSelection()
-	maxDials := r.Switch.MaxNumOutboundPeers() * 4
-	// check if the addressbook is smaller than maxDials
-	if len(addrBook) < maxDials {
-		maxDials = len(addrBook)
-	}
-	// We don't need to randomize the addresses since the addressbook is already shuffled
-	for i := 0; i < maxDials; i++ {
-		addr := addrBook[i]
+// We don't need to randomize the addresses since the addressbook is already shuffled
 
-		if r.Switch.IsDialingOrExistingAddress(addr) {
-			continue
-		}
-		go func(addr *p2p.NetAddress) {
-			err := r.dialPeer(addr)
-			if err != nil {
-				switch err.(type) {
-				case errMaxAttemptsToDial, errTooEarlyToDial:
-					r.Logger.Trace(err.Error(), "addr", addr)
-				default:
-					r.Logger.Trace(err.Error(), "addr", addr)
-				}
-			}
-		}(addr)
-	}
+// Check if banned nodes can be reinstated
 
-	if r.book.NeedMoreAddrs() {
-		// Check if banned nodes can be reinstated
-		r.book.ReinstateBadPeers()
-	}
+// 1) Pick a random peer and ask for more.
 
-	if r.book.NeedMoreAddrs() {
-		// 1) Pick a random peer and ask for more.
-		peers := r.Switch.Peers().List()
-		peersCount := len(peers)
-		if peersCount > 0 && ensurePeersPeriodElapsed {
-			peer := peers[cmtrand.Int()%peersCount]
-			r.Logger.Debug("We need more addresses. Sending pexRequest to random peer", "peer", peer)
-			r.RequestAddrs(peer)
-		}
-
-		// Get updated address book and if empty, dial seeds
-		updatedAddrBook := r.book.GetSelection()
-		if len(updatedAddrBook) == 0 {
-			r.Logger.Debug("No addresses to dial. Falling back to seeds")
-			r.dialSeeds()
-		}
-	}
-}
+// Get updated address book and if empty, dial seeds
 
 func (r *Reactor) dialAttemptsInfo(addr *p2p.NetAddress) (attempts int, lastDialed time.Time) {
-	_attempts, ok := r.attemptsToDial.Load(addr.DialString())
-	if !ok {
-		return
-	}
-	atd := _attempts.(_attemptsToDial)
-	return atd.number, atd.lastDialed
+	_ = "STUB: not implemented"
+	return 0, *new(time.Time)
 }
 
 // isDuplicatePeerIDRejection reports whether err is a rejection caused by a
@@ -552,61 +271,23 @@ func (r *Reactor) dialAttemptsInfo(addr *p2p.NetAddress) (attempts int, lastDial
 // IP, or a peer presenting an unexpected ID, from suppressing backoff for
 // the address we actually wanted to reach.
 func isDuplicatePeerIDRejection(err error, wantedID p2p.ID) bool {
-	if e, ok := err.(p2p.ErrRejected); ok {
-		if id, ok := e.DuplicatePeerID(); ok && id == wantedID {
-			return true
-		}
-	}
-	if e, ok := err.(p2p.ErrSwitchDuplicatePeerID); ok && e.ID == wantedID {
-		return true
-	}
+	_ = "STUB: not implemented"
 	return false
 }
 
-func (r *Reactor) dialPeer(addr *p2p.NetAddress) error {
-	attempts, lastDialed := r.dialAttemptsInfo(addr)
-	if attempts > maxAttemptsToDial && !r.Switch.IsPeerPersistent(addr) {
-		r.book.MarkBad(addr, defaultBanTime)
-		return errMaxAttemptsToDial{}
-	}
+func (r *Reactor) dialPeer(addr *p2p.NetAddress) error { _ = "STUB: not implemented"; return nil }
 
-	minTimeBetweenDials := 30 * time.Second
-	if time.Since(lastDialed) < minTimeBetweenDials {
-		return errTooEarlyToDial{minTimeBetweenDials, lastDialed}
-	}
+// If the rejection came from a duplicate *peer ID* matching the peer
+// we tried to dial, treat the dial as success-equivalent: the peer is
+// already connected (typically via an inbound connection raced against
+// our outbound dial), so we shouldn't penalize this address with the
+// 30s dial backoff or increment its attempt counter. Duplicate-IP
+// rejections take the normal failure path, since the colliding peer
+// may not be the one we wanted (e.g. an unrelated peer sharing an IP).
 
-	err := r.Switch.DialPeerWithAddress(addr)
-	if err != nil {
-		if _, ok := err.(p2p.ErrCurrentlyDialingOrExistingAddress); ok {
-			return err
-		}
-		// If the rejection came from a duplicate *peer ID* matching the peer
-		// we tried to dial, treat the dial as success-equivalent: the peer is
-		// already connected (typically via an inbound connection raced against
-		// our outbound dial), so we shouldn't penalize this address with the
-		// 30s dial backoff or increment its attempt counter. Duplicate-IP
-		// rejections take the normal failure path, since the colliding peer
-		// may not be the one we wanted (e.g. an unrelated peer sharing an IP).
-		if isDuplicatePeerIDRejection(err, addr.ID) {
-			r.attemptsToDial.Delete(addr.DialString())
-			return err
-		}
+// NOTE: addr is removed from addrbook in markAddrInBookBasedOnErr
 
-		markAddrInBookBasedOnErr(addr, r.book, err)
-		switch err.(type) {
-		case p2p.ErrSwitchAuthenticationFailure:
-			// NOTE: addr is removed from addrbook in markAddrInBookBasedOnErr
-			r.attemptsToDial.Delete(addr.DialString())
-		default:
-			r.attemptsToDial.Store(addr.DialString(), _attemptsToDial{attempts + 1, time.Now()})
-		}
-		return fmt.Errorf("dialing failed (attempts: %d): %w", attempts+1, err)
-	}
-
-	// cleanup any history
-	r.attemptsToDial.Delete(addr.DialString())
-	return nil
-}
+// cleanup any history
 
 // checkSeeds checks that addresses are well formed.
 // Returns number of seeds we can connect to, along with all seeds addrs.
@@ -614,53 +295,22 @@ func (r *Reactor) dialPeer(addr *p2p.NetAddress) error {
 // Doesn't error if the seed node can't be reached.
 // numOnline returns -1 if no seed nodes were in the initial configuration.
 func (r *Reactor) checkSeeds() (numOnline int, netAddrs []*p2p.NetAddress, err error) {
-	lSeeds := len(r.config.Seeds)
-	if lSeeds == 0 {
-		return -1, nil, nil
-	}
-	netAddrs, errs := p2p.NewNetAddressStrings(r.config.Seeds)
-	numOnline = lSeeds - len(errs)
-	for _, err := range errs {
-		switch e := err.(type) {
-		case p2p.ErrNetAddressLookup:
-			r.Logger.Error("Connecting to seed failed", "err", e)
-		default:
-			return 0, nil, fmt.Errorf("seed node configuration has error: %w", e)
-		}
-	}
-	return numOnline, netAddrs, nil
+	_ = "STUB: not implemented"
+	return 0, nil, nil
 }
 
 // randomly dial seeds until we connect to one or exhaust them
-func (r *Reactor) dialSeeds() {
-	perm := cmtrand.Perm(len(r.seedAddrs))
-	// perm := r.Switch.rng.Perm(lSeeds)
-	for _, i := range perm {
-		// dial a random seed
-		seedAddr := r.seedAddrs[i]
-		err := r.Switch.DialPeerWithAddress(seedAddr)
+func (r *Reactor) dialSeeds() { _ = "STUB: not implemented"; return }
 
-		switch err.(type) {
-		case nil, p2p.ErrCurrentlyDialingOrExistingAddress:
-			return
-		}
-		r.Switch.Logger.Error("Error dialing seed", "err", err, "seed", seedAddr)
-	}
-	// do not write error message if there were no seeds specified in config
-	if len(r.seedAddrs) > 0 {
-		r.Switch.Logger.Error("Couldn't connect to any seeds")
-	}
-}
+// perm := r.Switch.rng.Perm(lSeeds)
+
+// dial a random seed
+
+// do not write error message if there were no seeds specified in config
 
 // AttemptsToDial returns the number of attempts to dial specific address. It
 // returns 0 if never attempted or successfully connected.
-func (r *Reactor) AttemptsToDial(addr *p2p.NetAddress) int {
-	lAttempts, attempted := r.attemptsToDial.Load(addr.DialString())
-	if attempted {
-		return lAttempts.(_attemptsToDial).number
-	}
-	return 0
-}
+func (r *Reactor) AttemptsToDial(addr *p2p.NetAddress) int { _ = "STUB: not implemented"; return 0 }
 
 //----------------------------------------------------------
 
@@ -668,35 +318,18 @@ func (r *Reactor) AttemptsToDial(addr *p2p.NetAddress) int {
 // Seed/Crawler Mode causes this node to quickly disconnect
 // from peers, except other seed nodes.
 func (r *Reactor) crawlPeersRoutine() {
+	_ = "STUB: not implemented"
 	// If we have any seed nodes, consult them first
-	if len(r.seedAddrs) > 0 {
-		r.dialSeeds()
-	} else {
-		// Do an initial crawl
-		r.crawlPeers(r.book.GetSelection())
-	}
-
-	// Fire periodically
-	ticker := time.NewTicker(crawlPeerPeriod)
-
-	for {
-		select {
-		case <-ticker.C:
-			r.attemptDisconnects()
-			r.crawlPeers(r.book.GetSelection())
-			r.cleanupCrawlPeerInfos()
-		case <-r.Quit():
-			return
-		}
-	}
+	return
 }
+
+// Do an initial crawl
+
+// Fire periodically
 
 // nodeHasSomePeersOrDialingAny returns true if the node is connected to some
 // peers or dialing them currently.
-func (r *Reactor) nodeHasSomePeersOrDialingAny() bool {
-	out, in, dial := r.Switch.NumPeers()
-	return out+in+dial > 0
-}
+func (r *Reactor) nodeHasSomePeersOrDialingAny() bool { _ = "STUB: not implemented"; return false }
 
 // crawlPeerInfo handles temporary data needed for the network crawling
 // performed during seed/crawler mode.
@@ -707,74 +340,26 @@ type crawlPeerInfo struct {
 }
 
 // crawlPeers will crawl the network looking for new peer addresses.
-func (r *Reactor) crawlPeers(addrs []*p2p.NetAddress) {
-	now := time.Now()
+func (r *Reactor) crawlPeers(addrs []*p2p.NetAddress) { _ = "STUB: not implemented"; return }
 
-	for _, addr := range addrs {
-		peerInfo, ok := r.crawlPeerInfos[addr.ID]
+// Do not attempt to connect with peers we recently crawled.
 
-		// Do not attempt to connect with peers we recently crawled.
-		if ok && now.Sub(peerInfo.LastCrawled) < minTimeBetweenCrawls {
-			continue
-		}
+// Record crawling attempt.
 
-		// Record crawling attempt.
-		r.crawlPeerInfos[addr.ID] = crawlPeerInfo{
-			Addr:        addr,
-			LastCrawled: now,
-		}
+func (r *Reactor) cleanupCrawlPeerInfos() { _ = "STUB: not implemented"; return }
 
-		err := r.dialPeer(addr)
-		if err != nil {
-			switch err.(type) {
-			case errMaxAttemptsToDial, errTooEarlyToDial, p2p.ErrCurrentlyDialingOrExistingAddress:
-				r.Logger.Debug(err.Error(), "addr", addr)
-			default:
-				r.Logger.Debug(err.Error(), "addr", addr)
-			}
-			continue
-		}
-
-		peer := r.Switch.Peers().Get(addr.ID)
-		if peer != nil {
-			r.RequestAddrs(peer)
-		}
-	}
-}
-
-func (r *Reactor) cleanupCrawlPeerInfos() {
-	for id, info := range r.crawlPeerInfos {
-		// If we did not crawl a peer for 24 hours, it means the peer was removed
-		// from the addrbook => remove
-		//
-		// 10000 addresses / maxGetSelection = 40 cycles to get all addresses in
-		// the ideal case,
-		// 40 * crawlPeerPeriod ~ 20 minutes
-		if time.Since(info.LastCrawled) > 24*time.Hour {
-			delete(r.crawlPeerInfos, id)
-		}
-	}
-}
+// If we did not crawl a peer for 24 hours, it means the peer was removed
+// from the addrbook => remove
+//
+// 10000 addresses / maxGetSelection = 40 cycles to get all addresses in
+// the ideal case,
+// 40 * crawlPeerPeriod ~ 20 minutes
 
 // attemptDisconnects checks if we've been with each peer long enough to disconnect
-func (r *Reactor) attemptDisconnects() {
-	for _, peer := range r.Switch.Peers().List() {
-		if peer.Status().Duration < r.config.SeedDisconnectWaitPeriod {
-			continue
-		}
-		if peer.IsPersistent() {
-			continue
-		}
-		r.Switch.StopPeerGracefully(peer, r.String())
-	}
-}
+func (r *Reactor) attemptDisconnects() { _ = "STUB: not implemented"; return }
 
 func markAddrInBookBasedOnErr(addr *p2p.NetAddress, book AddrBook, err error) {
+	_ = "STUB: not implemented"
 	// TODO: detect more "bad peer" scenarios
-	switch err.(type) {
-	case p2p.ErrSwitchAuthenticationFailure:
-		book.MarkBad(addr, defaultBanTime)
-	default:
-		book.MarkAttempt(addr)
-	}
+	return
 }

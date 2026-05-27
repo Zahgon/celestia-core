@@ -31,8 +31,6 @@
 package protoio
 
 import (
-	"bytes"
-	"encoding/binary"
 	"io"
 
 	"github.com/cosmos/gogoproto/proto"
@@ -42,7 +40,8 @@ import (
 // equivalent to the gogoproto NewDelimitedWriter, except WriteMsg() also returns the
 // number of bytes written, which is necessary in the p2p package.
 func NewDelimitedWriter(w io.Writer) WriteCloser {
-	return &varintWriter{w, nil, nil}
+	_ = "STUB: not implemented"
+	return *new(WriteCloser)
 }
 
 type varintWriter struct {
@@ -52,52 +51,15 @@ type varintWriter struct {
 }
 
 func (w *varintWriter) WriteMsg(msg proto.Message) (int, error) {
-	if m, ok := msg.(marshaler); ok {
-		n, ok := getSize(m)
-		if ok {
-			if n+binary.MaxVarintLen64 >= len(w.buffer) {
-				w.buffer = make([]byte, n+binary.MaxVarintLen64)
-			}
-			lenOff := binary.PutUvarint(w.buffer, uint64(n))
-			_, err := m.MarshalTo(w.buffer[lenOff:])
-			if err != nil {
-				return 0, err
-			}
-			_, err = w.w.Write(w.buffer[:lenOff+n])
-			return lenOff + n, err
-		}
-	}
-
-	// fallback
-	if w.lenBuf == nil {
-		w.lenBuf = make([]byte, binary.MaxVarintLen64)
-	}
-	data, err := proto.Marshal(msg)
-	if err != nil {
-		return 0, err
-	}
-	length := uint64(len(data))
-	n := binary.PutUvarint(w.lenBuf, length)
-	_, err = w.w.Write(w.lenBuf[:n])
-	if err != nil {
-		return 0, err
-	}
-	_, err = w.w.Write(data)
-	return len(data) + n, err
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (w *varintWriter) Close() error {
-	if closer, ok := w.w.(io.Closer); ok {
-		return closer.Close()
-	}
-	return nil
-}
+// fallback
+
+func (w *varintWriter) Close() error { _ = "STUB: not implemented"; return nil }
 
 func MarshalDelimited(msg proto.Message) ([]byte, error) {
-	var buf bytes.Buffer
-	_, err := NewDelimitedWriter(&buf).WriteMsg(msg)
-	if err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

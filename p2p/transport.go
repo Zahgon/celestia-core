@@ -2,21 +2,14 @@ package p2p
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
-	"fmt"
 	"net"
 	"time"
-
-	"golang.org/x/net/netutil"
 
 	"github.com/cosmos/gogoproto/proto"
 
 	"github.com/cometbft/cometbft/crypto"
-	"github.com/cometbft/cometbft/libs/protoio"
 	"github.com/cometbft/cometbft/libs/trace"
 	"github.com/cometbft/cometbft/p2p/conn"
-	tmp2p "github.com/cometbft/cometbft/proto/tendermint/p2p"
 )
 
 const (
@@ -88,29 +81,11 @@ type transportLifecycle interface {
 // with all resolved IPs for the new connection.
 type ConnFilterFunc func(ConnSet, net.Conn, []net.IP) error
 
-func generateTraceID() string {
-	b := make([]byte, 8)
-	_, _ = rand.Read(b)
-	return hex.EncodeToString(b)
-}
+func generateTraceID() string { _ = "STUB: not implemented"; return "" }
 
 // ConnDuplicateIPFilter resolves and keeps all ips for an incoming connection
 // and refuses new ones if they come from a known ip.
-func ConnDuplicateIPFilter() ConnFilterFunc {
-	return func(cs ConnSet, c net.Conn, ips []net.IP) error {
-		for _, ip := range ips {
-			if cs.HasIP(ip) {
-				return ErrRejected{
-					conn:        c,
-					err:         fmt.Errorf("ip<%v> already connected", ip),
-					isDuplicate: true,
-				}
-			}
-		}
-
-		return nil
-	}
-}
+func ConnDuplicateIPFilter() ConnFilterFunc { _ = "STUB: not implemented"; return *new(ConnFilterFunc) }
 
 // MultiplexTransportOption sets an optional parameter on the
 // MultiplexTransport.
@@ -120,7 +95,8 @@ type MultiplexTransportOption func(*MultiplexTransport)
 func MultiplexTransportConnFilters(
 	filters ...ConnFilterFunc,
 ) MultiplexTransportOption {
-	return func(mt *MultiplexTransport) { mt.connFilters = filters }
+	_ = "STUB: not implemented"
+	return *new(MultiplexTransportOption)
 }
 
 // MultiplexTransportFilterTimeout sets the timeout waited for filter calls to
@@ -128,19 +104,22 @@ func MultiplexTransportConnFilters(
 func MultiplexTransportFilterTimeout(
 	timeout time.Duration,
 ) MultiplexTransportOption {
-	return func(mt *MultiplexTransport) { mt.filterTimeout = timeout }
+	_ = "STUB: not implemented"
+	return *new(MultiplexTransportOption)
 }
 
 // MultiplexTransportResolver sets the Resolver used for ip lokkups, defaults to
 // net.DefaultResolver.
 func MultiplexTransportResolver(resolver IPResolver) MultiplexTransportOption {
-	return func(mt *MultiplexTransport) { mt.resolver = resolver }
+	_ = "STUB: not implemented"
+	return *new(MultiplexTransportOption)
 }
 
 // MultiplexTransportMaxIncomingConnections sets the maximum number of
 // simultaneous connections (incoming). Default: 0 (unlimited)
 func MultiplexTransportMaxIncomingConnections(n int) MultiplexTransportOption {
-	return func(mt *MultiplexTransport) { mt.maxIncomingConnections = n }
+	_ = "STUB: not implemented"
+	return *new(MultiplexTransportOption)
 }
 
 // MultiplexTransport accepts and dials tcp connections and upgrades them to
@@ -183,42 +162,24 @@ func NewMultiplexTransport(
 	mConfig conn.MConnConfig,
 	tracer trace.Tracer,
 ) *MultiplexTransport {
-	return &MultiplexTransport{
-		acceptc:          make(chan accept),
-		closec:           make(chan struct{}),
-		dialTimeout:      defaultDialTimeout,
-		filterTimeout:    defaultFilterTimeout,
-		handshakeTimeout: defaultHandshakeTimeout,
-		mConfig:          mConfig,
-		nodeInfo:         nodeInfo,
-		nodeKey:          nodeKey,
-		conns:            NewConnSet(),
-		resolver:         net.DefaultResolver,
-		tracer:           tracer,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NetAddress implements Transport.
 func (mt *MultiplexTransport) NetAddress() NetAddress {
-	return mt.netAddr
+	_ = "STUB: not implemented"
+
+	// Accept implements Transport.
+	return *new(NetAddress)
 }
 
-// Accept implements Transport.
 func (mt *MultiplexTransport) Accept(cfg peerConfig) (Peer, error) {
-	select {
+	_ = "STUB: not implemented"
+
 	// This case should never have any side-effectful/blocking operations to
 	// ensure that quality peers are ready to be used.
-	case a := <-mt.acceptc:
-		if a.err != nil {
-			return nil, a.err
-		}
-
-		cfg.outbound = false
-
-		return mt.wrapPeer(a.conn, a.nodeInfo, cfg, a.netAddr), nil
-	case <-mt.closec:
-		return nil, ErrTransportClosed{}
-	}
+	return *new(Peer), nil
 }
 
 // Dial implements Transport.
@@ -226,336 +187,65 @@ func (mt *MultiplexTransport) Dial(
 	addr NetAddress,
 	cfg peerConfig,
 ) (Peer, error) {
-	c, err := addr.DialTimeout(mt.dialTimeout)
-	if err != nil {
-		return nil, err
-	}
-
-	if mt.mConfig.TestFuzz {
-		// so we have time to do peer handshakes and get set up.
-		c = FuzzConnAfterFromConfig(c, 10*time.Second, mt.mConfig.TestFuzzConfig)
-	}
-
-	// TODO(xla): Evaluate if we should apply filters if we explicitly dial.
-	if err := mt.filterConn(c); err != nil {
-		return nil, err
-	}
-
-	secretConn, nodeInfo, err := mt.upgrade(c, &addr)
-	if err != nil {
-		return nil, err
-	}
-
-	cfg.outbound = true
-
-	p := mt.wrapPeer(secretConn, nodeInfo, cfg, &addr)
-
-	return p, nil
+	_ = "STUB: not implemented"
+	return *new(Peer), nil
 }
+
+// so we have time to do peer handshakes and get set up.
+
+// TODO(xla): Evaluate if we should apply filters if we explicitly dial.
 
 // Close implements transportLifecycle.
-func (mt *MultiplexTransport) Close() error {
-	close(mt.closec)
-
-	if mt.listener != nil {
-		return mt.listener.Close()
-	}
-
-	return nil
-}
+func (mt *MultiplexTransport) Close() error { _ = "STUB: not implemented"; return nil }
 
 // Listen implements transportLifecycle.
-func (mt *MultiplexTransport) Listen(addr NetAddress) error {
-	ln, err := net.Listen("tcp", addr.DialString())
-	if err != nil {
-		return err
-	}
-
-	if mt.maxIncomingConnections > 0 {
-		ln = netutil.LimitListener(ln, mt.maxIncomingConnections)
-	}
-
-	mt.netAddr = addr
-	mt.listener = ln
-
-	go mt.acceptPeers()
-
-	return nil
-}
+func (mt *MultiplexTransport) Listen(addr NetAddress) error { _ = "STUB: not implemented"; return nil }
 
 // AddChannel registers a channel to nodeInfo.
 // NOTE: NodeInfo must be of type DefaultNodeInfo else channels won't be updated
 // This is a bit messy at the moment but is cleaned up in the following version
 // when NodeInfo changes from an interface to a concrete type
-func (mt *MultiplexTransport) AddChannel(chID byte) {
-	if ni, ok := mt.nodeInfo.(DefaultNodeInfo); ok {
-		if !ni.HasChannel(chID) {
-			ni.Channels = append(ni.Channels, chID)
-		}
-		mt.nodeInfo = ni
-	}
-}
+func (mt *MultiplexTransport) AddChannel(chID byte) { _ = "STUB: not implemented"; return }
 
-func (mt *MultiplexTransport) acceptPeers() {
-	for {
-		c, err := mt.listener.Accept()
-		if err != nil {
-			// If Close() has been called, silently exit.
-			select {
-			case _, ok := <-mt.closec:
-				if !ok {
-					return
-				}
-			default:
-				// Transport is not closed
-			}
+func (mt *MultiplexTransport) acceptPeers() { _ = "STUB: not implemented"; return }
 
-			mt.acceptc <- accept{err: err}
-			return
-		}
+// If Close() has been called, silently exit.
 
-		// Connection upgrade and filtering should be asynchronous to avoid
-		// Head-of-line blocking[0].
-		// Reference:  https://github.com/tendermint/tendermint/issues/2047
-		//
-		// [0] https://en.wikipedia.org/wiki/Head-of-line_blocking
-		go func(c net.Conn) {
-			defer func() {
-				if r := recover(); r != nil {
-					err := ErrRejected{
-						conn:          c,
-						err:           fmt.Errorf("recovered from panic: %v", r),
-						isAuthFailure: true,
-					}
-					select {
-					case mt.acceptc <- accept{err: err}:
-					case <-mt.closec:
-						// Give up if the transport was closed.
-						_ = c.Close()
-						return
-					}
-				}
-			}()
+// Transport is not closed
 
-			var (
-				nodeInfo   NodeInfo
-				secretConn *conn.SecretConnection
-				netAddr    *NetAddress
-			)
+// Connection upgrade and filtering should be asynchronous to avoid
+// Head-of-line blocking[0].
+// Reference:  https://github.com/tendermint/tendermint/issues/2047
+//
+// [0] https://en.wikipedia.org/wiki/Head-of-line_blocking
 
-			err := mt.filterConn(c)
-			if err == nil {
-				secretConn, nodeInfo, err = mt.upgrade(c, nil)
-				if err == nil {
-					addr := c.RemoteAddr()
-					id := PubKeyToID(secretConn.RemotePubKey())
-					netAddr = NewNetAddress(id, addr)
-				}
-			}
+// Give up if the transport was closed.
 
-			select {
-			case mt.acceptc <- accept{netAddr, secretConn, nodeInfo, err}:
-				// Make the upgraded peer available.
-			case <-mt.closec:
-				// Give up if the transport was closed.
-				_ = c.Close()
-				return
-			}
-		}(c)
-	}
-}
+// Make the upgraded peer available.
+
+// Give up if the transport was closed.
 
 // Cleanup removes the given address from the connections set and
 // closes the connection.
-func (mt *MultiplexTransport) Cleanup(p Peer) {
-	mt.conns.RemoveAddr(p.RemoteAddr())
-	_ = p.CloseConn()
-}
+func (mt *MultiplexTransport) Cleanup(p Peer) { _ = "STUB: not implemented"; return }
 
-func (mt *MultiplexTransport) cleanup(c net.Conn) error {
-	mt.conns.Remove(c)
-
-	return c.Close()
-}
+func (mt *MultiplexTransport) cleanup(c net.Conn) error { _ = "STUB: not implemented"; return nil }
 
 func (mt *MultiplexTransport) filterConn(c net.Conn) (err error) {
-	defer func() {
-		if err != nil {
-			_ = c.Close()
-		}
-	}()
-
-	// Reject if connection is already present.
-	if mt.conns.Has(c) {
-		return ErrRejected{conn: c, isDuplicate: true}
-	}
-
-	// Resolve ips for incoming conn.
-	ips, err := resolveIPs(mt.resolver, c)
-	if err != nil {
-		return err
-	}
-
-	errc := make(chan error, len(mt.connFilters))
-
-	for _, f := range mt.connFilters {
-		go func(f ConnFilterFunc, c net.Conn, ips []net.IP, errc chan<- error) {
-			errc <- f(mt.conns, c, ips)
-		}(f, c, ips, errc)
-	}
-
-	for i := 0; i < cap(errc); i++ {
-		select {
-		case err := <-errc:
-			if err != nil {
-				return ErrRejected{conn: c, err: err, isFiltered: true}
-			}
-		case <-time.After(mt.filterTimeout):
-			return ErrFilterTimeout{}
-		}
-
-	}
-
-	mt.conns.Set(c, ips)
-
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// Reject if connection is already present.
+
+// Resolve ips for incoming conn.
 
 func (mt *MultiplexTransport) upgrade(
 	c net.Conn,
 	dialedAddr *NetAddress,
 ) (secretConn *conn.SecretConnection, nodeInfo NodeInfo, err error) {
-	defer func() {
-		if err != nil {
-			_ = mt.cleanup(c)
-		}
-	}()
-	traceID := generateTraceID()
-	secretConn, err = upgradeSecretConn(c, mt.handshakeTimeout, mt.nodeKey.PrivKey)
-	getRemoteNodeID := func() string {
-		if secretConn != nil && secretConn.RemotePubKey() != nil {
-			return string(PubKeyToID(secretConn.RemotePubKey()))
-		}
-		return ""
-	}
-	if err != nil {
-		return nil, nil, ErrRejected{
-			conn:               c,
-			err:                fmt.Errorf("secret conn failed: %v", err),
-			isAuthFailure:      true,
-			localNodeID:        string(mt.nodeInfo.ID()),
-			remoteNodeID:       getRemoteNodeID(),
-			localAddr:          c.LocalAddr().String(),
-			remoteAddr:         c.RemoteAddr().String(),
-			handshakeStage:     "secret-conn-start",
-			traceID:            traceID,
-			malformedHandshake: false,
-		}
-	}
-
-	connID := PubKeyToID(secretConn.RemotePubKey())
-
-	if dialedAddr != nil {
-		if dialedID := dialedAddr.ID; connID != dialedID {
-			return nil, nil, ErrRejected{
-				conn:           c,
-				id:             connID,
-				err:            fmt.Errorf("conn.ID (%v) dialed ID (%v) mismatch", connID, dialedID),
-				isAuthFailure:  true,
-				localNodeID:    string(mt.nodeInfo.ID()),
-				remoteNodeID:   string(PubKeyToID(secretConn.RemotePubKey())),
-				localAddr:      c.LocalAddr().String(),
-				remoteAddr:     c.RemoteAddr().String(),
-				handshakeStage: "secret-conn-auth",
-				traceID:        traceID,
-			}
-		}
-	}
-
-	nodeInfo, err = handshake(secretConn, mt.handshakeTimeout, mt.nodeInfo)
-	if err != nil {
-		return nil, nil, ErrRejected{
-			conn:           c,
-			err:            fmt.Errorf("handshake failed: %v", err),
-			isAuthFailure:  true,
-			localNodeID:    string(mt.nodeInfo.ID()),
-			remoteNodeID:   string(PubKeyToID(secretConn.RemotePubKey())),
-			localAddr:      c.LocalAddr().String(),
-			remoteAddr:     c.RemoteAddr().String(),
-			handshakeStage: "challenge-response",
-			traceID:        traceID,
-		}
-	}
-
-	if err := nodeInfo.Validate(); err != nil {
-		return nil, nil, ErrRejected{
-			conn:              c,
-			err:               err,
-			isNodeInfoInvalid: true,
-			localNodeID:       string(mt.nodeInfo.ID()),
-			remoteNodeID:      string(PubKeyToID(secretConn.RemotePubKey())),
-			localAddr:         c.LocalAddr().String(),
-			remoteAddr:        c.RemoteAddr().String(),
-			handshakeStage:    "handshake-nodeinfo-validate",
-			traceID:           traceID,
-		}
-	}
-
-	if connID != nodeInfo.ID() {
-		return nil, nil, ErrRejected{
-			conn:           c,
-			id:             connID,
-			err:            fmt.Errorf("conn.ID (%v) NodeInfo.ID (%v) mismatch", connID, nodeInfo.ID()),
-			isAuthFailure:  true,
-			localNodeID:    string(mt.nodeInfo.ID()),
-			remoteNodeID:   string(nodeInfo.ID()),
-			localAddr:      c.LocalAddr().String(),
-			remoteAddr:     c.RemoteAddr().String(),
-			handshakeStage: "connid-vs-nodeid",
-			traceID:        traceID,
-		}
-	}
-
-	if mt.nodeInfo.ID() == nodeInfo.ID() {
-		return nil, nil, ErrRejected{
-			addr:           *NewNetAddress(nodeInfo.ID(), c.RemoteAddr()),
-			conn:           c,
-			id:             nodeInfo.ID(),
-			isSelf:         true,
-			localNodeID:    string(mt.nodeInfo.ID()),
-			remoteNodeID:   string(nodeInfo.ID()),
-			localAddr:      c.LocalAddr().String(),
-			remoteAddr:     c.RemoteAddr().String(),
-			handshakeStage: "self-detect",
-			traceID:        traceID,
-		}
-	}
-
-	if err := mt.nodeInfo.CompatibleWith(nodeInfo); err != nil {
-		var chainID, peerChainID string
-		if ni, ok := mt.nodeInfo.(DefaultNodeInfo); ok {
-			chainID = ni.Network
-		}
-		if ni, ok := nodeInfo.(DefaultNodeInfo); ok {
-			peerChainID = ni.Network
-		}
-		return nil, nil, ErrRejected{
-			conn:           c,
-			err:            err,
-			id:             nodeInfo.ID(),
-			isIncompatible: true,
-			localNodeID:    string(mt.nodeInfo.ID()),
-			remoteNodeID:   string(nodeInfo.ID()),
-			localAddr:      c.LocalAddr().String(),
-			remoteAddr:     c.RemoteAddr().String(),
-			handshakeStage: "post-handshake",
-			traceID:        traceID,
-			chainID:        chainID,
-			peerChainID:    peerChainID,
-		}
-	}
-
-	return secretConn, nodeInfo, nil
+	_ = "STUB: not implemented"
+	return nil, *new(NodeInfo), nil
 }
 
 func (mt *MultiplexTransport) wrapPeer(
@@ -564,40 +254,8 @@ func (mt *MultiplexTransport) wrapPeer(
 	cfg peerConfig,
 	socketAddr *NetAddress,
 ) Peer {
-
-	persistent := false
-	if cfg.isPersistent != nil {
-		if cfg.outbound {
-			persistent = cfg.isPersistent(socketAddr)
-		} else {
-			selfReportedAddr, err := ni.NetAddress()
-			if err == nil {
-				persistent = cfg.isPersistent(selfReportedAddr)
-			}
-		}
-	}
-
-	peerConn := newPeerConn(
-		cfg.outbound,
-		persistent,
-		c,
-		socketAddr,
-	)
-
-	p := newPeer(
-		peerConn,
-		mt.mConfig,
-		ni,
-		cfg.reactorsByCh,
-		cfg.msgTypeByChID,
-		cfg.chDescs,
-		cfg.onPeerError,
-		cfg.mlc,
-		PeerMetrics(cfg.metrics),
-		WithPeerTracer(mt.tracer),
-	)
-
-	return p
+	_ = "STUB: not implemented"
+	return *new(Peer)
 }
 
 func handshake(
@@ -605,44 +263,8 @@ func handshake(
 	timeout time.Duration,
 	nodeInfo NodeInfo,
 ) (NodeInfo, error) {
-	if err := c.SetDeadline(time.Now().Add(timeout)); err != nil {
-		return nil, err
-	}
-
-	var (
-		errc           = make(chan error, 2)
-		pbpeerNodeInfo tmp2p.DefaultNodeInfo
-		peerNodeInfo   DefaultNodeInfo
-	)
-
-	ourNodeInfo, ok := nodeInfo.(DefaultNodeInfo)
-	if !ok {
-		return nil, fmt.Errorf("nodeInfo is not DefaultNodeInfo, got: %T", nodeInfo)
-	}
-
-	go func(errc chan<- error, c net.Conn) {
-		_, err := protoio.NewDelimitedWriter(c).WriteMsg(ourNodeInfo.ToProto())
-		errc <- err
-	}(errc, c)
-	go func(errc chan<- error, c net.Conn) {
-		protoReader := protoio.NewDelimitedReader(c, MaxNodeInfoSize())
-		_, err := protoReader.ReadMsg(&pbpeerNodeInfo)
-		errc <- err
-	}(errc, c)
-
-	for i := 0; i < cap(errc); i++ {
-		err := <-errc
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	peerNodeInfo, err := DefaultNodeInfoFromToProto(&pbpeerNodeInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return peerNodeInfo, c.SetDeadline(time.Time{})
+	_ = "STUB: not implemented"
+	return *new(NodeInfo), nil
 }
 
 func upgradeSecretConn(
@@ -650,34 +272,11 @@ func upgradeSecretConn(
 	timeout time.Duration,
 	privKey crypto.PrivKey,
 ) (*conn.SecretConnection, error) {
-	if err := c.SetDeadline(time.Now().Add(timeout)); err != nil {
-		return nil, err
-	}
-
-	sc, err := conn.MakeSecretConnection(c, privKey)
-	if err != nil {
-		return nil, err
-	}
-
-	return sc, sc.SetDeadline(time.Time{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func resolveIPs(resolver IPResolver, c net.Conn) ([]net.IP, error) {
-	host, _, err := net.SplitHostPort(c.RemoteAddr().String())
-	if err != nil {
-		return nil, err
-	}
-
-	addrs, err := resolver.LookupIPAddr(context.Background(), host)
-	if err != nil {
-		return nil, err
-	}
-
-	ips := []net.IP{}
-
-	for _, addr := range addrs {
-		ips = append(ips, addr.IP)
-	}
-
-	return ips, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

@@ -1,19 +1,10 @@
 package state
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
-	"os"
 	"time"
 
-	"github.com/cosmos/gogoproto/proto"
-
 	cmtstate "github.com/cometbft/cometbft/proto/tendermint/state"
-	cmtversion "github.com/cometbft/cometbft/proto/tendermint/version"
 	"github.com/cometbft/cometbft/types"
-	cmttime "github.com/cometbft/cometbft/types/time"
-	"github.com/cometbft/cometbft/version"
 )
 
 // database keys
@@ -25,13 +16,8 @@ var (
 
 // InitStateVersion sets the Consensus and Software versions.
 func InitStateVersion(appVersion uint64) cmtstate.Version {
-	return cmtstate.Version{
-		Consensus: cmtversion.Consensus{
-			Block: version.BlockProtocol,
-			App:   appVersion,
-		},
-		Software: version.TMCoreSemVer,
-	}
+	_ = "STUB: not implemented"
+	return *new(cmtstate.Version)
 }
 
 //-----------------------------------------------------------------------------
@@ -83,180 +69,49 @@ type State struct {
 
 // Propose returns the amount of time to wait for a proposal using application timeouts
 func (state State) Propose(round int32) time.Duration {
-	return time.Duration(
-		state.Timeouts.TimeoutPropose.Nanoseconds()+state.Timeouts.TimeoutProposeDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Prevote returns the amount of time to wait for straggler votes after receiving any +2/3 prevotes using application timeouts
 func (state State) Prevote(round int32) time.Duration {
-	return time.Duration(
-		state.Timeouts.TimeoutPrevote.Nanoseconds()+state.Timeouts.TimeoutPrevoteDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Precommit returns the amount of time to wait for straggler votes after receiving any +2/3 precommits using application timeouts
 func (state State) Precommit(round int32) time.Duration {
-	return time.Duration(
-		state.Timeouts.TimeoutPrecommit.Nanoseconds()+state.Timeouts.TimeoutPrecommitDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Commit returns the amount of time to wait for straggler votes after receiving +2/3 precommits using application timeouts
-func (state State) Commit(t time.Time) time.Time {
-	return t.Add(state.Timeouts.TimeoutCommit)
-}
+func (state State) Commit(t time.Time) time.Time { _ = "STUB: not implemented"; return *new(time.Time) }
 
 // Copy makes a copy of the State for mutating.
-func (state State) Copy() State {
-
-	return State{
-		Version:       state.Version,
-		ChainID:       state.ChainID,
-		InitialHeight: state.InitialHeight,
-
-		LastBlockHeight: state.LastBlockHeight,
-		LastBlockID:     state.LastBlockID,
-		LastBlockTime:   state.LastBlockTime,
-
-		NextValidators:              state.NextValidators.Copy(),
-		Validators:                  state.Validators.Copy(),
-		LastValidators:              state.LastValidators.Copy(),
-		LastHeightValidatorsChanged: state.LastHeightValidatorsChanged,
-
-		ConsensusParams:                  state.ConsensusParams,
-		LastHeightConsensusParamsChanged: state.LastHeightConsensusParamsChanged,
-
-		AppHash: state.AppHash,
-
-		LastResultsHash: state.LastResultsHash,
-		Timeouts:        state.Timeouts,
-	}
-}
+func (state State) Copy() State { _ = "STUB: not implemented"; return *new(State) }
 
 // Equals returns true if the States are identical.
-func (state State) Equals(state2 State) bool {
-	sbz, s2bz := state.Bytes(), state2.Bytes()
-	return bytes.Equal(sbz, s2bz)
-}
+func (state State) Equals(state2 State) bool { _ = "STUB: not implemented"; return false }
 
 // Bytes serializes the State using protobuf.
 // It panics if either casting to protobuf or serialization fails.
-func (state State) Bytes() []byte {
-	sm, err := state.ToProto()
-	if err != nil {
-		panic(err)
-	}
-	bz, err := proto.Marshal(sm)
-	if err != nil {
-		panic(err)
-	}
-	return bz
-}
+func (state State) Bytes() []byte { _ = "STUB: not implemented"; return nil }
 
 // IsEmpty returns true if the State is equal to the empty State.
-func (state State) IsEmpty() bool {
-	return state.Validators == nil // XXX can't compare to Empty
-}
+func (state State) IsEmpty() bool { _ = "STUB: not implemented"; return false }
+
+// XXX can't compare to Empty
 
 // ToProto takes the local state type and returns the equivalent proto type
-func (state *State) ToProto() (*cmtstate.State, error) {
-	if state == nil {
-		return nil, errors.New("state is nil")
-	}
+func (state *State) ToProto() (*cmtstate.State, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	sm := new(cmtstate.State)
-
-	sm.Version = state.Version
-	sm.ChainID = state.ChainID
-	sm.InitialHeight = state.InitialHeight
-	sm.LastBlockHeight = state.LastBlockHeight
-
-	sm.LastBlockID = state.LastBlockID.ToProto()
-	sm.LastBlockTime = state.LastBlockTime
-	vals, err := state.Validators.ToProto()
-	if err != nil {
-		return nil, err
-	}
-	sm.Validators = vals
-
-	nVals, err := state.NextValidators.ToProto()
-	if err != nil {
-		return nil, err
-	}
-	sm.NextValidators = nVals
-
-	if state.LastBlockHeight >= 1 { // At Block 1 LastValidators is nil
-		lVals, err := state.LastValidators.ToProto()
-		if err != nil {
-			return nil, err
-		}
-		sm.LastValidators = lVals
-	}
-
-	sm.LastHeightValidatorsChanged = state.LastHeightValidatorsChanged
-	sm.ConsensusParams = state.ConsensusParams.ToProto()
-	sm.LastHeightConsensusParamsChanged = state.LastHeightConsensusParamsChanged
-	sm.LastResultsHash = state.LastResultsHash
-	sm.AppHash = state.AppHash
-
-	sm.TimeoutInfo = state.Timeouts
-
-	return sm, nil
-}
+// At Block 1 LastValidators is nil
 
 // FromProto takes a state proto message & returns the local state type
-func FromProto(pb *cmtstate.State) (*State, error) {
-	if pb == nil {
-		return nil, errors.New("nil State")
-	}
+func FromProto(pb *cmtstate.State) (*State, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	state := new(State)
-
-	state.Version = pb.Version
-	state.ChainID = pb.ChainID
-	state.InitialHeight = pb.InitialHeight
-
-	bi, err := types.BlockIDFromProto(&pb.LastBlockID)
-	if err != nil {
-		return nil, err
-	}
-	state.LastBlockID = *bi
-	state.LastBlockHeight = pb.LastBlockHeight
-	state.LastBlockTime = pb.LastBlockTime
-
-	vals, err := types.ValidatorSetFromProto(pb.Validators)
-	if err != nil {
-		return nil, err
-	}
-	state.Validators = vals
-
-	nVals, err := types.ValidatorSetFromProto(pb.NextValidators)
-	if err != nil {
-		return nil, err
-	}
-	state.NextValidators = nVals
-
-	if state.LastBlockHeight >= 1 { // At Block 1 LastValidators is nil
-		lVals, err := types.ValidatorSetFromProto(pb.LastValidators)
-		if err != nil {
-			return nil, err
-		}
-		state.LastValidators = lVals
-	} else {
-		state.LastValidators = types.NewValidatorSet(nil)
-	}
-
-	state.LastHeightValidatorsChanged = pb.LastHeightValidatorsChanged
-	state.ConsensusParams = types.ConsensusParamsFromProto(pb.ConsensusParams)
-	state.LastHeightConsensusParamsChanged = pb.LastHeightConsensusParamsChanged
-	state.LastResultsHash = pb.LastResultsHash
-	state.AppHash = pb.AppHash
-
-	state.Timeouts = pb.TimeoutInfo
-
-	return state, nil
-}
+// At Block 1 LastValidators is nil
 
 //------------------------------------------------------------------------
 // Create a block from the latest state
@@ -271,14 +126,8 @@ func (state State) MakeBlock(
 	evidence []types.Evidence,
 	proposerAddress []byte,
 ) (*types.Block, *types.PartSet, error) {
-	block, err := state.MakeBlockWithoutPartset(height, data, lastCommit, evidence, proposerAddress)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ops, err := block.MakePartSet(types.BlockPartSizeBytes)
-
-	return block, ops, err
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
 
 func (state State) MakeBlockWithoutPartset(
@@ -288,57 +137,28 @@ func (state State) MakeBlockWithoutPartset(
 	evidence []types.Evidence,
 	proposerAddress []byte,
 ) (*types.Block, error) {
+	_ = "STUB: not implemented"
 	// Build base block with block data.
-	block := types.MakeBlock(height, data, lastCommit, evidence)
-
-	// Set time.
-	var timestamp time.Time
-	if height == state.InitialHeight {
-		timestamp = state.LastBlockTime // genesis time
-	} else {
-		ts, err := MedianTime(lastCommit, state.LastValidators)
-		if err != nil {
-			return nil, fmt.Errorf("error making block while calculating median time: %w", err)
-		}
-		timestamp = ts
-	}
-
-	// Fill rest of header with state data.
-	block.Header.Populate( //nolint:staticcheck
-		state.Version.Consensus, state.ChainID,
-		timestamp, state.LastBlockID,
-		state.Validators.Hash(), state.NextValidators.Hash(),
-		state.ConsensusParams.Hash(), state.AppHash, state.LastResultsHash,
-		proposerAddress,
-	)
-
-	return block, nil
+	return nil, nil
 }
+
+// Set time.
+
+// genesis time
+
+// Fill rest of header with state data.
+//nolint:staticcheck
 
 // MedianTime computes a median time for a given Commit (based on Timestamp field of votes messages) and the
 // corresponding validator set. The computed time is always between timestamps of
 // the votes sent by honest processes, i.e., a faulty processes can not arbitrarily increase or decrease the
 // computed value.
 func MedianTime(commit *types.Commit, validators *types.ValidatorSet) (time.Time, error) {
-	weightedTimes := make([]*cmttime.WeightedTime, len(commit.Signatures))
-	totalVotingPower := int64(0)
-
-	for i, commitSig := range commit.Signatures {
-		if commitSig.BlockIDFlag == types.BlockIDFlagAbsent {
-			continue
-		}
-		_, validator := validators.GetByAddress(commitSig.ValidatorAddress)
-		// If there's no condition, TestValidateBlockCommit panics; not needed normally.
-		if validator == nil {
-			return time.Time{}, fmt.Errorf("commit validator not found in validator set: %X",
-				commitSig.ValidatorAddress)
-		}
-		totalVotingPower += validator.VotingPower
-		weightedTimes[i] = cmttime.NewWeightedTime(commitSig.Timestamp, validator.VotingPower)
-	}
-
-	return cmttime.WeightedMedian(weightedTimes, totalVotingPower), nil
+	_ = "STUB: not implemented"
+	return *new(time.Time), nil
 }
+
+// If there's no condition, TestValidateBlockCommit panics; not needed normally.
 
 //------------------------------------------------------------------------
 // Genesis
@@ -348,75 +168,23 @@ func MedianTime(commit *types.Commit, validators *types.ValidatorSet) (time.Time
 //
 // Used during replay and in tests.
 func MakeGenesisStateFromFile(genDocFile string) (State, error) {
-	genDoc, err := MakeGenesisDocFromFile(genDocFile)
-	if err != nil {
-		return State{}, err
-	}
-	return MakeGenesisState(genDoc)
+	_ = "STUB: not implemented"
+	return *new(State), nil
 }
 
 // MakeGenesisDocFromFile reads and unmarshals genesis doc from the given file.
 func MakeGenesisDocFromFile(genDocFile string) (*types.GenesisDoc, error) {
-	genDocJSON, err := os.ReadFile(genDocFile)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't read GenesisDoc file: %v", err)
-	}
-	genDoc, err := types.GenesisDocFromJSON(genDocJSON)
-	if err != nil {
-		return nil, fmt.Errorf("error reading GenesisDoc: %v", err)
-	}
-	return genDoc, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // MakeGenesisState creates state from types.GenesisDoc.
 func MakeGenesisState(genDoc *types.GenesisDoc) (State, error) {
-	err := genDoc.ValidateAndComplete()
-	if err != nil {
-		return State{}, fmt.Errorf("error in genesis doc: %w", err)
-	}
-
-	var validatorSet, nextValidatorSet *types.ValidatorSet
-	if genDoc.Validators == nil {
-		validatorSet = types.NewValidatorSet(nil)
-		nextValidatorSet = types.NewValidatorSet(nil)
-	} else {
-		validators := make([]*types.Validator, len(genDoc.Validators))
-		for i, val := range genDoc.Validators {
-			validators[i] = types.NewValidator(val.PubKey, val.Power)
-		}
-		validatorSet = types.NewValidatorSet(validators)
-		nextValidatorSet = types.NewValidatorSet(validators).CopyIncrementProposerPriority(1)
-	}
-
-	appVersion := getAppVersion(genDoc)
-
-	return State{
-		Version:       InitStateVersion(appVersion),
-		ChainID:       genDoc.ChainID,
-		InitialHeight: genDoc.InitialHeight,
-
-		LastBlockHeight: 0,
-		LastBlockID:     types.BlockID{},
-		LastBlockTime:   genDoc.GenesisTime,
-
-		NextValidators:              nextValidatorSet,
-		Validators:                  validatorSet,
-		LastValidators:              types.NewValidatorSet(nil),
-		LastHeightValidatorsChanged: genDoc.InitialHeight,
-
-		ConsensusParams:                  *genDoc.ConsensusParams,
-		LastHeightConsensusParamsChanged: genDoc.InitialHeight,
-
-		AppHash: genDoc.AppHash,
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(State), nil
 }
 
-func getAppVersion(genDoc *types.GenesisDoc) uint64 {
-	if genDoc.ConsensusParams != nil &&
-		genDoc.ConsensusParams.Version.App != 0 {
-		return genDoc.ConsensusParams.Version.App
-	}
-	// Default to app version 1 because some chains (e.g. mocha-4) did not set
-	// an explicit app version in genesis.json.
-	return uint64(1)
-}
+func getAppVersion(genDoc *types.GenesisDoc) uint64 { _ = "STUB: not implemented"; return 0 }
+
+// Default to app version 1 because some chains (e.g. mocha-4) did not set
+// an explicit app version in genesis.json.

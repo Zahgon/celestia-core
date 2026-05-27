@@ -2,14 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 
-	dbm "github.com/cometbft/cometbft-db"
-
 	cfg "github.com/cometbft/cometbft/config"
-	"github.com/cometbft/cometbft/libs/os"
 	"github.com/cometbft/cometbft/state"
 	"github.com/cometbft/cometbft/store"
 )
@@ -52,46 +48,18 @@ be done multiple times.
 // at height n - 1. Note state here refers to CometBFT state not application state.
 // Returns the latest state height and app hash alongside an error if there was one.
 func RollbackState(config *cfg.Config, removeBlock bool) (int64, []byte, error) {
+	_ = "STUB: not implemented"
 	// use the parsed config to load the block and state store
-	blockStore, stateStore, err := loadStateAndBlockStore(config)
-	if err != nil {
-		return -1, nil, err
-	}
-	defer func() {
-		_ = blockStore.Close()
-		_ = stateStore.Close()
-	}()
-
-	// rollback the last state
-	return state.Rollback(blockStore, stateStore, removeBlock)
+	return 0, nil, nil
 }
+
+// rollback the last state
 
 func loadStateAndBlockStore(config *cfg.Config) (*store.BlockStore, state.Store, error) {
-	dbType := dbm.BackendType(config.DBBackend)
-
-	if !os.FileExists(filepath.Join(config.DBDir(), "blockstore.db")) {
-		return nil, nil, fmt.Errorf("no blockstore found in %v", config.DBDir())
-	}
-
-	// Get BlockStore
-	blockStoreDB, err := dbm.NewDB("blockstore", dbType, config.DBDir())
-	if err != nil {
-		return nil, nil, err
-	}
-	blockStore := store.NewBlockStore(blockStoreDB)
-
-	if !os.FileExists(filepath.Join(config.DBDir(), "state.db")) {
-		return nil, nil, fmt.Errorf("no statestore found in %v", config.DBDir())
-	}
-
-	// Get StateStore
-	stateDB, err := dbm.NewDB("state", dbType, config.DBDir())
-	if err != nil {
-		return nil, nil, err
-	}
-	stateStore := state.NewStore(stateDB, state.StoreOptions{
-		DiscardABCIResponses: config.Storage.DiscardABCIResponses,
-	})
-
-	return blockStore, stateStore, nil
+	_ = "STUB: not implemented"
+	return nil, *new(state.Store), nil
 }
+
+// Get BlockStore
+
+// Get StateStore

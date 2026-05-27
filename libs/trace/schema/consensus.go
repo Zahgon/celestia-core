@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/cometbft/cometbft/libs/trace"
@@ -10,22 +9,7 @@ import (
 
 // ConsensusTables returns the list of tables that are used for consensus
 // tracing.
-func ConsensusTables() []string {
-	return []string{
-		RoundStateTable,
-		BlockPartsTable,
-		BlockTable,
-		VoteTable,
-		ConsensusStateTable,
-		ProposalTable,
-		GapTable,
-		RetriesTable,
-		CatchupRequestsTable,
-		MissedProposalsTable,
-		SigningLatencyTable,
-		FullBlockReceivingTimeTable,
-	}
-}
+func ConsensusTables() []string { _ = "STUB: not implemented"; return nil }
 
 // Schema constants for the consensus round state tracing database.
 const (
@@ -42,14 +26,13 @@ type RoundState struct {
 }
 
 // Table returns the table name for the RoundState struct.
-func (RoundState) Table() string {
-	return RoundStateTable
-}
+func (RoundState) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteRoundState writes a tracing point for a tx using the predetermined
 // schema for consensus state tracing.
 func WriteRoundState(client trace.Tracer, height int64, round int32, step string) {
-	client.Write(RoundState{Height: height, Round: round, Step: step})
+	_ = "STUB: not implemented"
+	return
 }
 
 // Schema constants for the "consensus_block_parts" table.
@@ -70,9 +53,7 @@ type BlockPart struct {
 }
 
 // Table returns the table name for the BlockPart struct.
-func (BlockPart) Table() string {
-	return BlockPartsTable
-}
+func (BlockPart) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteBlockPart writes a tracing point for a BlockPart using the predetermined
 // schema for consensus state tracing.
@@ -85,21 +66,13 @@ func WriteBlockPart(
 	peer string,
 	transferType TransferType,
 ) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from the map of fields.
-	if !client.IsCollecting(BlockPartsTable) {
-		return
-	}
-	client.Write(BlockPart{
-		Height: height,
-		Round:  round,
-		//nolint:gosec
-		Index:        int32(index),
-		Catchup:      catchup,
-		Peer:         peer,
-		TransferType: transferType,
-	})
+	return
 }
+
+//nolint:gosec
 
 // Schema constants for the consensus votes tracing database.
 const (
@@ -122,11 +95,13 @@ type Vote struct {
 }
 
 func (Vote) Table() string {
-	return VoteTable
+	_ = "STUB: not implemented"
+
+	// WriteVote writes a tracing point for a vote using the predetermined
+	// schema for consensus vote tracing.
+	return ""
 }
 
-// WriteVote writes a tracing point for a vote using the predetermined
-// schema for consensus vote tracing.
 func WriteVote(client trace.Tracer,
 	height int64, // height of the current peer when it received/sent the vote
 	round int32, // round of the current peer when it received/sent the vote
@@ -134,17 +109,8 @@ func WriteVote(client trace.Tracer,
 	peer string, // the peer from which it received the vote or the peer to which it sent the vote
 	transferType TransferType, // download (received) or upload(sent)
 ) {
-	client.Write(Vote{
-		Height:           height,
-		Round:            round,
-		VoteType:         vote.Type.String(),
-		VoteHeight:       vote.Height,
-		VoteRound:        vote.Round,
-		VoteTimestamp:    vote.Timestamp,
-		ValidatorAddress: vote.ValidatorAddress.String(),
-		Peer:             peer,
-		TransferType:     transferType,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -164,21 +130,18 @@ type BlockSummary struct {
 }
 
 func (BlockSummary) Table() string {
-	return BlockTable
+	_ = "STUB: not implemented"
+
+	// WriteBlockSummary writes a tracing point for a block using the predetermined.
+	return ""
 }
 
-// WriteBlockSummary writes a tracing point for a block using the predetermined.
 func WriteBlockSummary(client trace.Tracer, block *types.Block, size int) {
-	client.Write(BlockSummary{
-		Height:                   block.Height,
-		UnixMillisecondTimestamp: block.Time.UnixMilli(),
-		TxCount:                  len(block.Data.Txs), //nolint:staticcheck
-		SquareSize:               block.SquareSize,
-		BlockSize:                size,
-		Proposer:                 block.ProposerAddress.String(),
-		LastCommitRound:          block.LastCommit.Round,
-	})
+	_ = "STUB: not implemented"
+	return
 }
+
+//nolint:staticcheck
 
 const (
 	ConsensusStateTable = "consensus_state"
@@ -205,9 +168,7 @@ type ConsensusState struct {
 	Data         []string     `json:"data,omitempty"`
 }
 
-func (ConsensusState) Table() string {
-	return ConsensusStateTable
-}
+func (ConsensusState) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteConsensusState(
 	client trace.Tracer,
@@ -218,14 +179,8 @@ func WriteConsensusState(
 	transferType TransferType,
 	data ...string,
 ) {
-	client.Write(ConsensusState{
-		Height:       height,
-		Round:        round,
-		Peer:         peer,
-		UpdateType:   string(updateType),
-		TransferType: transferType,
-		Data:         data,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -239,9 +194,7 @@ type Proposal struct {
 	TransferType TransferType `json:"transfer_type"`
 }
 
-func (Proposal) Table() string {
-	return ProposalTable
-}
+func (Proposal) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteProposal(
 	client trace.Tracer,
@@ -250,12 +203,8 @@ func WriteProposal(
 	peerID string,
 	transferType TransferType,
 ) {
-	client.Write(Proposal{
-		Height:       height,
-		Round:        round,
-		PeerID:       peerID,
-		TransferType: transferType,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 // Schema constants for the "consensus_block_parts" table.
@@ -277,9 +226,7 @@ type BlockPartState struct {
 }
 
 // Table returns the table name for the BlockPart struct.
-func (b BlockPartState) Table() string {
-	return BlockPartStateTable
-}
+func (b BlockPartState) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteBlockPart writes a tracing point for a BlockPart using the predetermined
 // schema for consensus state tracing.
@@ -293,22 +240,13 @@ func WriteBlockPartState(
 	transferType TransferType,
 	messageType string,
 ) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from the map of fields.
-	if !client.IsCollecting(BlockPartStateTable) {
-		return
-	}
-	client.Write(BlockPartState{
-		Height: height,
-		Round:  round,
-		//nolint:gosec
-		Indexes:      indexes,
-		Have:         have,
-		Peer:         peer,
-		TransferType: transferType,
-		MessageType:  messageType,
-	})
+	return
 }
+
+//nolint:gosec
 
 const (
 	NotesTable = "notes"
@@ -321,9 +259,7 @@ type Note struct {
 	NoteType string `json:"note_type"`
 }
 
-func (p Note) Table() string {
-	return NotesTable
-}
+func (p Note) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteNote(
 	client trace.Tracer,
@@ -333,16 +269,8 @@ func WriteNote(
 	note string,
 	items ...interface{},
 ) {
-	if !client.IsCollecting(NotesTable) {
-		return
-	}
-
-	client.Write(Note{
-		Height:   height,
-		Round:    round,
-		Note:     fmt.Sprintf(note, items...),
-		NoteType: noteType,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -356,9 +284,7 @@ type CatchupRequest struct {
 	Peer   string `json:"peer"`
 }
 
-func (b CatchupRequest) Table() string {
-	return CatchupRequestsTable
-}
+func (b CatchupRequest) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteCatchupRequest(
 	client trace.Tracer,
@@ -367,17 +293,10 @@ func WriteCatchupRequest(
 	parts string,
 	peer string,
 ) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from the map of fields.
-	if !client.IsCollecting(CatchupRequestsTable) {
-		return
-	}
-	client.Write(CatchupRequest{
-		Height: height,
-		Round:  round,
-		Parts:  parts,
-		Peer:   peer,
-	})
+	return
 }
 
 const (
@@ -390,9 +309,7 @@ type Retries struct {
 	Missing string `json:"missing"`
 }
 
-func (b Retries) Table() string {
-	return RetriesTable
-}
+func (b Retries) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteRetries(
 	client trace.Tracer,
@@ -400,11 +317,8 @@ func WriteRetries(
 	round int32,
 	missing string,
 ) {
-	client.Write(Retries{
-		Height:  height,
-		Round:   round,
-		Missing: missing,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -416,19 +330,15 @@ type Gap struct {
 	Round  int32 `json:"round"`
 }
 
-func (b Gap) Table() string {
-	return GapTable
-}
+func (b Gap) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteGap(
 	client trace.Tracer,
 	height int64,
 	round int32,
 ) {
-	client.Write(Gap{
-		Height: height,
-		Round:  round,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -441,9 +351,7 @@ type MissedProposal struct {
 	Proposer string `json:"proposer"`
 }
 
-func (b MissedProposal) Table() string {
-	return MissedProposalsTable
-}
+func (b MissedProposal) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteMissedProposal(
 	client trace.Tracer,
@@ -451,11 +359,8 @@ func WriteMissedProposal(
 	round int32,
 	proposerAddress string,
 ) {
-	client.Write(MissedProposal{
-		Height:   height,
-		Round:    round,
-		Proposer: proposerAddress,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -472,9 +377,7 @@ type SignatureLatency struct {
 	MessageType string `json:"message_type"`
 }
 
-func (b SignatureLatency) Table() string {
-	return SigningLatencyTable
-}
+func (b SignatureLatency) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteSignatureLatency(
 	client trace.Tracer,
@@ -483,12 +386,8 @@ func WriteSignatureLatency(
 	latency int64,
 	msgType string,
 ) {
-	client.Write(SignatureLatency{
-		Height:      height,
-		Round:       round,
-		Latency:     latency,
-		MessageType: msgType,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -502,9 +401,7 @@ type FullBlockReceivingTime struct {
 	DurationMs int64 `json:"duration_ms"`
 }
 
-func (b FullBlockReceivingTime) Table() string {
-	return FullBlockReceivingTimeTable
-}
+func (b FullBlockReceivingTime) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteFullBlockReceivingTime(
 	client trace.Tracer,
@@ -512,9 +409,6 @@ func WriteFullBlockReceivingTime(
 	round int32,
 	duration time.Duration,
 ) {
-	client.Write(FullBlockReceivingTime{
-		Height:     height,
-		Round:      round,
-		DurationMs: duration.Milliseconds(),
-	})
+	_ = "STUB: not implemented"
+	return
 }

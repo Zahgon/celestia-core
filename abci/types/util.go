@@ -18,14 +18,12 @@ var _ sort.Interface = (ValidatorUpdates)(nil)
 // See Issue https://github.com/tendermint/abci/issues/212
 
 func (v ValidatorUpdates) Len() int {
-	return len(v)
+	_ = "STUB: not implemented"
+
+	// XXX: doesn't distinguish same validator with different power
+	return 0
 }
 
-// XXX: doesn't distinguish same validator with different power
-func (v ValidatorUpdates) Less(i, j int) bool {
-	return v[i].PubKey.Compare(v[j].PubKey) <= 0
-}
+func (v ValidatorUpdates) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
-func (v ValidatorUpdates) Swap(i, j int) {
-	v[i], v[j] = v[j], v[i]
-}
+func (v ValidatorUpdates) Swap(i, j int) { _ = "STUB: not implemented"; return }

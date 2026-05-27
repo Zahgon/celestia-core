@@ -5,16 +5,14 @@ package consensus
 
 import (
 	fmt "fmt"
+	math "math"
+	time "time"
+
 	types "github.com/cometbft/cometbft/proto/tendermint/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
 	_ "github.com/cosmos/gogoproto/types"
-	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "github.com/golang/protobuf/ptypes/duration"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -35,52 +33,29 @@ type MsgInfo struct {
 	PeerID string  `protobuf:"bytes,2,opt,name=peer_id,json=peerId,proto3" json:"peer_id,omitempty"`
 }
 
-func (m *MsgInfo) Reset()         { *m = MsgInfo{} }
-func (m *MsgInfo) String() string { return proto.CompactTextString(m) }
-func (*MsgInfo) ProtoMessage()    {}
-func (*MsgInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed0b60c2d348ab09, []int{0}
-}
-func (m *MsgInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *MsgInfo) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *MsgInfo) String() string            { _ = "STUB: not implemented"; return "" }
+func (*MsgInfo) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*MsgInfo) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *MsgInfo) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *MsgInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_MsgInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *MsgInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_MsgInfo.Merge(m, src)
-}
-func (m *MsgInfo) XXX_Size() int {
-	return m.Size()
-}
-func (m *MsgInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_MsgInfo.DiscardUnknown(m)
-}
+
+func (m *MsgInfo) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *MsgInfo) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *MsgInfo) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_MsgInfo proto.InternalMessageInfo
 
-func (m *MsgInfo) GetMsg() Message {
-	if m != nil {
-		return m.Msg
-	}
-	return Message{}
-}
+func (m *MsgInfo) GetMsg() Message { _ = "STUB: not implemented"; return *new(Message) }
 
-func (m *MsgInfo) GetPeerID() string {
-	if m != nil {
-		return m.PeerID
-	}
-	return ""
-}
+func (m *MsgInfo) GetPeerID() string { _ = "STUB: not implemented"; return "" }
 
 // TimeoutInfo internally generated messages which may update the state
 type TimeoutInfo struct {
@@ -90,66 +65,36 @@ type TimeoutInfo struct {
 	Step     uint32        `protobuf:"varint,4,opt,name=step,proto3" json:"step,omitempty"`
 }
 
-func (m *TimeoutInfo) Reset()         { *m = TimeoutInfo{} }
-func (m *TimeoutInfo) String() string { return proto.CompactTextString(m) }
-func (*TimeoutInfo) ProtoMessage()    {}
-func (*TimeoutInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed0b60c2d348ab09, []int{1}
-}
-func (m *TimeoutInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *TimeoutInfo) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *TimeoutInfo) String() string            { _ = "STUB: not implemented"; return "" }
+func (*TimeoutInfo) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*TimeoutInfo) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *TimeoutInfo) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *TimeoutInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TimeoutInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *TimeoutInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TimeoutInfo.Merge(m, src)
-}
-func (m *TimeoutInfo) XXX_Size() int {
-	return m.Size()
-}
-func (m *TimeoutInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_TimeoutInfo.DiscardUnknown(m)
-}
+
+func (m *TimeoutInfo) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *TimeoutInfo) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *TimeoutInfo) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_TimeoutInfo proto.InternalMessageInfo
 
 func (m *TimeoutInfo) GetDuration() time.Duration {
-	if m != nil {
-		return m.Duration
-	}
-	return 0
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
-func (m *TimeoutInfo) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
-}
+func (m *TimeoutInfo) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *TimeoutInfo) GetRound() int32 {
-	if m != nil {
-		return m.Round
-	}
-	return 0
-}
+func (m *TimeoutInfo) GetRound() int32 { _ = "STUB: not implemented"; return 0 }
 
-func (m *TimeoutInfo) GetStep() uint32 {
-	if m != nil {
-		return m.Step
-	}
-	return 0
-}
+func (m *TimeoutInfo) GetStep() uint32 { _ = "STUB: not implemented"; return 0 }
 
 // EndHeight marks the end of the given height inside WAL.
 // @internal used by scripts/wal2json util.
@@ -157,45 +102,27 @@ type EndHeight struct {
 	Height int64 `protobuf:"varint,1,opt,name=height,proto3" json:"height,omitempty"`
 }
 
-func (m *EndHeight) Reset()         { *m = EndHeight{} }
-func (m *EndHeight) String() string { return proto.CompactTextString(m) }
-func (*EndHeight) ProtoMessage()    {}
-func (*EndHeight) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed0b60c2d348ab09, []int{2}
-}
-func (m *EndHeight) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *EndHeight) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *EndHeight) String() string            { _ = "STUB: not implemented"; return "" }
+func (*EndHeight) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*EndHeight) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *EndHeight) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *EndHeight) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_EndHeight.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *EndHeight) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EndHeight.Merge(m, src)
-}
-func (m *EndHeight) XXX_Size() int {
-	return m.Size()
-}
-func (m *EndHeight) XXX_DiscardUnknown() {
-	xxx_messageInfo_EndHeight.DiscardUnknown(m)
-}
+
+func (m *EndHeight) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *EndHeight) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *EndHeight) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_EndHeight proto.InternalMessageInfo
 
-func (m *EndHeight) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
-}
+func (m *EndHeight) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
 type WALMessage struct {
 	// Types that are valid to be assigned to Sum:
@@ -206,36 +133,23 @@ type WALMessage struct {
 	Sum isWALMessage_Sum `protobuf_oneof:"sum"`
 }
 
-func (m *WALMessage) Reset()         { *m = WALMessage{} }
-func (m *WALMessage) String() string { return proto.CompactTextString(m) }
-func (*WALMessage) ProtoMessage()    {}
-func (*WALMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed0b60c2d348ab09, []int{3}
-}
-func (m *WALMessage) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *WALMessage) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *WALMessage) String() string            { _ = "STUB: not implemented"; return "" }
+func (*WALMessage) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*WALMessage) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *WALMessage) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *WALMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_WALMessage.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *WALMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_WALMessage.Merge(m, src)
-}
-func (m *WALMessage) XXX_Size() int {
-	return m.Size()
-}
-func (m *WALMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_WALMessage.DiscardUnknown(m)
-}
+
+func (m *WALMessage) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *WALMessage) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *WALMessage) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_WALMessage proto.InternalMessageInfo
 
@@ -258,55 +172,29 @@ type WALMessage_EndHeight struct {
 	EndHeight *EndHeight `protobuf:"bytes,4,opt,name=end_height,json=endHeight,proto3,oneof" json:"end_height,omitempty"`
 }
 
-func (*WALMessage_EventDataRoundState) isWALMessage_Sum() {}
-func (*WALMessage_MsgInfo) isWALMessage_Sum()             {}
-func (*WALMessage_TimeoutInfo) isWALMessage_Sum()         {}
-func (*WALMessage_EndHeight) isWALMessage_Sum()           {}
+func (*WALMessage_EventDataRoundState) isWALMessage_Sum() { _ = "STUB: not implemented"; return }
+func (*WALMessage_MsgInfo) isWALMessage_Sum()             { _ = "STUB: not implemented"; return }
+func (*WALMessage_TimeoutInfo) isWALMessage_Sum()         { _ = "STUB: not implemented"; return }
+func (*WALMessage_EndHeight) isWALMessage_Sum()           { _ = "STUB: not implemented"; return }
 
 func (m *WALMessage) GetSum() isWALMessage_Sum {
-	if m != nil {
-		return m.Sum
-	}
-	return nil
+	_ = "STUB: not implemented"
+	return *new(isWALMessage_Sum)
 }
 
 func (m *WALMessage) GetEventDataRoundState() *types.EventDataRoundState {
-	if x, ok := m.GetSum().(*WALMessage_EventDataRoundState); ok {
-		return x.EventDataRoundState
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (m *WALMessage) GetMsgInfo() *MsgInfo {
-	if x, ok := m.GetSum().(*WALMessage_MsgInfo); ok {
-		return x.MsgInfo
-	}
-	return nil
-}
+func (m *WALMessage) GetMsgInfo() *MsgInfo { _ = "STUB: not implemented"; return nil }
 
-func (m *WALMessage) GetTimeoutInfo() *TimeoutInfo {
-	if x, ok := m.GetSum().(*WALMessage_TimeoutInfo); ok {
-		return x.TimeoutInfo
-	}
-	return nil
-}
+func (m *WALMessage) GetTimeoutInfo() *TimeoutInfo { _ = "STUB: not implemented"; return nil }
 
-func (m *WALMessage) GetEndHeight() *EndHeight {
-	if x, ok := m.GetSum().(*WALMessage_EndHeight); ok {
-		return x.EndHeight
-	}
-	return nil
-}
+func (m *WALMessage) GetEndHeight() *EndHeight { _ = "STUB: not implemented"; return nil }
 
 // XXX_OneofWrappers is for the internal use of the proto package.
-func (*WALMessage) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*WALMessage_EventDataRoundState)(nil),
-		(*WALMessage_MsgInfo)(nil),
-		(*WALMessage_TimeoutInfo)(nil),
-		(*WALMessage_EndHeight)(nil),
-	}
-}
+func (*WALMessage) XXX_OneofWrappers() []interface{} { _ = "STUB: not implemented"; return nil }
 
 // TimedWALMessage wraps WALMessage and adds Time for debugging purposes.
 type TimedWALMessage struct {
@@ -314,52 +202,29 @@ type TimedWALMessage struct {
 	Msg  *WALMessage `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
 }
 
-func (m *TimedWALMessage) Reset()         { *m = TimedWALMessage{} }
-func (m *TimedWALMessage) String() string { return proto.CompactTextString(m) }
-func (*TimedWALMessage) ProtoMessage()    {}
-func (*TimedWALMessage) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ed0b60c2d348ab09, []int{4}
-}
-func (m *TimedWALMessage) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *TimedWALMessage) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *TimedWALMessage) String() string            { _ = "STUB: not implemented"; return "" }
+func (*TimedWALMessage) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*TimedWALMessage) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *TimedWALMessage) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *TimedWALMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_TimedWALMessage.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *TimedWALMessage) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TimedWALMessage.Merge(m, src)
-}
-func (m *TimedWALMessage) XXX_Size() int {
-	return m.Size()
-}
-func (m *TimedWALMessage) XXX_DiscardUnknown() {
-	xxx_messageInfo_TimedWALMessage.DiscardUnknown(m)
-}
+
+func (m *TimedWALMessage) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *TimedWALMessage) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *TimedWALMessage) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_TimedWALMessage proto.InternalMessageInfo
 
-func (m *TimedWALMessage) GetTime() time.Time {
-	if m != nil {
-		return m.Time
-	}
-	return time.Time{}
-}
+func (m *TimedWALMessage) GetTime() time.Time { _ = "STUB: not implemented"; return *new(time.Time) }
 
-func (m *TimedWALMessage) GetMsg() *WALMessage {
-	if m != nil {
-		return m.Msg
-	}
-	return nil
-}
+func (m *TimedWALMessage) GetMsg() *WALMessage { _ = "STUB: not implemented"; return nil }
 
 func init() {
 	proto.RegisterType((*MsgInfo)(nil), "tendermint.consensus.MsgInfo")
@@ -409,1129 +274,135 @@ var fileDescriptor_ed0b60c2d348ab09 = []byte{
 	0x7b, 0xfc, 0x27, 0x00, 0x00, 0xff, 0xff, 0x0b, 0x81, 0x69, 0x90, 0x03, 0x04, 0x00, 0x00,
 }
 
-func (m *MsgInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+func (m *MsgInfo) Marshal() (dAtA []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *MsgInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *MsgInfo) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *MsgInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.PeerID) > 0 {
-		i -= len(m.PeerID)
-		copy(dAtA[i:], m.PeerID)
-		i = encodeVarintWal(dAtA, i, uint64(len(m.PeerID)))
-		i--
-		dAtA[i] = 0x12
-	}
-	{
-		size, err := m.Msg.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintWal(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *TimeoutInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (m *TimeoutInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *TimeoutInfo) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *TimeoutInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Step != 0 {
-		i = encodeVarintWal(dAtA, i, uint64(m.Step))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.Round != 0 {
-		i = encodeVarintWal(dAtA, i, uint64(m.Round))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Height != 0 {
-		i = encodeVarintWal(dAtA, i, uint64(m.Height))
-		i--
-		dAtA[i] = 0x10
-	}
-	n2, err2 := github_com_cosmos_gogoproto_types.StdDurationMarshalTo(m.Duration, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.Duration):])
-	if err2 != nil {
-		return 0, err2
-	}
-	i -= n2
-	i = encodeVarintWal(dAtA, i, uint64(n2))
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (m *EndHeight) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+func (m *EndHeight) Marshal() (dAtA []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *EndHeight) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *EndHeight) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *EndHeight) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Height != 0 {
-		i = encodeVarintWal(dAtA, i, uint64(m.Height))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (m *WALMessage) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+func (m *WALMessage) Marshal() (dAtA []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *WALMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *WALMessage) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *WALMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Sum != nil {
-		{
-			size := m.Sum.Size()
-			i -= size
-			if _, err := m.Sum.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *WALMessage_EventDataRoundState) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *WALMessage_EventDataRoundState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.EventDataRoundState != nil {
-		{
-			size, err := m.EventDataRoundState.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWal(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m *WALMessage_MsgInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *WALMessage_MsgInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.MsgInfo != nil {
-		{
-			size, err := m.MsgInfo.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWal(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m *WALMessage_TimeoutInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *WALMessage_TimeoutInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.TimeoutInfo != nil {
-		{
-			size, err := m.TimeoutInfo.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWal(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m *WALMessage_EndHeight) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *WALMessage_EndHeight) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.EndHeight != nil {
-		{
-			size, err := m.EndHeight.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWal(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m *TimedWALMessage) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *TimedWALMessage) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *TimedWALMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Msg != nil {
-		{
-			size, err := m.Msg.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWal(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
-	n8, err8 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.Time, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Time):])
-	if err8 != nil {
-		return 0, err8
-	}
-	i -= n8
-	i = encodeVarintWal(dAtA, i, uint64(n8))
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func encodeVarintWal(dAtA []byte, offset int, v uint64) int {
-	offset -= sovWal(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *MsgInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.Msg.Size()
-	n += 1 + l + sovWal(uint64(l))
-	l = len(m.PeerID)
-	if l > 0 {
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
+func encodeVarintWal(dAtA []byte, offset int, v uint64) int { _ = "STUB: not implemented"; return 0 }
 
-func (m *TimeoutInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = github_com_cosmos_gogoproto_types.SizeOfStdDuration(m.Duration)
-	n += 1 + l + sovWal(uint64(l))
-	if m.Height != 0 {
-		n += 1 + sovWal(uint64(m.Height))
-	}
-	if m.Round != 0 {
-		n += 1 + sovWal(uint64(m.Round))
-	}
-	if m.Step != 0 {
-		n += 1 + sovWal(uint64(m.Step))
-	}
-	return n
-}
+func (m *MsgInfo) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *EndHeight) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Height != 0 {
-		n += 1 + sovWal(uint64(m.Height))
-	}
-	return n
-}
+func (m *TimeoutInfo) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *WALMessage) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Sum != nil {
-		n += m.Sum.Size()
-	}
-	return n
-}
+func (m *EndHeight) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *WALMessage_EventDataRoundState) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.EventDataRoundState != nil {
-		l = m.EventDataRoundState.Size()
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
-func (m *WALMessage_MsgInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.MsgInfo != nil {
-		l = m.MsgInfo.Size()
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
-func (m *WALMessage_TimeoutInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.TimeoutInfo != nil {
-		l = m.TimeoutInfo.Size()
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
-func (m *WALMessage_EndHeight) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.EndHeight != nil {
-		l = m.EndHeight.Size()
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
-func (m *TimedWALMessage) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Time)
-	n += 1 + l + sovWal(uint64(l))
-	if m.Msg != nil {
-		l = m.Msg.Size()
-		n += 1 + l + sovWal(uint64(l))
-	}
-	return n
-}
+func (m *WALMessage) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func sovWal(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozWal(x uint64) (n int) {
-	return sovWal(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *MsgInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: MsgInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: MsgInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Msg.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PeerID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PeerID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWal(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWal
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *WALMessage_EventDataRoundState) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TimeoutInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TimeoutInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TimeoutInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Duration", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_cosmos_gogoproto_types.StdDurationUnmarshal(&m.Duration, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Height |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Round", wireType)
-			}
-			m.Round = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Round |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Step", wireType)
-			}
-			m.Step = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Step |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWal(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWal
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *WALMessage_MsgInfo) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *EndHeight) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: EndHeight: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EndHeight: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Height |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWal(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWal
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *WALMessage_TimeoutInfo) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *WALMessage) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: WALMessage: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: WALMessage: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field EventDataRoundState", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &types.EventDataRoundState{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Sum = &WALMessage_EventDataRoundState{v}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field MsgInfo", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &MsgInfo{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Sum = &WALMessage_MsgInfo{v}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TimeoutInfo", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &TimeoutInfo{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Sum = &WALMessage_TimeoutInfo{v}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field EndHeight", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := &EndHeight{}
-			if err := v.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			m.Sum = &WALMessage_EndHeight{v}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWal(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWal
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *WALMessage_EndHeight) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *TimedWALMessage) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: TimedWALMessage: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TimedWALMessage: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Time", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.Time, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Msg", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWal
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWal
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Msg == nil {
-				m.Msg = &WALMessage{}
-			}
-			if err := m.Msg.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWal(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthWal
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *TimedWALMessage) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipWal(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowWal
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowWal
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthWal
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupWal
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthWal
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
+func sovWal(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func sozWal(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func (m *MsgInfo) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *TimeoutInfo) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *EndHeight) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *WALMessage) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *TimedWALMessage) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func skipWal(dAtA []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 var (
 	ErrInvalidLengthWal        = fmt.Errorf("proto: negative length found during unmarshaling")

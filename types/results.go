@@ -11,44 +11,24 @@ type ABCIResults []*abci.ExecTxResult
 // NewResults strips non-deterministic fields from ExecTxResult responses
 // and returns ABCIResults.
 func NewResults(responses []*abci.ExecTxResult) ABCIResults {
-	res := make(ABCIResults, len(responses))
-	for i, d := range responses {
-		res[i] = deterministicExecTxResult(d)
-	}
-	return res
+	_ = "STUB: not implemented"
+	return *new(ABCIResults)
 }
 
 // Hash returns a merkle hash of all results.
-func (a ABCIResults) Hash() []byte {
-	return merkle.HashFromByteSlices(a.toByteSlices())
-}
+func (a ABCIResults) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
 // ProveResult returns a merkle proof of one result from the set
 func (a ABCIResults) ProveResult(i int) merkle.Proof {
-	_, proofs := merkle.ProofsFromByteSlices(a.toByteSlices())
-	return *proofs[i]
+	_ = "STUB: not implemented"
+	return *new(merkle.Proof)
 }
 
-func (a ABCIResults) toByteSlices() [][]byte {
-	l := len(a)
-	bzs := make([][]byte, l)
-	for i := 0; i < l; i++ {
-		bz, err := a[i].Marshal()
-		if err != nil {
-			panic(err)
-		}
-		bzs[i] = bz
-	}
-	return bzs
-}
+func (a ABCIResults) toByteSlices() [][]byte { _ = "STUB: not implemented"; return nil }
 
 // deterministicExecTxResult strips non-deterministic fields from
 // ExecTxResult and returns another ExecTxResult.
 func deterministicExecTxResult(response *abci.ExecTxResult) *abci.ExecTxResult {
-	return &abci.ExecTxResult{
-		Code:      response.Code,
-		Data:      response.Data,
-		GasWanted: response.GasWanted,
-		GasUsed:   response.GasUsed,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }

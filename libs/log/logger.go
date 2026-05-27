@@ -2,8 +2,6 @@ package log
 
 import (
 	"io"
-
-	kitlog "github.com/go-kit/log"
 )
 
 // Logger is what any CometBFT library should take.
@@ -26,6 +24,4 @@ type Logger interface {
 //	interface {
 //	    Fd() uintptr
 //	}
-func NewSyncWriter(w io.Writer) io.Writer {
-	return kitlog.NewSyncWriter(w)
-}
+func NewSyncWriter(w io.Writer) io.Writer { _ = "STUB: not implemented"; return *new(io.Writer) }

@@ -1,18 +1,11 @@
 package types
 
 import (
-	"bytes"
 	"encoding/json"
-	"errors"
-	"fmt"
-	"os"
 	"time"
 
 	"github.com/cometbft/cometbft/crypto"
 	cmtbytes "github.com/cometbft/cometbft/libs/bytes"
-	cmtjson "github.com/cometbft/cometbft/libs/json"
-	cmtos "github.com/cometbft/cometbft/libs/os"
-	cmttime "github.com/cometbft/cometbft/types/time"
 )
 
 const (
@@ -46,92 +39,26 @@ type GenesisDoc struct {
 }
 
 // SaveAs is a utility method for saving GenensisDoc as a JSON file.
-func (genDoc *GenesisDoc) SaveAs(file string) error {
-	genDocBytes, err := cmtjson.MarshalIndent(genDoc, "", "  ")
-	if err != nil {
-		return err
-	}
-	return cmtos.WriteFile(file, genDocBytes, 0644)
-}
+func (genDoc *GenesisDoc) SaveAs(file string) error { _ = "STUB: not implemented"; return nil }
 
 // ValidatorHash returns the hash of the validator set contained in the GenesisDoc
-func (genDoc *GenesisDoc) ValidatorHash() []byte {
-	vals := make([]*Validator, len(genDoc.Validators))
-	for i, v := range genDoc.Validators {
-		vals[i] = NewValidator(v.PubKey, v.Power)
-	}
-	vset := NewValidatorSet(vals)
-	return vset.Hash()
-}
+func (genDoc *GenesisDoc) ValidatorHash() []byte { _ = "STUB: not implemented"; return nil }
 
 // ValidateAndComplete checks that all necessary fields are present
 // and fills in defaults for optional fields left empty
-func (genDoc *GenesisDoc) ValidateAndComplete() error {
-	if genDoc.ChainID == "" {
-		return errors.New("genesis doc must include non-empty chain_id")
-	}
-	if len(genDoc.ChainID) > MaxChainIDLen {
-		return fmt.Errorf("chain_id in genesis doc is too long (max: %d)", MaxChainIDLen)
-	}
-	if genDoc.InitialHeight < 0 {
-		return fmt.Errorf("initial_height cannot be negative (got %v)", genDoc.InitialHeight)
-	}
-	if genDoc.InitialHeight == 0 {
-		genDoc.InitialHeight = 1
-	}
-
-	if genDoc.ConsensusParams == nil {
-		genDoc.ConsensusParams = DefaultConsensusParams()
-	} else if err := genDoc.ConsensusParams.ValidateBasic(); err != nil {
-		return err
-	}
-
-	for i, v := range genDoc.Validators {
-		if v.Power == 0 {
-			return fmt.Errorf("the genesis file cannot contain validators with no voting power: %v", v)
-		}
-		if len(v.Address) > 0 && !bytes.Equal(v.PubKey.Address(), v.Address) {
-			return fmt.Errorf("incorrect address for validator %v in the genesis file, should be %v", v, v.PubKey.Address())
-		}
-		if len(v.Address) == 0 {
-			genDoc.Validators[i].Address = v.PubKey.Address()
-		}
-	}
-
-	if genDoc.GenesisTime.IsZero() {
-		genDoc.GenesisTime = cmttime.Now()
-	}
-
-	return nil
-}
+func (genDoc *GenesisDoc) ValidateAndComplete() error { _ = "STUB: not implemented"; return nil }
 
 //------------------------------------------------------------
 // Make genesis state from file
 
 // GenesisDocFromJSON unmarshalls JSON data into a GenesisDoc.
 func GenesisDocFromJSON(jsonBlob []byte) (*GenesisDoc, error) {
-	genDoc := GenesisDoc{}
-	err := cmtjson.Unmarshal(jsonBlob, &genDoc)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := genDoc.ValidateAndComplete(); err != nil {
-		return nil, err
-	}
-
-	return &genDoc, err
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GenesisDocFromFile reads JSON data from a file and unmarshalls it into a GenesisDoc.
 func GenesisDocFromFile(genDocFile string) (*GenesisDoc, error) {
-	jsonBlob, err := os.ReadFile(genDocFile)
-	if err != nil {
-		return nil, fmt.Errorf("couldn't read GenesisDoc file: %w", err)
-	}
-	genDoc, err := GenesisDocFromJSON(jsonBlob)
-	if err != nil {
-		return nil, fmt.Errorf("error reading GenesisDoc at %s: %w", genDocFile, err)
-	}
-	return genDoc, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

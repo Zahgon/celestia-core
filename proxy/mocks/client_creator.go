@@ -14,32 +14,8 @@ type ClientCreator struct {
 
 // NewABCIClient provides a mock function with no fields
 func (_m *ClientCreator) NewABCIClient() (abcicli.Client, error) {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for NewABCIClient")
-	}
-
-	var r0 abcicli.Client
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (abcicli.Client, error)); ok {
-		return rf()
-	}
-	if rf, ok := ret.Get(0).(func() abcicli.Client); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(abcicli.Client)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return *new(abcicli.Client), nil
 }
 
 // NewClientCreator creates a new instance of ClientCreator. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -48,10 +24,6 @@ func NewClientCreator(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *ClientCreator {
-	mock := &ClientCreator{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
+	_ = "STUB: not implemented"
+	return nil
 }

@@ -4,6 +4,4 @@ type ErrInvalidVote struct {
 	Reason string
 }
 
-func (e ErrInvalidVote) Error() string {
-	return "invalid vote: " + e.Reason
-}
+func (e ErrInvalidVote) Error() string { _ = "STUB: not implemented"; return "" }

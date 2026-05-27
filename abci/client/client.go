@@ -2,7 +2,6 @@ package abcicli
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/cometbft/cometbft/abci/types"
@@ -46,15 +45,8 @@ type Client interface {
 // NewClient returns a new ABCI client of the specified transport type.
 // It returns an error if the transport is not "socket" or "grpc"
 func NewClient(addr, transport string, mustConnect bool) (client Client, err error) {
-	switch transport {
-	case "socket":
-		client = NewSocketClient(addr, mustConnect)
-	case "grpc":
-		client = NewGRPCClient(addr, mustConnect)
-	default:
-		err = fmt.Errorf("unknown abci transport %s", transport)
-	}
-	return
+	_ = "STUB: not implemented"
+	return *new(Client), nil
 }
 
 type Callback func(*types.Request, *types.Response)
@@ -75,44 +67,16 @@ type ReqRes struct {
 	cb              func(*types.Response) // A single callback that may be set.
 }
 
-func NewReqRes(req *types.Request) *ReqRes {
-	return &ReqRes{
-		Request:   req,
-		WaitGroup: waitGroup1(),
-		Response:  nil,
-
-		callbackInvoked: false,
-		cb:              nil,
-	}
-}
+func NewReqRes(req *types.Request) *ReqRes { _ = "STUB: not implemented"; return nil }
 
 // Sets sets the callback. If reqRes is already done, it will call the cb
 // immediately. Note, reqRes.cb should not change if reqRes.done and only one
 // callback is supported.
-func (r *ReqRes) SetCallback(cb func(res *types.Response)) {
-	r.mtx.Lock()
-
-	if r.callbackInvoked {
-		r.mtx.Unlock()
-		cb(r.Response)
-		return
-	}
-
-	r.cb = cb
-	r.mtx.Unlock()
-}
+func (r *ReqRes) SetCallback(cb func(res *types.Response)) { _ = "STUB: not implemented"; return }
 
 // InvokeCallback invokes a thread-safe execution of the configured callback
 // if non-nil.
-func (r *ReqRes) InvokeCallback() {
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-
-	if r.cb != nil {
-		r.cb(r.Response)
-	}
-	r.callbackInvoked = true
-}
+func (r *ReqRes) InvokeCallback() { _ = "STUB: not implemented"; return }
 
 // GetCallback returns the configured callback of the ReqRes object which may be
 // nil. Note, it is not safe to concurrently call this in cases where it is
@@ -120,14 +84,6 @@ func (r *ReqRes) InvokeCallback() {
 // will invoke the callback twice and create a potential race condition.
 //
 // ref: https://github.com/tendermint/tendermint/issues/5439
-func (r *ReqRes) GetCallback() func(*types.Response) {
-	r.mtx.Lock()
-	defer r.mtx.Unlock()
-	return r.cb
-}
+func (r *ReqRes) GetCallback() func(*types.Response) { _ = "STUB: not implemented"; return nil }
 
-func waitGroup1() (wg *sync.WaitGroup) {
-	wg = &sync.WaitGroup{}
-	wg.Add(1)
-	return
-}
+func waitGroup1() (wg *sync.WaitGroup) { _ = "STUB: not implemented"; return nil }

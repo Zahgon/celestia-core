@@ -4,11 +4,6 @@ package xchacha20poly1305
 
 import (
 	"crypto/cipher"
-	"encoding/binary"
-	"errors"
-	"fmt"
-
-	"golang.org/x/crypto/chacha20poly1305"
 )
 
 // Implements crypto.AEAD
@@ -38,68 +33,25 @@ const (
 )
 
 // New returns a new xchachapoly1305 AEAD
-func New(key []byte) (cipher.AEAD, error) {
-	if len(key) != KeySize {
-		return nil, errors.New("xchacha20poly1305: bad key length")
-	}
-	ret := new(xchacha20poly1305)
-	copy(ret.key[:], key)
-	return ret, nil
-}
+func New(key []byte) (cipher.AEAD, error) { _ = "STUB: not implemented"; return *new(cipher.AEAD), nil }
 
-func (c *xchacha20poly1305) NonceSize() int {
-	return NonceSize
-}
+func (c *xchacha20poly1305) NonceSize() int { _ = "STUB: not implemented"; return 0 }
 
-func (c *xchacha20poly1305) Overhead() int {
-	return TagSize
-}
+func (c *xchacha20poly1305) Overhead() int { _ = "STUB: not implemented"; return 0 }
 
 func (c *xchacha20poly1305) Seal(dst, nonce, plaintext, additionalData []byte) []byte {
-	if len(nonce) != NonceSize {
-		panic("xchacha20poly1305: bad nonce length passed to Seal")
-	}
-
-	if uint64(len(plaintext)) > MaxPlaintextSize {
-		panic("xchacha20poly1305: plaintext too large")
-	}
-
-	var subKey [KeySize]byte
-	var hNonce [16]byte
-	var subNonce [chacha20poly1305.NonceSize]byte
-	copy(hNonce[:], nonce[:16])
-
-	HChaCha20(&subKey, &hNonce, &c.key)
-
-	// This can't error because we always provide a correctly sized key
-	chacha20poly1305, _ := chacha20poly1305.New(subKey[:])
-
-	copy(subNonce[4:], nonce[16:])
-
-	return chacha20poly1305.Seal(dst, subNonce[:], plaintext, additionalData)
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// This can't error because we always provide a correctly sized key
 
 func (c *xchacha20poly1305) Open(dst, nonce, ciphertext, additionalData []byte) ([]byte, error) {
-	if len(nonce) != NonceSize {
-		return nil, fmt.Errorf("xchacha20poly1305: bad nonce length passed to Open")
-	}
-	if uint64(len(ciphertext)) > MaxCiphertextSize {
-		return nil, fmt.Errorf("xchacha20poly1305: ciphertext too large")
-	}
-	var subKey [KeySize]byte
-	var hNonce [16]byte
-	var subNonce [chacha20poly1305.NonceSize]byte
-	copy(hNonce[:], nonce[:16])
-
-	HChaCha20(&subKey, &hNonce, &c.key)
-
-	// This can't error because we always provide a correctly sized key
-	chacha20poly1305, _ := chacha20poly1305.New(subKey[:])
-
-	copy(subNonce[4:], nonce[16:])
-
-	return chacha20poly1305.Open(dst, subNonce[:], ciphertext, additionalData)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// This can't error because we always provide a correctly sized key
 
 // HChaCha exported from
 // https://github.com/aead/chacha20/blob/8b13a72661dae6e9e5dea04f344f0dc95ea29547/chacha/chacha_generic.go#L194
@@ -129,131 +81,9 @@ func (c *xchacha20poly1305) Open(dst, nonce, ciphertext, additionalData []byte) 
 
 // HChaCha20 generates 32 pseudo-random bytes from a 128 bit nonce and a 256 bit secret key.
 // It can be used as a key-derivation-function (KDF).
-func HChaCha20(out *[32]byte, nonce *[16]byte, key *[32]byte) { hChaCha20Generic(out, nonce, key) }
+func HChaCha20(out *[32]byte, nonce *[16]byte, key *[32]byte) { _ = "STUB: not implemented"; return }
 
 func hChaCha20Generic(out *[32]byte, nonce *[16]byte, key *[32]byte) {
-	v00 := sigma0
-	v01 := sigma1
-	v02 := sigma2
-	v03 := sigma3
-	v04 := binary.LittleEndian.Uint32(key[0:])
-	v05 := binary.LittleEndian.Uint32(key[4:])
-	v06 := binary.LittleEndian.Uint32(key[8:])
-	v07 := binary.LittleEndian.Uint32(key[12:])
-	v08 := binary.LittleEndian.Uint32(key[16:])
-	v09 := binary.LittleEndian.Uint32(key[20:])
-	v10 := binary.LittleEndian.Uint32(key[24:])
-	v11 := binary.LittleEndian.Uint32(key[28:])
-	v12 := binary.LittleEndian.Uint32(nonce[0:])
-	v13 := binary.LittleEndian.Uint32(nonce[4:])
-	v14 := binary.LittleEndian.Uint32(nonce[8:])
-	v15 := binary.LittleEndian.Uint32(nonce[12:])
-
-	for i := 0; i < 20; i += 2 {
-		v00 += v04
-		v12 ^= v00
-		v12 = (v12 << 16) | (v12 >> 16)
-		v08 += v12
-		v04 ^= v08
-		v04 = (v04 << 12) | (v04 >> 20)
-		v00 += v04
-		v12 ^= v00
-		v12 = (v12 << 8) | (v12 >> 24)
-		v08 += v12
-		v04 ^= v08
-		v04 = (v04 << 7) | (v04 >> 25)
-		v01 += v05
-		v13 ^= v01
-		v13 = (v13 << 16) | (v13 >> 16)
-		v09 += v13
-		v05 ^= v09
-		v05 = (v05 << 12) | (v05 >> 20)
-		v01 += v05
-		v13 ^= v01
-		v13 = (v13 << 8) | (v13 >> 24)
-		v09 += v13
-		v05 ^= v09
-		v05 = (v05 << 7) | (v05 >> 25)
-		v02 += v06
-		v14 ^= v02
-		v14 = (v14 << 16) | (v14 >> 16)
-		v10 += v14
-		v06 ^= v10
-		v06 = (v06 << 12) | (v06 >> 20)
-		v02 += v06
-		v14 ^= v02
-		v14 = (v14 << 8) | (v14 >> 24)
-		v10 += v14
-		v06 ^= v10
-		v06 = (v06 << 7) | (v06 >> 25)
-		v03 += v07
-		v15 ^= v03
-		v15 = (v15 << 16) | (v15 >> 16)
-		v11 += v15
-		v07 ^= v11
-		v07 = (v07 << 12) | (v07 >> 20)
-		v03 += v07
-		v15 ^= v03
-		v15 = (v15 << 8) | (v15 >> 24)
-		v11 += v15
-		v07 ^= v11
-		v07 = (v07 << 7) | (v07 >> 25)
-		v00 += v05
-		v15 ^= v00
-		v15 = (v15 << 16) | (v15 >> 16)
-		v10 += v15
-		v05 ^= v10
-		v05 = (v05 << 12) | (v05 >> 20)
-		v00 += v05
-		v15 ^= v00
-		v15 = (v15 << 8) | (v15 >> 24)
-		v10 += v15
-		v05 ^= v10
-		v05 = (v05 << 7) | (v05 >> 25)
-		v01 += v06
-		v12 ^= v01
-		v12 = (v12 << 16) | (v12 >> 16)
-		v11 += v12
-		v06 ^= v11
-		v06 = (v06 << 12) | (v06 >> 20)
-		v01 += v06
-		v12 ^= v01
-		v12 = (v12 << 8) | (v12 >> 24)
-		v11 += v12
-		v06 ^= v11
-		v06 = (v06 << 7) | (v06 >> 25)
-		v02 += v07
-		v13 ^= v02
-		v13 = (v13 << 16) | (v13 >> 16)
-		v08 += v13
-		v07 ^= v08
-		v07 = (v07 << 12) | (v07 >> 20)
-		v02 += v07
-		v13 ^= v02
-		v13 = (v13 << 8) | (v13 >> 24)
-		v08 += v13
-		v07 ^= v08
-		v07 = (v07 << 7) | (v07 >> 25)
-		v03 += v04
-		v14 ^= v03
-		v14 = (v14 << 16) | (v14 >> 16)
-		v09 += v14
-		v04 ^= v09
-		v04 = (v04 << 12) | (v04 >> 20)
-		v03 += v04
-		v14 ^= v03
-		v14 = (v14 << 8) | (v14 >> 24)
-		v09 += v14
-		v04 ^= v09
-		v04 = (v04 << 7) | (v04 >> 25)
-	}
-
-	binary.LittleEndian.PutUint32(out[0:], v00)
-	binary.LittleEndian.PutUint32(out[4:], v01)
-	binary.LittleEndian.PutUint32(out[8:], v02)
-	binary.LittleEndian.PutUint32(out[12:], v03)
-	binary.LittleEndian.PutUint32(out[16:], v12)
-	binary.LittleEndian.PutUint32(out[20:], v13)
-	binary.LittleEndian.PutUint32(out[24:], v14)
-	binary.LittleEndian.PutUint32(out[28:], v15)
+	_ = "STUB: not implemented"
+	return
 }

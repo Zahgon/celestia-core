@@ -1,46 +1,18 @@
 package test
 
 import (
-	"fmt"
-	"os"
-	"path/filepath"
-
 	"github.com/cometbft/cometbft/config"
-	cmtos "github.com/cometbft/cometbft/libs/os"
 )
 
-func ResetTestRoot(testName string) *config.Config {
-	return ResetTestRootWithChainID(testName, "")
-}
+func ResetTestRoot(testName string) *config.Config { _ = "STUB: not implemented"; return nil }
 
 func ResetTestRootWithChainID(testName string, chainID string) *config.Config {
+	_ = "STUB: not implemented"
 	// create a unique, concurrency-safe test directory under os.TempDir()
-	rootDir, err := os.MkdirTemp("", fmt.Sprintf("%s-%s_", chainID, testName))
-	if err != nil {
-		panic(err)
-	}
-
-	config.EnsureRoot(rootDir)
-
-	baseConfig := config.DefaultBaseConfig()
-	genesisFilePath := filepath.Join(rootDir, baseConfig.Genesis)
-	privKeyFilePath := filepath.Join(rootDir, baseConfig.PrivValidatorKey)
-	privStateFilePath := filepath.Join(rootDir, baseConfig.PrivValidatorState)
-
-	if !cmtos.FileExists(genesisFilePath) {
-		if chainID == "" {
-			chainID = DefaultTestChainID
-		}
-		testGenesis := fmt.Sprintf(testGenesisFmt, chainID)
-		cmtos.MustWriteFile(genesisFilePath, []byte(testGenesis), 0644)
-	}
-	// we always overwrite the priv val
-	cmtos.MustWriteFile(privKeyFilePath, []byte(testPrivValidatorKey), 0644)
-	cmtos.MustWriteFile(privStateFilePath, []byte(testPrivValidatorState), 0644)
-
-	config := config.TestConfig().SetRoot(rootDir)
-	return config
+	return nil
 }
+
+// we always overwrite the priv val
 
 var testGenesisFmt = `{
   "genesis_time": "2018-10-10T08:20:13.695936996Z",

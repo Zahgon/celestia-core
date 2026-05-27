@@ -2,13 +2,9 @@ package types
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
-	cmtbytes "github.com/cometbft/cometbft/libs/bytes"
-	"github.com/cometbft/cometbft/libs/protoio"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	cmttime "github.com/cometbft/cometbft/types/time"
 )
 
 var (
@@ -35,49 +31,16 @@ type Proposal struct {
 // NewProposal returns a new Proposal.
 // If there is no POLRound, polRound should be -1.
 func NewProposal(height int64, round int32, polRound int32, blockID BlockID) *Proposal {
-	return &Proposal{
-		Type:      cmtproto.ProposalType,
-		Height:    height,
-		Round:     round,
-		BlockID:   blockID,
-		POLRound:  polRound,
-		Timestamp: cmttime.Now(),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ValidateBasic performs basic validation.
-func (p *Proposal) ValidateBasic() error {
-	if p.Type != cmtproto.ProposalType {
-		return errors.New("invalid Type")
-	}
-	if p.Height < 0 {
-		return errors.New("negative Height")
-	}
-	if p.Round < 0 {
-		return errors.New("negative Round")
-	}
-	if p.POLRound < -1 {
-		return errors.New("negative POLRound (exception: -1)")
-	}
-	if err := p.BlockID.ValidateBasic(); err != nil {
-		return fmt.Errorf("wrong BlockID: %v", err)
-	}
-	// ValidateBasic above would pass even if the BlockID was empty:
-	if !p.BlockID.IsComplete() {
-		return fmt.Errorf("expected a complete, non-empty BlockID, got: %v", p.BlockID)
-	}
+func (p *Proposal) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
-	// NOTE: Timestamp validation is subtle and handled elsewhere.
+// ValidateBasic above would pass even if the BlockID was empty:
 
-	if len(p.Signature) == 0 {
-		return errors.New("signature is missing")
-	}
-
-	if len(p.Signature) > MaxSignatureSize {
-		return fmt.Errorf("signature is too big (max: %d)", MaxSignatureSize)
-	}
-	return nil
-}
+// NOTE: Timestamp validation is subtle and handled elsewhere.
 
 // String returns a string representation of the Proposal.
 //
@@ -89,15 +52,7 @@ func (p *Proposal) ValidateBasic() error {
 // 6. timestamp
 //
 // See BlockID#String.
-func (p *Proposal) String() string {
-	return fmt.Sprintf("Proposal{%v/%v (%v, %v) %X @ %s}",
-		p.Height,
-		p.Round,
-		p.BlockID,
-		p.POLRound,
-		cmtbytes.Fingerprint(p.Signature),
-		CanonicalTime(p.Timestamp))
-}
+func (p *Proposal) String() string { _ = "STUB: not implemented"; return "" }
 
 // ProposalSignBytes returns the proto-encoding of the canonicalized Proposal,
 // for signing. Panics if the marshaling fails.
@@ -108,54 +63,16 @@ func (p *Proposal) String() string {
 //
 // See CanonicalizeProposal
 func ProposalSignBytes(chainID string, p *cmtproto.Proposal) []byte {
-	pb := CanonicalizeProposal(chainID, p)
-	bz, err := protoio.MarshalDelimited(&pb)
-	if err != nil {
-		panic(err)
-	}
-
-	return bz
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ToProto converts Proposal to protobuf
-func (p *Proposal) ToProto() *cmtproto.Proposal {
-	if p == nil {
-		return &cmtproto.Proposal{}
-	}
-	pb := new(cmtproto.Proposal)
-
-	pb.BlockID = p.BlockID.ToProto()
-	pb.Type = p.Type
-	pb.Height = p.Height
-	pb.Round = p.Round
-	pb.PolRound = p.POLRound
-	pb.Timestamp = p.Timestamp
-	pb.Signature = p.Signature
-
-	return pb
-}
+func (p *Proposal) ToProto() *cmtproto.Proposal { _ = "STUB: not implemented"; return nil }
 
 // FromProto sets a protobuf Proposal to the given pointer.
 // It returns an error if the proposal is invalid.
 func ProposalFromProto(pp *cmtproto.Proposal) (*Proposal, error) {
-	if pp == nil {
-		return nil, errors.New("nil proposal")
-	}
-
-	p := new(Proposal)
-
-	blockID, err := BlockIDFromProto(&pp.BlockID)
-	if err != nil {
-		return nil, err
-	}
-
-	p.BlockID = *blockID
-	p.Type = pp.Type
-	p.Height = pp.Height
-	p.Round = pp.Round
-	p.POLRound = pp.PolRound
-	p.Timestamp = pp.Timestamp
-	p.Signature = pp.Signature
-
-	return p, p.ValidateBasic()
+	_ = "STUB: not implemented"
+	return nil, nil
 }

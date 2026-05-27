@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"context"
-	"time"
 
 	"github.com/go-kit/kit/metrics"
 
@@ -64,50 +63,46 @@ type appConnConsensus struct {
 var _ AppConnConsensus = (*appConnConsensus)(nil)
 
 func NewAppConnConsensus(appConn abcicli.Client, metrics *Metrics) AppConnConsensus {
-	return &appConnConsensus{
-		metrics: metrics,
-		appConn: appConn,
-	}
+	_ = "STUB: not implemented"
+	return *new(AppConnConsensus)
 }
 
-func (app *appConnConsensus) Error() error {
-	return app.appConn.Error()
-}
+func (app *appConnConsensus) Error() error { _ = "STUB: not implemented"; return nil }
 
 func (app *appConnConsensus) InitChain(ctx context.Context, req *types.RequestInitChain) (*types.ResponseInitChain, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "init_chain", "type", "sync"))()
-	return app.appConn.InitChain(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) PrepareProposal(ctx context.Context,
 	req *types.RequestPrepareProposal) (*types.ResponsePrepareProposal, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "prepare_proposal", "type", "sync"))()
-	return app.appConn.PrepareProposal(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) ProcessProposal(ctx context.Context, req *types.RequestProcessProposal) (*types.ResponseProcessProposal, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "process_proposal", "type", "sync"))()
-	return app.appConn.ProcessProposal(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) ExtendVote(ctx context.Context, req *types.RequestExtendVote) (*types.ResponseExtendVote, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "extend_vote", "type", "sync"))()
-	return app.appConn.ExtendVote(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) VerifyVoteExtension(ctx context.Context, req *types.RequestVerifyVoteExtension) (*types.ResponseVerifyVoteExtension, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "verify_vote_extension", "type", "sync"))()
-	return app.appConn.VerifyVoteExtension(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) FinalizeBlock(ctx context.Context, req *types.RequestFinalizeBlock) (*types.ResponseFinalizeBlock, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "finalize_block", "type", "sync"))()
-	return app.appConn.FinalizeBlock(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnConsensus) Commit(ctx context.Context) (*types.ResponseCommit, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "commit", "type", "sync"))()
-	return app.appConn.Commit(ctx, &types.RequestCommit{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 //------------------------------------------------
@@ -119,38 +114,32 @@ type appConnMempool struct {
 }
 
 func NewAppConnMempool(appConn abcicli.Client, metrics *Metrics) AppConnMempool {
-	return &appConnMempool{
-		metrics: metrics,
-		appConn: appConn,
-	}
+	_ = "STUB: not implemented"
+	return *new(AppConnMempool)
 }
 
 func (app *appConnMempool) SetResponseCallback(cb abcicli.Callback) {
-	app.appConn.SetResponseCallback(cb)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (app *appConnMempool) Error() error {
-	return app.appConn.Error()
-}
+func (app *appConnMempool) Error() error { _ = "STUB: not implemented"; return nil }
 
-func (app *appConnMempool) Flush(ctx context.Context) error {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "flush", "type", "sync"))()
-	return app.appConn.Flush(ctx)
-}
+func (app *appConnMempool) Flush(ctx context.Context) error { _ = "STUB: not implemented"; return nil }
 
 func (app *appConnMempool) CheckTx(ctx context.Context, req *types.RequestCheckTx) (*types.ResponseCheckTx, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "check_tx", "type", "sync"))()
-	return app.appConn.CheckTx(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnMempool) CheckTxAsync(ctx context.Context, req *types.RequestCheckTx) (*abcicli.ReqRes, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "check_tx", "type", "async"))()
-	return app.appConn.CheckTxAsync(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnMempool) QuerySequence(ctx context.Context, req *types.RequestQuerySequence) (*types.ResponseQuerySequence, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "query_sequence", "type", "sync"))()
-	return app.appConn.QuerySequence(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 //------------------------------------------------
@@ -162,29 +151,25 @@ type appConnQuery struct {
 }
 
 func NewAppConnQuery(appConn abcicli.Client, metrics *Metrics) AppConnQuery {
-	return &appConnQuery{
-		metrics: metrics,
-		appConn: appConn,
-	}
+	_ = "STUB: not implemented"
+	return *new(AppConnQuery)
 }
 
-func (app *appConnQuery) Error() error {
-	return app.appConn.Error()
-}
+func (app *appConnQuery) Error() error { _ = "STUB: not implemented"; return nil }
 
 func (app *appConnQuery) Echo(ctx context.Context, msg string) (*types.ResponseEcho, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "echo", "type", "sync"))()
-	return app.appConn.Echo(ctx, msg)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnQuery) Info(ctx context.Context, req *types.RequestInfo) (*types.ResponseInfo, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "info", "type", "sync"))()
-	return app.appConn.Info(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnQuery) Query(ctx context.Context, req *types.RequestQuery) (*types.ResponseQuery, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "query", "type", "sync"))()
-	return app.appConn.Query(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 //------------------------------------------------
@@ -196,41 +181,34 @@ type appConnSnapshot struct {
 }
 
 func NewAppConnSnapshot(appConn abcicli.Client, metrics *Metrics) AppConnSnapshot {
-	return &appConnSnapshot{
-		metrics: metrics,
-		appConn: appConn,
-	}
+	_ = "STUB: not implemented"
+	return *new(AppConnSnapshot)
 }
 
-func (app *appConnSnapshot) Error() error {
-	return app.appConn.Error()
-}
+func (app *appConnSnapshot) Error() error { _ = "STUB: not implemented"; return nil }
 
 func (app *appConnSnapshot) ListSnapshots(ctx context.Context, req *types.RequestListSnapshots) (*types.ResponseListSnapshots, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "list_snapshots", "type", "sync"))()
-	return app.appConn.ListSnapshots(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnSnapshot) OfferSnapshot(ctx context.Context, req *types.RequestOfferSnapshot) (*types.ResponseOfferSnapshot, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "offer_snapshot", "type", "sync"))()
-	return app.appConn.OfferSnapshot(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnSnapshot) LoadSnapshotChunk(ctx context.Context, req *types.RequestLoadSnapshotChunk) (*types.ResponseLoadSnapshotChunk, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "load_snapshot_chunk", "type", "sync"))()
-	return app.appConn.LoadSnapshotChunk(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *appConnSnapshot) ApplySnapshotChunk(ctx context.Context, req *types.RequestApplySnapshotChunk) (*types.ResponseApplySnapshotChunk, error) {
-	defer addTimeSample(app.metrics.MethodTimingSeconds.With("method", "apply_snapshot_chunk", "type", "sync"))()
-	return app.appConn.ApplySnapshotChunk(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // addTimeSample returns a function that, when called, adds an observation to m.
 // The observation added to m is the number of seconds ellapsed since addTimeSample
 // was initially called. addTimeSample is meant to be called in a defer to calculate
 // the amount of time a function takes to complete.
-func addTimeSample(m metrics.Histogram) func() {
-	start := time.Now()
-	return func() { m.Observe(time.Since(start).Seconds()) }
-}
+func addTimeSample(m metrics.Histogram) func() { _ = "STUB: not implemented"; return nil }

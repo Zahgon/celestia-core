@@ -1,21 +1,11 @@
 package schema
 
 import (
-	"github.com/cometbft/cometbft/libs/bytes"
 	"github.com/cometbft/cometbft/libs/trace"
 )
 
 // MempoolTables returns the list of tables for mempool tracing.
-func MempoolTables() []string {
-	return []string{
-		MempoolTxTable,
-		MempoolPeerStateTable,
-		MempoolRecoveredPartsTable,
-		MempoolAddResultTable,
-		MempoolTxStatusTable,
-		MempoolRecheckTable,
-	}
-}
+func MempoolTables() []string { _ = "STUB: not implemented"; return nil }
 
 // Schema constants for the mempool_tx table.
 const (
@@ -33,24 +23,15 @@ type MempoolTx struct {
 }
 
 // Table returns the table name for the MempoolTx struct.
-func (MempoolTx) Table() string {
-	return MempoolTxTable
-}
+func (MempoolTx) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolTx writes a tracing point for a tx using the predetermined
 // schema for mempool tracing.
 func WriteMempoolTx(client trace.Tracer, peer string, txHash []byte, size int, transferType TransferType) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from the map of fields.
-	if !client.IsCollecting(MempoolTxTable) {
-		return
-	}
-	client.Write(MempoolTx{
-		TxHash:       bytes.HexBytes(txHash).String(),
-		Peer:         peer,
-		Size:         size,
-		TransferType: transferType,
-	})
+	return
 }
 
 const (
@@ -80,9 +61,7 @@ type MempoolPeerState struct {
 }
 
 // Table returns the table name for the MempoolPeerState struct.
-func (MempoolPeerState) Table() string {
-	return MempoolPeerStateTable
-}
+func (MempoolPeerState) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolPeerState writes a tracing point for the mempool state using
 // the predetermined schema for mempool tracing.
@@ -93,7 +72,8 @@ func WriteMempoolPeerState(
 	txHash []byte,
 	transferType TransferType,
 ) {
-	WriteMempoolPeerStateWithSeq(client, peer, stateUpdate, txHash, transferType, nil, 0)
+	_ = "STUB: not implemented"
+	return
 }
 
 // WriteMempoolPeerStateWithSeq writes a tracing point for the mempool state
@@ -107,25 +87,10 @@ func WriteMempoolPeerStateWithSeq(
 	signer []byte,
 	sequence uint64,
 ) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from creating the map of fields.
-	if !client.IsCollecting(MempoolPeerStateTable) {
-		return
-	}
-
-	signerStr := ""
-	if len(signer) > 0 {
-		signerStr = string(signer)
-	}
-
-	client.Write(MempoolPeerState{
-		Peer:         peer,
-		StateUpdate:  stateUpdate,
-		TransferType: transferType,
-		TxHash:       bytes.HexBytes(txHash).String(),
-		Signer:       signerStr,
-		Sequence:     sequence,
-	})
+	return
 }
 
 const (
@@ -153,9 +118,7 @@ type MempoolAddResult struct {
 }
 
 // Table returns the table name for the MempoolAddResult struct.
-func (MempoolAddResult) Table() string {
-	return MempoolAddResultTable
-}
+func (MempoolAddResult) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolAddResult writes a tracing point for mempool add results using
 // the predetermined schema for mempool tracing.
@@ -168,25 +131,10 @@ func WriteMempoolAddResult(
 	signer string,
 	sequence uint64,
 ) {
+	_ = "STUB: not implemented"
 	// this check is redundant to what is checked during client.Write, although it
 	// is an optimization to avoid allocations from creating the map of fields.
-	if !client.IsCollecting(MempoolAddResultTable) {
-		return
-	}
-
-	errStr := ""
-	if err != nil {
-		errStr = err.Error()
-	}
-
-	client.Write(MempoolAddResult{
-		Peer:     peer,
-		TxHash:   bytes.HexBytes(txHash).String(),
-		Result:   result,
-		Error:    errStr,
-		Signer:   signer,
-		Sequence: sequence,
-	})
+	return
 }
 
 const (
@@ -204,22 +152,13 @@ type MempoolRecoveredParts struct {
 	Duration       int64 `json:"duration"`
 }
 
-func (m MempoolRecoveredParts) Table() string {
-	return MempoolRecoveredPartsTable
-}
+func (m MempoolRecoveredParts) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolRecoveredParts writes a tracing point for the recovery of parts
 // using the predetermined schema for mempool tracing.
 func WriteMempoolRecoveredParts(client trace.Tracer, height int64, round int32, parts int, duration int64) {
-	if !client.IsCollecting(MempoolRecoveredPartsTable) {
-		return
-	}
-	client.Write(MempoolRecoveredParts{
-		Height:         height,
-		Round:          round,
-		RecoveredParts: parts,
-		Duration:       duration,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -248,9 +187,7 @@ type MempoolTxStatus struct {
 }
 
 // Table returns the table name for the MempoolTxStatus struct.
-func (MempoolTxStatus) Table() string {
-	return MempoolTxStatusTable
-}
+func (MempoolTxStatus) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolTxStatus writes a tracing point for mempool transaction status
 // changes using the predetermined schema for mempool tracing.
@@ -262,27 +199,8 @@ func WriteMempoolTxStatus(
 	signer []byte,
 	sequence uint64,
 ) {
-	if !client.IsCollecting(MempoolTxStatusTable) {
-		return
-	}
-
-	errStr := ""
-	if err != nil {
-		errStr = err.Error()
-	}
-
-	signerStr := ""
-	if len(signer) > 0 {
-		signerStr = string(signer)
-	}
-
-	client.Write(MempoolTxStatus{
-		TxHash:   bytes.HexBytes(txHash).String(),
-		Status:   status,
-		Error:    errStr,
-		Signer:   signerStr,
-		Sequence: sequence,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -301,9 +219,7 @@ type MempoolRecheck struct {
 }
 
 // Table returns the table name for the MempoolRecheck struct.
-func (MempoolRecheck) Table() string {
-	return MempoolRecheckTable
-}
+func (MempoolRecheck) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteMempoolRecheck writes a tracing point for mempool recheck events using
 // the predetermined schema for mempool tracing.
@@ -315,25 +231,6 @@ func WriteMempoolRecheck(
 	kept bool,
 	err error,
 ) {
-	if !client.IsCollecting(MempoolRecheckTable) {
-		return
-	}
-
-	errStr := ""
-	if err != nil {
-		errStr = err.Error()
-	}
-
-	signerStr := ""
-	if len(signer) > 0 {
-		signerStr = string(signer)
-	}
-
-	client.Write(MempoolRecheck{
-		TxHash:   bytes.HexBytes(txHash).String(),
-		Signer:   signerStr,
-		Sequence: sequence,
-		Kept:     kept,
-		Error:    errStr,
-	})
+	_ = "STUB: not implemented"
+	return
 }

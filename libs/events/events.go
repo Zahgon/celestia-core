@@ -2,8 +2,6 @@
 package events
 
 import (
-	"fmt"
-
 	"github.com/cometbft/cometbft/libs/service"
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
 )
@@ -14,9 +12,7 @@ type ErrListenerWasRemoved struct {
 }
 
 // Error implements the error interface.
-func (e ErrListenerWasRemoved) Error() string {
-	return fmt.Sprintf("listener #%s was removed", e.listenerID)
-}
+func (e ErrListenerWasRemoved) Error() string { _ = "STUB: not implemented"; return "" }
 
 // EventData is a generic event data can be typed and registered with
 // tendermint/go-amino via concrete implementation of this interface.
@@ -59,104 +55,52 @@ type eventSwitch struct {
 	listeners  map[string]*eventListener
 }
 
-func NewEventSwitch() EventSwitch {
-	evsw := &eventSwitch{
-		eventCells: make(map[string]*eventCell),
-		listeners:  make(map[string]*eventListener),
-	}
-	evsw.BaseService = *service.NewBaseService(nil, "EventSwitch", evsw)
-	return evsw
-}
+func NewEventSwitch() EventSwitch { _ = "STUB: not implemented"; return *new(EventSwitch) }
 
-func (evsw *eventSwitch) OnStart() error {
-	return nil
-}
+func (evsw *eventSwitch) OnStart() error { _ = "STUB: not implemented"; return nil }
 
-func (evsw *eventSwitch) OnStop() {}
+func (evsw *eventSwitch) OnStop() { _ = "STUB: not implemented"; return }
 
 func (evsw *eventSwitch) AddListenerForEvent(listenerID, event string, cb EventCallback) error {
+	_ = "STUB: not implemented"
 	// Get/Create eventCell and listener.
-	evsw.mtx.Lock()
-	eventCell := evsw.eventCells[event]
-	if eventCell == nil {
-		eventCell = newEventCell()
-		evsw.eventCells[event] = eventCell
-	}
-	listener := evsw.listeners[listenerID]
-	if listener == nil {
-		listener = newEventListener(listenerID)
-		evsw.listeners[listenerID] = listener
-	}
-	evsw.mtx.Unlock()
-
-	// Add event and listener.
-	if err := listener.AddEvent(event); err != nil {
-		return err
-	}
-	eventCell.AddListener(listenerID, cb)
-
 	return nil
 }
 
+// Add event and listener.
+
 func (evsw *eventSwitch) RemoveListener(listenerID string) {
+	_ = "STUB: not implemented"
 	// Get and remove listener.
-	evsw.mtx.RLock()
-	listener := evsw.listeners[listenerID]
-	evsw.mtx.RUnlock()
-	if listener == nil {
-		return
-	}
-
-	evsw.mtx.Lock()
-	delete(evsw.listeners, listenerID)
-	evsw.mtx.Unlock()
-
-	// Remove callback for each event.
-	listener.SetRemoved()
-	for _, event := range listener.GetEvents() {
-		evsw.RemoveListenerForEvent(event, listenerID)
-	}
+	return
 }
+
+// Remove callback for each event.
 
 func (evsw *eventSwitch) RemoveListenerForEvent(event string, listenerID string) {
+	_ = "STUB: not implemented"
 	// Get eventCell
-	evsw.mtx.Lock()
-	eventCell := evsw.eventCells[event]
-	evsw.mtx.Unlock()
-
-	if eventCell == nil {
-		return
-	}
-
-	// Remove listenerID from eventCell
-	numListeners := eventCell.RemoveListener(listenerID)
-
-	// Maybe garbage collect eventCell.
-	if numListeners == 0 {
-		// Lock again and double check.
-		evsw.mtx.Lock()      // OUTER LOCK
-		eventCell.mtx.Lock() // INNER LOCK
-		if len(eventCell.listeners) == 0 {
-			delete(evsw.eventCells, event)
-		}
-		eventCell.mtx.Unlock() // INNER LOCK
-		evsw.mtx.Unlock()      // OUTER LOCK
-	}
+	return
 }
+
+// Remove listenerID from eventCell
+
+// Maybe garbage collect eventCell.
+
+// Lock again and double check.
+// OUTER LOCK
+// INNER LOCK
+
+// INNER LOCK
+// OUTER LOCK
 
 func (evsw *eventSwitch) FireEvent(event string, data EventData) {
+	_ = "STUB: not implemented"
 	// Get the eventCell
-	evsw.mtx.RLock()
-	eventCell := evsw.eventCells[event]
-	evsw.mtx.RUnlock()
-
-	if eventCell == nil {
-		return
-	}
-
-	// Fire event for all listeners in eventCell
-	eventCell.FireEvent(data)
+	return
 }
+
+// Fire event for all listeners in eventCell
 
 //-----------------------------------------------------------------------------
 
@@ -166,38 +110,16 @@ type eventCell struct {
 	listeners map[string]EventCallback
 }
 
-func newEventCell() *eventCell {
-	return &eventCell{
-		listeners: make(map[string]EventCallback),
-	}
-}
+func newEventCell() *eventCell { _ = "STUB: not implemented"; return nil }
 
 func (cell *eventCell) AddListener(listenerID string, cb EventCallback) {
-	cell.mtx.Lock()
-	cell.listeners[listenerID] = cb
-	cell.mtx.Unlock()
+	_ = "STUB: not implemented"
+	return
 }
 
-func (cell *eventCell) RemoveListener(listenerID string) int {
-	cell.mtx.Lock()
-	delete(cell.listeners, listenerID)
-	numListeners := len(cell.listeners)
-	cell.mtx.Unlock()
-	return numListeners
-}
+func (cell *eventCell) RemoveListener(listenerID string) int { _ = "STUB: not implemented"; return 0 }
 
-func (cell *eventCell) FireEvent(data EventData) {
-	cell.mtx.RLock()
-	eventCallbacks := make([]EventCallback, 0, len(cell.listeners))
-	for _, cb := range cell.listeners {
-		eventCallbacks = append(eventCallbacks, cb)
-	}
-	cell.mtx.RUnlock()
-
-	for _, cb := range eventCallbacks {
-		cb(data)
-	}
-}
+func (cell *eventCell) FireEvent(data EventData) { _ = "STUB: not implemented"; return }
 
 //-----------------------------------------------------------------------------
 
@@ -211,37 +133,10 @@ type eventListener struct {
 	events  []string
 }
 
-func newEventListener(id string) *eventListener {
-	return &eventListener{
-		id:      id,
-		removed: false,
-		events:  nil,
-	}
-}
+func newEventListener(id string) *eventListener { _ = "STUB: not implemented"; return nil }
 
-func (evl *eventListener) AddEvent(event string) error {
-	evl.mtx.Lock()
+func (evl *eventListener) AddEvent(event string) error { _ = "STUB: not implemented"; return nil }
 
-	if evl.removed {
-		evl.mtx.Unlock()
-		return ErrListenerWasRemoved{listenerID: evl.id}
-	}
+func (evl *eventListener) GetEvents() []string { _ = "STUB: not implemented"; return nil }
 
-	evl.events = append(evl.events, event)
-	evl.mtx.Unlock()
-	return nil
-}
-
-func (evl *eventListener) GetEvents() []string {
-	evl.mtx.RLock()
-	events := make([]string, len(evl.events))
-	copy(events, evl.events)
-	evl.mtx.RUnlock()
-	return events
-}
-
-func (evl *eventListener) SetRemoved() {
-	evl.mtx.Lock()
-	evl.removed = true
-	evl.mtx.Unlock()
-}
+func (evl *eventListener) SetRemoved() { _ = "STUB: not implemented"; return }

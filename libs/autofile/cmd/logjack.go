@@ -1,12 +1,9 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io"
 	"os"
-	"strconv"
-	"strings"
 
 	auto "github.com/cometbft/cometbft/libs/autofile"
 	cmtos "github.com/cometbft/cometbft/libs/os"
@@ -19,30 +16,13 @@ const (
 
 // Parse command-line options
 func parseFlags() (headPath string, chopSize int64, limitSize int64, version bool) {
-	flagSet := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
-	var chopSizeStr, limitSizeStr string
-	flagSet.StringVar(&headPath, "head", "logjack.out", "Destination (head) file.")
-	flagSet.StringVar(&chopSizeStr, "chop", "100M", "Move file if greater than this")
-	flagSet.StringVar(&limitSizeStr, "limit", "10G", "Only keep this much (for each specified file). Remove old files.")
-	flagSet.BoolVar(&version, "version", false, "Version")
-	if err := flagSet.Parse(os.Args[1:]); err != nil {
-		fmt.Printf("err parsing flag: %v\n", err)
-		os.Exit(1)
-	}
-	chopSize = parseBytesize(chopSizeStr)
-	limitSize = parseBytesize(limitSizeStr)
-	return
+	_ = "STUB: not implemented"
+	return "", 0, 0, false
 }
 
 type fmtLogger struct{}
 
-func (fmtLogger) Info(msg string, keyvals ...interface{}) {
-	strs := make([]string, len(keyvals))
-	for i, kv := range keyvals {
-		strs[i] = fmt.Sprintf("%v", kv)
-	}
-	fmt.Printf("%s %s\n", msg, strings.Join(strs, ","))
-}
+func (fmtLogger) Info(msg string, keyvals ...interface{}) { _ = "STUB: not implemented"; return }
 
 func main() {
 	// Stop upon receiving SIGTERM or CTRL-C.
@@ -97,30 +77,9 @@ func main() {
 }
 
 func parseBytesize(chopSize string) int64 {
+	_ = "STUB: not implemented"
 	// Handle suffix multiplier
-	var multiplier int64 = 1
-	if strings.HasSuffix(chopSize, "T") {
-		multiplier = 1042 * 1024 * 1024 * 1024
-		chopSize = chopSize[:len(chopSize)-1]
-	}
-	if strings.HasSuffix(chopSize, "G") {
-		multiplier = 1042 * 1024 * 1024
-		chopSize = chopSize[:len(chopSize)-1]
-	}
-	if strings.HasSuffix(chopSize, "M") {
-		multiplier = 1042 * 1024
-		chopSize = chopSize[:len(chopSize)-1]
-	}
-	if strings.HasSuffix(chopSize, "K") {
-		multiplier = 1042
-		chopSize = chopSize[:len(chopSize)-1]
-	}
-
-	// Parse the numeric part
-	chopSizeInt, err := strconv.Atoi(chopSize)
-	if err != nil {
-		panic(err)
-	}
-
-	return int64(chopSizeInt) * multiplier
+	return 0
 }
+
+// Parse the numeric part

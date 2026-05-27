@@ -66,9 +66,17 @@ type EvidencePool interface {
 type EmptyEvidencePool struct{}
 
 func (EmptyEvidencePool) PendingEvidence(int64) (ev []types.Evidence, size int64) {
+	_ = "STUB: not implemented"
 	return nil, 0
 }
-func (EmptyEvidencePool) AddEvidence(types.Evidence) error                { return nil }
-func (EmptyEvidencePool) Update(State, types.EvidenceList)                {}
-func (EmptyEvidencePool) CheckEvidence(types.EvidenceList) error          { return nil }
-func (EmptyEvidencePool) ReportConflictingVotes(*types.Vote, *types.Vote) {}
+
+func (EmptyEvidencePool) AddEvidence(types.Evidence) error { _ = "STUB: not implemented"; return nil }
+func (EmptyEvidencePool) Update(State, types.EvidenceList) { _ = "STUB: not implemented"; return }
+func (EmptyEvidencePool) CheckEvidence(types.EvidenceList) error {
+	_ = "STUB: not implemented"
+	return nil
+}
+func (EmptyEvidencePool) ReportConflictingVotes(*types.Vote, *types.Vote) {
+	_ = "STUB: not implemented"
+	return
+}

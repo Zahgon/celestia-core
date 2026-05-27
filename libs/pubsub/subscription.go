@@ -29,46 +29,36 @@ type Subscription struct {
 }
 
 // NewSubscription returns a new subscription with the given outCapacity.
-func NewSubscription(outCapacity int) *Subscription {
-	return &Subscription{
-		out:      make(chan Message, outCapacity),
-		canceled: make(chan struct{}),
-	}
-}
+func NewSubscription(outCapacity int) *Subscription { _ = "STUB: not implemented"; return nil }
 
 // Out returns a channel onto which messages and events are published.
 // Unsubscribe/UnsubscribeAll does not close the channel to avoid clients from
 // receiving a nil message.
 func (s *Subscription) Out() <-chan Message {
-	return s.out
+	_ = "STUB: not implemented"
+
+	// Canceled returns a channel that's closed when the subscription is
+	// terminated and supposed to be used in a select statement.
+	return nil
 }
 
-// Canceled returns a channel that's closed when the subscription is
-// terminated and supposed to be used in a select statement.
 func (s *Subscription) Canceled() <-chan struct{} {
-	return s.canceled
+	_ = "STUB: not implemented"
+
+	// Err returns nil if the channel returned is not yet closed.
+	// If the channel is closed, Err returns a non-nil error explaining why:
+	//   - ErrUnsubscribed if the subscriber choose to unsubscribe,
+	//   - ErrOutOfCapacity if the subscriber is not pulling messages fast enough
+	//     and the channel returned by Out became full,
+	//
+	// After Err returns a non-nil error, successive calls to Err return the same
+	// error.
+	return nil
 }
 
-// Err returns nil if the channel returned is not yet closed.
-// If the channel is closed, Err returns a non-nil error explaining why:
-//   - ErrUnsubscribed if the subscriber choose to unsubscribe,
-//   - ErrOutOfCapacity if the subscriber is not pulling messages fast enough
-//     and the channel returned by Out became full,
-//
-// After Err returns a non-nil error, successive calls to Err return the same
-// error.
-func (s *Subscription) Err() error {
-	s.mtx.RLock()
-	defer s.mtx.RUnlock()
-	return s.err
-}
+func (s *Subscription) Err() error { _ = "STUB: not implemented"; return nil }
 
-func (s *Subscription) cancel(err error) {
-	s.mtx.Lock()
-	s.err = err
-	s.mtx.Unlock()
-	close(s.canceled)
-}
+func (s *Subscription) cancel(err error) { _ = "STUB: not implemented"; return }
 
 // Message glues data and events together.
 type Message struct {
@@ -77,15 +67,16 @@ type Message struct {
 }
 
 func NewMessage(data interface{}, events map[string][]string) Message {
-	return Message{data, events}
+	_ = "STUB: not implemented"
+	return *new(Message)
 }
 
 // Data returns an original data published.
 func (msg Message) Data() interface{} {
-	return msg.data
+	_ = "STUB: not implemented"
+
+	// Events returns events, which matched the client's query.
+	return nil
 }
 
-// Events returns events, which matched the client's query.
-func (msg Message) Events() map[string][]string {
-	return msg.events
-}
+func (msg Message) Events() map[string][]string { _ = "STUB: not implemented"; return nil }

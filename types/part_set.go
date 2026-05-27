@@ -1,20 +1,11 @@
 package types
 
 import (
-	"bytes"
 	"errors"
-	"fmt"
-	"runtime"
-
-	"golang.org/x/sync/errgroup"
-
-	"github.com/klauspost/reedsolomon"
 
 	"github.com/cometbft/cometbft/crypto/merkle"
 	"github.com/cometbft/cometbft/libs/bits"
 	cmtbytes "github.com/cometbft/cometbft/libs/bytes"
-	cmtjson "github.com/cometbft/cometbft/libs/json"
-	cmtmath "github.com/cometbft/cometbft/libs/math"
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
@@ -33,13 +24,9 @@ type ErrInvalidPart struct {
 	Reason error
 }
 
-func (e ErrInvalidPart) Error() string {
-	return fmt.Sprintf("invalid part: %v", e.Reason)
-}
+func (e ErrInvalidPart) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrInvalidPart) Unwrap() error {
-	return e.Reason
-}
+func (e ErrInvalidPart) Unwrap() error { _ = "STUB: not implemented"; return nil }
 
 type PartInfo struct {
 	*Part
@@ -55,88 +42,29 @@ type Part struct {
 }
 
 // ValidateBasic performs basic validation.
-func (part *Part) ValidateBasic() error {
-	if len(part.Bytes) > int(BlockPartSizeBytes) {
-		return ErrPartTooBig
-	}
-	// All parts except the last one should have the same constant size.
-	if int64(part.Index) < part.Proof.Total-1 && len(part.Bytes) != int(BlockPartSizeBytes) {
-		return ErrPartInvalidSize
-	}
-	if int64(part.Index) != part.Proof.Index {
-		return ErrInvalidPart{Reason: fmt.Errorf("part index %d != proof index %d", part.Index, part.Proof.Index)}
-	}
-	if err := part.Proof.ValidateBasic(); err != nil {
-		return ErrInvalidPart{Reason: fmt.Errorf("wrong Proof: %w", err)}
-	}
-	return nil
-}
+func (part *Part) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
+
+// All parts except the last one should have the same constant size.
 
 // GetProof returns the merkle proof while safely handling concurrent access
-func (part *Part) GetProof() merkle.Proof {
-	part.mtx.Lock()
-	defer part.mtx.Unlock()
-	return part.Proof
-}
+func (part *Part) GetProof() merkle.Proof { _ = "STUB: not implemented"; return *new(merkle.Proof) }
 
 // SetProof sets the merkle proof while safely handling concurrent access
-func (part *Part) SetProof(proof merkle.Proof) {
-	part.mtx.Lock()
-	defer part.mtx.Unlock()
-	part.Proof = proof
-}
+func (part *Part) SetProof(proof merkle.Proof) { _ = "STUB: not implemented"; return }
 
 // String returns a string representation of Part.
 //
 // See StringIndented.
-func (part *Part) String() string {
-	return part.StringIndented("")
-}
+func (part *Part) String() string { _ = "STUB: not implemented"; return "" }
 
 // StringIndented returns an indented Part.
 //
 // See merkle.Proof#StringIndented
-func (part *Part) StringIndented(indent string) string {
-	return fmt.Sprintf(`Part{#%v
-%s  Bytes: %X...
-%s  Proof: %v
-%s}`,
-		part.Index,
-		indent, cmtbytes.Fingerprint(part.Bytes),
-		indent, part.Proof.StringIndented(indent+"  "),
-		indent)
-}
+func (part *Part) StringIndented(indent string) string { _ = "STUB: not implemented"; return "" }
 
-func (part *Part) ToProto() (*cmtproto.Part, error) {
-	if part == nil {
-		return nil, errors.New("nil part")
-	}
-	pb := new(cmtproto.Part)
-	proof := part.Proof.ToProto()
+func (part *Part) ToProto() (*cmtproto.Part, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	pb.Index = part.Index
-	pb.Bytes = part.Bytes
-	pb.Proof = *proof
-
-	return pb, nil
-}
-
-func PartFromProto(pb *cmtproto.Part) (*Part, error) {
-	if pb == nil {
-		return nil, errors.New("nil part")
-	}
-
-	part := new(Part)
-	proof, err := merkle.ProofFromProto(&pb.Proof, false)
-	if err != nil {
-		return nil, err
-	}
-	part.Index = pb.Index
-	part.Bytes = pb.Bytes
-	part.Proof = *proof
-
-	return part, part.ValidateBasic()
-}
+func PartFromProto(pb *cmtproto.Part) (*Part, error) { _ = "STUB: not implemented"; return nil, nil }
 
 //-------------------------------------
 
@@ -149,58 +77,34 @@ type PartSetHeader struct {
 //
 // 1. total number of parts
 // 2. first 6 bytes of the hash
-func (psh PartSetHeader) String() string {
-	return fmt.Sprintf("%v:%X", psh.Total, cmtbytes.Fingerprint(psh.Hash))
-}
+func (psh PartSetHeader) String() string { _ = "STUB: not implemented"; return "" }
 
-func (psh PartSetHeader) IsZero() bool {
-	return psh.Total == 0 && len(psh.Hash) == 0
-}
+func (psh PartSetHeader) IsZero() bool { _ = "STUB: not implemented"; return false }
 
-func (psh PartSetHeader) Equals(other PartSetHeader) bool {
-	return psh.Total == other.Total && bytes.Equal(psh.Hash, other.Hash)
-}
+func (psh PartSetHeader) Equals(other PartSetHeader) bool { _ = "STUB: not implemented"; return false }
 
 // ValidateBasic performs basic validation.
-func (psh PartSetHeader) ValidateBasic() error {
-	if psh.Total > MaxBlockPartsCount {
-		return fmt.Errorf("total %d exceeds MaxBlockPartsCount %d", psh.Total, MaxBlockPartsCount)
-	}
-	// Hash can be empty in case of POLBlockID.PartSetHeader in Proposal.
-	if err := ValidateHash(psh.Hash); err != nil {
-		return fmt.Errorf("wrong Hash: %w", err)
-	}
-	return nil
-}
+func (psh PartSetHeader) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
+
+// Hash can be empty in case of POLBlockID.PartSetHeader in Proposal.
 
 // ToProto converts PartSetHeader to protobuf
 func (psh *PartSetHeader) ToProto() cmtproto.PartSetHeader {
-	if psh == nil {
-		return cmtproto.PartSetHeader{}
-	}
-
-	return cmtproto.PartSetHeader{
-		Total: psh.Total,
-		Hash:  psh.Hash,
-	}
+	_ = "STUB: not implemented"
+	return *new(cmtproto.PartSetHeader)
 }
 
 // FromProto sets a protobuf PartSetHeader to the given pointer
 func PartSetHeaderFromProto(ppsh *cmtproto.PartSetHeader) (*PartSetHeader, error) {
-	if ppsh == nil {
-		return nil, errors.New("nil PartSetHeader")
-	}
-	psh := new(PartSetHeader)
-	psh.Total = ppsh.Total
-	psh.Hash = ppsh.Hash
-
-	return psh, psh.ValidateBasic()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // ProtoPartSetHeaderIsZero is similar to the IsZero function for
 // PartSetHeader, but for the Protobuf representation.
 func ProtoPartSetHeaderIsZero(ppsh *cmtproto.PartSetHeader) bool {
-	return ppsh.Total == 0 && len(ppsh.Hash) == 0
+	_ = "STUB: not implemented"
+	return false
 }
 
 //-------------------------------------
@@ -232,146 +136,58 @@ type PartSet struct {
 // The data bytes are split into "partSize" chunks, and merkle tree computed.
 // CONTRACT: partSize is greater than zero.
 func NewPartSetFromData(data []byte, partSize uint32) (ops *PartSet, err error) {
-	total := (uint32(len(data)) + partSize - 1) / partSize
-	chunks := make([][]byte, total)
-	for i := uint32(0); i < total; i++ {
-		chunk := data[i*partSize : cmtmath.MinInt(len(data), int((i+1)*partSize))]
-		chunks[i] = chunk
-	}
-
-	// Compute merkle proofs
-	root, proofs := merkle.ParallelProofsFromByteSlices(chunks)
-
-	ops = NewPartSetFromHeader(PartSetHeader{
-		Total: total,
-		Hash:  root,
-	}, partSize)
-
-	// Fill the buffer in a single copy and populate metadata.
-	copied := copy(ops.buffer, data)
-	if copied != len(data) {
-		return nil, fmt.Errorf("copy failed: %d < %d", copied, len(data))
-	}
-
-	// Set sizes and bookkeeping.
-	if total > 0 {
-		lastIdx := total - 1
-		ops.lastPartSize = len(chunks[lastIdx])
-	}
-	ops.proofs = make([]merkle.Proof, total)
-	for i := uint32(0); i < total; i++ {
-		ops.proofs[i] = *proofs[i]
-	}
-	ops.partsBitArray.Fill()
-	ops.count = total
-	ops.byteSize = int64(len(data))
-
-	return ops, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// Compute merkle proofs
+
+// Fill the buffer in a single copy and populate metadata.
+
+// Set sizes and bookkeeping.
 
 // newPartSetFromChunks creates a new PartSet from given data chunks, and other data.
 func newPartSetFromChunks(chunks [][]byte, root cmtbytes.HexBytes, proofs []*merkle.Proof, partSize int) (*PartSet, error) {
-	total := len(chunks)
-	if total != len(proofs) {
-		return nil, fmt.Errorf("chunks and proofs have different lengths: %d != %d", len(chunks), len(proofs))
-	}
-	if root == nil {
-		return nil, fmt.Errorf("root is nil")
-	}
-
-	// create a new partset using the new parity parts.
-	ps := NewPartSetFromHeader(PartSetHeader{
-		Total: uint32(total),
-		Hash:  root,
-	}, uint32(partSize))
-
-	// access ps directly, without mutex, because we know it is not used elsewhere
-	for i := 0; i < total; i++ {
-		start := i * partSize
-		end := start + len(chunks[i])
-
-		// Ensure we don't exceed buffer bounds
-		if end > len(ps.buffer) {
-			return nil, fmt.Errorf("part data exceeds buffer bounds")
-		}
-
-		copy(ps.buffer[start:end], chunks[i])
-		ps.proofs[i] = *proofs[i]
-	}
-	ps.partsBitArray.Fill()
-	ps.count = uint32(total)
-	ps.lastPartSize = len(chunks[total-1])
-	ps.byteSize = int64(len(ps.buffer))
-	return ps, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// create a new partset using the new parity parts.
+
+// access ps directly, without mutex, because we know it is not used elsewhere
+
+// Ensure we don't exceed buffer bounds
 
 // Encode Extend erasure encodes the block parts. Only the original parts should be
 // provided. The parity data is formed into its own PartSet and returned
 // alongside the length of the last part. The length of the last part is
 // necessary because the last part may be padded with zeros after decoding. These zeros must be removed before computi
 func Encode(ops *PartSet, partSize uint32) (*PartSet, int, error) {
-	total := int(ops.Total())
-	chunks := make([][]byte, 2*total)
-	ops.mtx.Lock()
-	for i := range total {
-		chunks[i] = ops.getPartBytes(i)
-	}
-	ops.mtx.Unlock()
-
-	ps := int(partSize)
-	parityBuffer := make([]byte, total*ps) // allocate once, only slice later
-	for i := 0; i < total; i++ {
-		chunks[total+i] = parityBuffer[i*ps : (i+1)*ps]
-	}
-
-	// pad ONLY the last chunk and not the part with zeros if necessary AFTER the root has been generated
-	lastLen := len(ops.GetPartBytes(total - 1))
-	if lastLen < int(partSize) {
-		padded := make([]byte, partSize)
-		count := copy(padded, chunks[total-1])
-		if count < len(chunks[total-1]) {
-			return nil, 0, fmt.Errorf("copy failed of unpadded part with index %d: %d < %d", ops.Total()-1, count, len(chunks[ops.Total()-1]))
-		}
-		chunks[total-1] = padded
-	}
-
-	// init an encoder if it is not already initialized using the original
-	// number of parts.
-	enc, err := reedsolomon.New(total, total)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// Encode the parts.
-	err = enc.Encode(chunks)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	// only the parity data is needed for the new partset.
-	chunks = chunks[total:]
-	eroot, eproofs := merkle.ParallelProofsFromByteSlices(chunks)
-
-	eps, err := newPartSetFromChunks(chunks, eroot, eproofs, ps)
-	if err != nil {
-		return nil, 0, err
-	}
-	return eps, lastLen, nil
+	_ = "STUB: not implemented"
+	return nil, 0, nil
 }
+
+// allocate once, only slice later
+
+// pad ONLY the last chunk and not the part with zeros if necessary AFTER the root has been generated
+
+// init an encoder if it is not already initialized using the original
+// number of parts.
+
+// Encode the parts.
+
+// only the parity data is needed for the new partset.
 
 // IsReadyForDecoding returns true if the PartSet has every single part, not just
 // ready to be decoded.
 // TODO: this here only requires 2/3rd. We need all the data now because we have no erasure encoding.
-func (ps *PartSet) IsReadyForDecoding() bool {
-	return ps.IsComplete()
-}
+func (ps *PartSet) IsReadyForDecoding() bool { _ = "STUB: not implemented"; return false }
 
 // pruneLastPart trims the last original part to its true length, removing any
 // Reed-Solomon padding bytes that were added during encoding.
 func pruneLastPart(data [][]byte, lastIndex uint32, lastPartLen int) {
-	if len(data[lastIndex]) != lastPartLen {
-		data[lastIndex] = data[lastIndex][:lastPartLen]
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // Decode uses the block parts that are provided to reconstruct the original
@@ -379,275 +195,78 @@ func pruneLastPart(data [][]byte, lastIndex uint32, lastPartLen int) {
 // is different from that in the PartSetHeader. Parts are fully complete with
 // proofs after decoding.
 func Decode(ops, eps *PartSet, lastPartLen int) (*PartSet, *PartSet, error) {
-	enc, err := reedsolomon.New(int(ops.total), int(eps.total))
-	if err != nil {
-		return nil, nil, err
-	}
-
-	data := make([][]byte, ops.Total()+eps.Total())
-	ops.mtx.Lock()
-	for i := 0; i < int(ops.Total()); i++ {
-		chunk := ops.getPartBytes(i)
-		if chunk == nil {
-			data[i] = nil
-			continue
-		}
-		if len(chunk) != int(BlockPartSizeBytes) {
-			padded := make([]byte, BlockPartSizeBytes)
-			count := copy(padded, chunk)
-			if count < len(chunk) {
-				return nil, nil, fmt.Errorf("unpadded part with index %d copy failed %d < %d", i, count, len(chunk))
-			}
-			chunk = padded
-		}
-		data[i] = chunk
-	}
-	ops.mtx.Unlock()
-
-	eps.mtx.Lock()
-	for i := 0; i < int(eps.Total()); i++ {
-		chunk := eps.getPartBytes(i)
-		if chunk == nil {
-			data[int(ops.Total())+i] = nil
-			continue
-		}
-		data[int(ops.Total())+i] = chunk
-	}
-	eps.mtx.Unlock()
-
-	err = enc.Reconstruct(data)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// prune the last part if we need to
-	pruneLastPart(data, ops.Total()-1, lastPartLen)
-
-	// recalculate all of the proofs since we apparently don't have a function
-	// to generate a single proof... TODO: don't generate proofs for block parts
-	// we already have...
-	root, proofs := merkle.ParallelProofsFromByteSlices(data[:ops.Total()])
-	if !bytes.Equal(root, ops.Hash()) {
-		return nil, nil, fmt.Errorf("reconstructed data has different hash!! want: %X, got: %X", ops.hash, root)
-	}
-
-	eg := errgroup.Group{}
-	eg.SetLimit(runtime.NumCPU())
-	for i, d := range data[:ops.Total()] {
-		eg.Go(func() error {
-			if !ops.HasPart(i) {
-				added, err := ops.AddPart(&Part{
-					Index: uint32(i),
-					Bytes: d,
-					Proof: *proofs[i],
-				})
-				if err != nil {
-					return err
-				}
-				if !added {
-					return fmt.Errorf("couldn't add original part %d when decoding", i)
-				}
-			}
-			return nil
-		})
-	}
-	err = eg.Wait()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	// recalculate all of the proofs since we apparently don't have a function
-	// to generate a single proof... TODO: don't generate proofs for block parts
-	// we already have.
-	eroot, eproofs := merkle.ParallelProofsFromByteSlices(data[ops.Total():])
-	if !bytes.Equal(eroot, eps.Hash()) {
-		return nil, nil, fmt.Errorf("reconstructed parity data has different hash!! want: %X, got: %X", eps.hash, eroot)
-	}
-
-	eg = errgroup.Group{}
-	eg.SetLimit(runtime.NumCPU())
-	for i := 0; i < int(eps.Total()); i++ {
-		eg.Go(func() error {
-			if !eps.HasPart(i) {
-				added, err := eps.AddPart(&Part{
-					Index: uint32(i),
-					Bytes: data[int(ops.Total())+i],
-					Proof: *eproofs[i],
-				})
-				if err != nil {
-					return err
-				}
-				if !added {
-					return fmt.Errorf("couldn't add parity part %d when decoding", i)
-				}
-			}
-			return nil
-		})
-	}
-	err = eg.Wait()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return ops, eps, nil
+	_ = "STUB: not implemented"
+	return nil, nil, nil
 }
+
+// prune the last part if we need to
+
+// recalculate all of the proofs since we apparently don't have a function
+// to generate a single proof... TODO: don't generate proofs for block parts
+// we already have...
+
+// recalculate all of the proofs since we apparently don't have a function
+// to generate a single proof... TODO: don't generate proofs for block parts
+// we already have.
 
 // Returns an empty PartSet ready to be populated.
 func NewPartSetFromHeader(header PartSetHeader, partSize uint32) *PartSet {
+	_ = "STUB: not implemented"
 	// Calculate buffer size: (total-1) full parts + potentially smaller last part
-	bufferSize := int(header.Total) * int(partSize)
-	return &PartSet{
-		total:         header.Total,
-		hash:          header.Hash,
-		buffer:        make([]byte, bufferSize),
-		partSize:      int(partSize),
-		lastPartSize:  0, // default to 0; will be updated when the last part is added
-		proofs:        make([]merkle.Proof, header.Total),
-		partsBitArray: bits.NewBitArray(int(header.Total)),
-		count:         0,
-		byteSize:      0,
-	}
+	return nil
 }
 
-func (ps *PartSet) Header() PartSetHeader {
-	if ps == nil {
-		return PartSetHeader{}
-	}
-	return PartSetHeader{
-		Total: ps.total,
-		Hash:  ps.hash,
-	}
-}
+// default to 0; will be updated when the last part is added
 
-func (ps *PartSet) HasHeader(header PartSetHeader) bool {
-	if ps == nil {
-		return false
-	}
-	return ps.Header().Equals(header)
-}
+func (ps *PartSet) Header() PartSetHeader { _ = "STUB: not implemented"; return *new(PartSetHeader) }
 
-func (ps *PartSet) BitArray() *bits.BitArray {
-	return ps.partsBitArray.Copy()
-}
+func (ps *PartSet) HasHeader(header PartSetHeader) bool { _ = "STUB: not implemented"; return false }
 
-func (ps *PartSet) Hash() []byte {
-	if ps == nil {
-		return merkle.HashFromByteSlices(nil)
-	}
-	return ps.hash
-}
+func (ps *PartSet) BitArray() *bits.BitArray { _ = "STUB: not implemented"; return nil }
 
-func (ps *PartSet) HashesTo(hash []byte) bool {
-	if ps == nil {
-		return false
-	}
-	return bytes.Equal(ps.hash, hash)
-}
+func (ps *PartSet) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
-func (ps *PartSet) Count() uint32 {
-	if ps == nil {
-		return 0
-	}
-	return ps.count
-}
+func (ps *PartSet) HashesTo(hash []byte) bool { _ = "STUB: not implemented"; return false }
 
-func (ps *PartSet) ByteSize() int64 {
-	if ps == nil {
-		return 0
-	}
-	return ps.byteSize
-}
+func (ps *PartSet) Count() uint32 { _ = "STUB: not implemented"; return 0 }
 
-func (ps *PartSet) Total() uint32 {
-	if ps == nil {
-		return 0
-	}
-	return ps.total
-}
+func (ps *PartSet) ByteSize() int64 { _ = "STUB: not implemented"; return 0 }
+
+func (ps *PartSet) Total() uint32 { _ = "STUB: not implemented"; return 0 }
 
 // CONTRACT: part is validated using ValidateBasic.
 func (ps *PartSet) AddPart(part *Part) (bool, error) {
+	_ = "STUB: not implemented"
 	// TODO: remove this? would be preferable if this only returned (false, nil)
 	// when its a duplicate block part
-	if ps == nil {
-		return false, nil
-	}
-
-	if part == nil {
-		return false, fmt.Errorf("nil part")
-	}
-
-	// Defense-in-depth: ensure the part's index is bound to its proof's index
-	// before any further processing. Callers are expected to enforce this via
-	// Part.ValidateBasic, but enforcing it at the sink prevents a structurally
-	// valid proof for index j from being installed in slot i (i != j).
-	if int64(part.Index) != part.Proof.Index {
-		return false, ErrInvalidPart{Reason: fmt.Errorf("part index %d != proof index %d", part.Index, part.Proof.Index)}
-	}
-
-	// If part already exists, return false.
-	if ps.partsBitArray.GetIndex(int(part.Index)) {
-		return false, nil
-	}
-
-	// The proof should be compatible with the number of parts.
-	if part.Proof.Total != int64(ps.total) {
-		return false, fmt.Errorf(ErrPartSetInvalidProofTotal.Error()+":%v %v", part.Proof.Total, ps.total)
-	}
-
-	if err := part.Proof.Verify(ps.Hash(), part.Bytes); err != nil {
-		return false, fmt.Errorf("%w:%w", ErrPartSetInvalidProofHash, err)
-	}
-
-	return ps.addPart(part)
+	return false, nil
 }
+
+// Defense-in-depth: ensure the part's index is bound to its proof's index
+// before any further processing. Callers are expected to enforce this via
+// Part.ValidateBasic, but enforcing it at the sink prevents a structurally
+// valid proof for index j from being installed in slot i (i != j).
+
+// If part already exists, return false.
+
+// The proof should be compatible with the number of parts.
 
 func (ps *PartSet) AddPartWithoutProof(part *Part) (bool, error) {
-	return ps.addPart(part)
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
-func (ps *PartSet) addPart(part *Part) (bool, error) {
-	if part == nil {
-		return false, errors.New("nil part")
-	}
+func (ps *PartSet) addPart(part *Part) (bool, error) { _ = "STUB: not implemented"; return false, nil }
 
-	// Invalid part index
-	if part.Index >= ps.total {
-		return false, ErrPartSetUnexpectedIndex
-	}
+// Invalid part index
 
-	// If part already exists, return false.
-	if ps.partsBitArray.GetIndex(int(part.Index)) {
-		return false, nil
-	}
+// If part already exists, return false.
 
-	// Calculate buffer position and copy part data
-	start := int(part.Index) * ps.partSize
-	end := start + len(part.Bytes)
+// Calculate buffer position and copy part data
 
-	// Ensure we don't exceed buffer bounds
-	if end > len(ps.buffer) {
-		return false, fmt.Errorf("part data exceeds buffer bounds")
-	}
+// Ensure we don't exceed buffer bounds
 
-	ps.mtx.Lock()
-
-	copy(ps.buffer[start:end], part.Bytes)
-	ps.proofs[part.Index] = part.Proof
-
-	// Track last part size if this is the last part
-	if part.Index == ps.total-1 {
-		ps.lastPartSize = len(part.Bytes)
-	}
-	ps.count++
-	ps.byteSize += int64(len(part.Bytes))
-
-	ps.mtx.Unlock()
-
-	ps.partsBitArray.SetIndex(int(part.Index), true)
-
-	return true, nil
-}
+// Track last part size if this is the last part
 
 // getPartBytes returns the bytes for a part from the internal buffer.
 // Assumes mutex is already locked.
@@ -656,95 +275,27 @@ func (ps *PartSet) addPart(part *Part) (bool, error) {
 // - The part at given index doesn't exist (not yet received)
 // - The index is out of bounds
 // - Buffer access would be out of bounds
-func (ps *PartSet) getPartBytes(index int) []byte {
-	if !ps.partsBitArray.GetIndex(index) {
-		return nil
-	}
+func (ps *PartSet) getPartBytes(index int) []byte { _ = "STUB: not implemented"; return nil }
 
-	// Calculate buffer position
-	start := index * ps.partSize
-	partSize := ps.partSize
+// Calculate buffer position
 
-	// For the last part, use the actual size
-	if index == int(ps.total)-1 {
-		partSize = ps.lastPartSize
-	}
-
-	end := start + partSize
-	if start >= len(ps.buffer) || end > len(ps.buffer) {
-		return nil
-	}
-
-	return ps.buffer[start:end]
-}
+// For the last part, use the actual size
 
 // GetPartBytes returns only the bytes for a part, without the proof.
 // This is more efficient when only the data is needed.
-func (ps *PartSet) GetPartBytes(index int) []byte {
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-	return ps.getPartBytes(index)
-}
+func (ps *PartSet) GetPartBytes(index int) []byte { _ = "STUB: not implemented"; return nil }
 
-func (ps *PartSet) GetPart(index int) *Part {
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
+func (ps *PartSet) GetPart(index int) *Part { _ = "STUB: not implemented"; return nil }
 
-	bytes := ps.getPartBytes(index)
-	if bytes == nil {
-		return nil
-	}
+func (ps *PartSet) HasPart(index int) bool { _ = "STUB: not implemented"; return false }
 
-	return &Part{
-		Index: uint32(index),
-		Bytes: bytes,
-		Proof: ps.proofs[index],
-	}
-}
+func (ps *PartSet) IsComplete() bool { _ = "STUB: not implemented"; return false }
 
-func (ps *PartSet) HasPart(index int) bool {
-	return ps.partsBitArray.GetIndex(index)
-}
-
-func (ps *PartSet) IsComplete() bool {
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-	return ps.count == ps.total
-}
-
-func (ps *PartSet) GetBytes() []byte {
-	if !ps.IsComplete() {
-		panic("Cannot GetBytes() on incomplete PartSet")
-	}
-	dataSize := int(ps.total-1)*ps.partSize + ps.lastPartSize
-	return ps.buffer[:dataSize]
-}
+func (ps *PartSet) GetBytes() []byte { _ = "STUB: not implemented"; return nil }
 
 // StringShort returns a short version of String.
 //
 // (Count of Total)
-func (ps *PartSet) StringShort() string {
-	if ps == nil {
-		return "nil-PartSet"
-	}
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-	return fmt.Sprintf("(%v of %v)", ps.Count(), ps.Total())
-}
+func (ps *PartSet) StringShort() string { _ = "STUB: not implemented"; return "" }
 
-func (ps *PartSet) MarshalJSON() ([]byte, error) {
-	if ps == nil {
-		return []byte("{}"), nil
-	}
-
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-
-	return cmtjson.Marshal(struct {
-		CountTotal    string         `json:"count/total"`
-		PartsBitArray *bits.BitArray `json:"parts_bit_array"`
-	}{
-		fmt.Sprintf("%d/%d", ps.Count(), ps.Total()),
-		ps.partsBitArray,
-	})
-}
+func (ps *PartSet) MarshalJSON() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }

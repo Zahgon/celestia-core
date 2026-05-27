@@ -1,12 +1,7 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
-
-	cmtjson "github.com/cometbft/cometbft/libs/json"
-	"github.com/cometbft/cometbft/privval"
 )
 
 // GenValidatorCmd allows the generation of a keypair for a
@@ -18,12 +13,4 @@ var GenValidatorCmd = &cobra.Command{
 	Run:     genValidator,
 }
 
-func genValidator(*cobra.Command, []string) {
-	pv := privval.GenFilePV("", "")
-	jsbz, err := cmtjson.Marshal(pv)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf(`%v
-`, string(jsbz))
-}
+func genValidator(*cobra.Command, []string) { _ = "STUB: not implemented"; return }

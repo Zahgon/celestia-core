@@ -12,7 +12,6 @@ to ensure garbage collection of removed elements.
 */
 
 import (
-	"fmt"
 	"sync"
 
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
@@ -56,160 +55,55 @@ type CElement struct {
 
 // Blocking implementation of Next().
 // May return nil iff CElement was tail and got removed.
-func (e *CElement) NextWait() *CElement {
-	for {
-		e.mtx.RLock()
-		next := e.next
-		nextWg := e.nextWg
-		removed := e.removed
-		e.mtx.RUnlock()
+func (e *CElement) NextWait() *CElement { _ = "STUB: not implemented"; return nil }
 
-		if next != nil || removed {
-			return next
-		}
-
-		nextWg.Wait()
-		// e.next doesn't necessarily exist here.
-		// That's why we need to continue a for-loop.
-	}
-}
+// e.next doesn't necessarily exist here.
+// That's why we need to continue a for-loop.
 
 // Blocking implementation of Prev().
 // May return nil iff CElement was head and got removed.
-func (e *CElement) PrevWait() *CElement {
-	for {
-		e.mtx.RLock()
-		prev := e.prev
-		prevWg := e.prevWg
-		removed := e.removed
-		e.mtx.RUnlock()
-
-		if prev != nil || removed {
-			return prev
-		}
-
-		prevWg.Wait()
-	}
-}
+func (e *CElement) PrevWait() *CElement { _ = "STUB: not implemented"; return nil }
 
 // PrevWaitChan can be used to wait until Prev becomes not nil. Once it does,
 // channel will be closed.
-func (e *CElement) PrevWaitChan() <-chan struct{} {
-	e.mtx.RLock()
-	defer e.mtx.RUnlock()
-
-	return e.prevWaitCh
-}
+func (e *CElement) PrevWaitChan() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // NextWaitChan can be used to wait until Next becomes not nil. Once it does,
 // channel will be closed.
-func (e *CElement) NextWaitChan() <-chan struct{} {
-	e.mtx.RLock()
-	defer e.mtx.RUnlock()
-
-	return e.nextWaitCh
-}
+func (e *CElement) NextWaitChan() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // Nonblocking, may return nil if at the end.
-func (e *CElement) Next() *CElement {
-	e.mtx.RLock()
-	val := e.next
-	e.mtx.RUnlock()
-	return val
-}
+func (e *CElement) Next() *CElement { _ = "STUB: not implemented"; return nil }
 
 // Nonblocking, may return nil if at the end.
-func (e *CElement) Prev() *CElement {
-	e.mtx.RLock()
-	prev := e.prev
-	e.mtx.RUnlock()
-	return prev
-}
+func (e *CElement) Prev() *CElement { _ = "STUB: not implemented"; return nil }
 
-func (e *CElement) Removed() bool {
-	e.mtx.RLock()
-	isRemoved := e.removed
-	e.mtx.RUnlock()
-	return isRemoved
-}
+func (e *CElement) Removed() bool { _ = "STUB: not implemented"; return false }
 
-func (e *CElement) DetachNext() {
-	e.mtx.Lock()
-	if !e.removed {
-		e.mtx.Unlock()
-		panic("DetachNext() must be called after Remove(e)")
-	}
-	e.next = nil
-	e.mtx.Unlock()
-}
+func (e *CElement) DetachNext() { _ = "STUB: not implemented"; return }
 
-func (e *CElement) DetachPrev() {
-	e.mtx.Lock()
-	if !e.removed {
-		e.mtx.Unlock()
-		panic("DetachPrev() must be called after Remove(e)")
-	}
-	e.prev = nil
-	e.mtx.Unlock()
-}
+func (e *CElement) DetachPrev() { _ = "STUB: not implemented"; return }
 
 // NOTE: This function needs to be safe for
 // concurrent goroutines waiting on nextWg.
-func (e *CElement) SetNext(newNext *CElement) {
-	e.mtx.Lock()
+func (e *CElement) SetNext(newNext *CElement) { _ = "STUB: not implemented"; return }
 
-	oldNext := e.next
-	e.next = newNext
-	if oldNext != nil && newNext == nil {
-		// See https://golang.org/pkg/sync/:
-		//
-		// If a WaitGroup is reused to wait for several independent sets of
-		// events, new Add calls must happen after all previous Wait calls have
-		// returned.
-		e.nextWg = waitGroup1() // WaitGroups are difficult to re-use.
-		e.nextWaitCh = make(chan struct{})
-	}
-	if oldNext == nil && newNext != nil {
-		e.nextWg.Done()
-		close(e.nextWaitCh)
-	}
-	e.mtx.Unlock()
-}
+// See https://golang.org/pkg/sync/:
+//
+// If a WaitGroup is reused to wait for several independent sets of
+// events, new Add calls must happen after all previous Wait calls have
+// returned.
+// WaitGroups are difficult to re-use.
 
 // NOTE: This function needs to be safe for
 // concurrent goroutines waiting on prevWg
-func (e *CElement) SetPrev(newPrev *CElement) {
-	e.mtx.Lock()
+func (e *CElement) SetPrev(newPrev *CElement) { _ = "STUB: not implemented"; return }
 
-	oldPrev := e.prev
-	e.prev = newPrev
-	if oldPrev != nil && newPrev == nil {
-		e.prevWg = waitGroup1() // WaitGroups are difficult to re-use.
-		e.prevWaitCh = make(chan struct{})
-	}
-	if oldPrev == nil && newPrev != nil {
-		e.prevWg.Done()
-		close(e.prevWaitCh)
-	}
-	e.mtx.Unlock()
-}
+// WaitGroups are difficult to re-use.
 
-func (e *CElement) SetRemoved() {
-	e.mtx.Lock()
+func (e *CElement) SetRemoved() { _ = "STUB: not implemented"; return }
 
-	e.removed = true
-
-	// This wakes up anyone waiting in either direction.
-	if e.prev == nil {
-		e.prevWg.Done()
-		close(e.prevWaitCh)
-	}
-	if e.next == nil {
-		e.nextWg.Done()
-		close(e.nextWaitCh)
-	}
-	e.mtx.Unlock()
-}
+// This wakes up anyone waiting in either direction.
 
 //--------------------------------------------------------------------------------
 
@@ -227,181 +121,66 @@ type CList struct {
 	maxLen int       // max list length
 }
 
-func (l *CList) Init() *CList {
-	l.mtx.Lock()
-
-	l.wg = waitGroup1()
-	l.waitCh = make(chan struct{})
-	l.head = nil
-	l.tail = nil
-	l.curLen = 0
-	l.mtx.Unlock()
-	return l
-}
+func (l *CList) Init() *CList { _ = "STUB: not implemented"; return nil }
 
 // Return CList with MaxLength. CList will panic if it goes beyond MaxLength.
-func New() *CList { return newWithMax(MaxLength) }
+func New() *CList { _ = "STUB: not implemented"; return nil }
 
 // Return CList with given maxLength.
 // Will panic if list exceeds given maxLength.
-func newWithMax(maxLength int) *CList {
-	l := new(CList)
-	l.maxLen = maxLength
-	return l.Init()
-}
+func newWithMax(maxLength int) *CList { _ = "STUB: not implemented"; return nil }
 
-func (l *CList) Len() int {
-	l.mtx.RLock()
-	curLen := l.curLen
-	l.mtx.RUnlock()
-	return curLen
-}
+func (l *CList) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (l *CList) Front() *CElement {
-	l.mtx.RLock()
-	head := l.head
-	l.mtx.RUnlock()
-	return head
-}
+func (l *CList) Front() *CElement { _ = "STUB: not implemented"; return nil }
 
 func (l *CList) FrontWait() *CElement {
+	_ = "STUB: not implemented"
 	// Loop until the head is non-nil else wait and try again
-	for {
-		l.mtx.RLock()
-		head := l.head
-		wg := l.wg
-		l.mtx.RUnlock()
-
-		if head != nil {
-			return head
-		}
-		wg.Wait()
-		// NOTE: If you think l.head exists here, think harder.
-	}
+	return nil
 }
 
-func (l *CList) Back() *CElement {
-	l.mtx.RLock()
-	back := l.tail
-	l.mtx.RUnlock()
-	return back
-}
+// NOTE: If you think l.head exists here, think harder.
 
-func (l *CList) BackWait() *CElement {
-	for {
-		l.mtx.RLock()
-		tail := l.tail
-		wg := l.wg
-		l.mtx.RUnlock()
+func (l *CList) Back() *CElement { _ = "STUB: not implemented"; return nil }
 
-		if tail != nil {
-			return tail
-		}
-		wg.Wait()
-		// l.tail doesn't necessarily exist here.
-		// That's why we need to continue a for-loop.
-	}
-}
+func (l *CList) BackWait() *CElement { _ = "STUB: not implemented"; return nil }
+
+// l.tail doesn't necessarily exist here.
+// That's why we need to continue a for-loop.
 
 // WaitChan can be used to wait until Front or Back becomes not nil. Once it
 // does, channel will be closed.
-func (l *CList) WaitChan() <-chan struct{} {
-	l.mtx.Lock()
-	defer l.mtx.Unlock()
-
-	return l.waitCh
-}
+func (l *CList) WaitChan() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // Panics if list grows beyond its max length.
 func (l *CList) PushBack(v interface{}) *CElement {
-	l.mtx.Lock()
+	_ = "STUB: not implemented"
 
 	// Construct a new element
-	e := &CElement{
-		prev:       nil,
-		prevWg:     waitGroup1(),
-		prevWaitCh: make(chan struct{}),
-		next:       nil,
-		nextWg:     waitGroup1(),
-		nextWaitCh: make(chan struct{}),
-		removed:    false,
-		Value:      v,
-	}
-
-	// Release waiters on FrontWait/BackWait maybe
-	if l.curLen == 0 {
-		l.wg.Done()
-		close(l.waitCh)
-	}
-	if l.curLen >= l.maxLen {
-		panic(fmt.Sprintf("clist: maximum length list reached %d", l.maxLen))
-	}
-	l.curLen++
-
-	// Modify the tail
-	if l.tail == nil {
-		l.head = e
-		l.tail = e
-	} else {
-		e.SetPrev(l.tail) // We must init e first.
-		l.tail.SetNext(e) // This will make e accessible.
-		l.tail = e        // Update the list.
-	}
-	l.mtx.Unlock()
-	return e
+	return nil
 }
+
+// Release waiters on FrontWait/BackWait maybe
+
+// Modify the tail
+
+// We must init e first.
+// This will make e accessible.
+// Update the list.
 
 // CONTRACT: Caller must call e.DetachPrev() and/or e.DetachNext() to avoid memory leaks.
 // NOTE: As per the contract of CList, removed elements cannot be added back.
-func (l *CList) Remove(e *CElement) interface{} {
-	l.mtx.Lock()
+func (l *CList) Remove(e *CElement) interface{} { _ = "STUB: not implemented"; return nil }
 
-	prev := e.Prev()
-	next := e.Next()
+// If we're removing the only item, make CList FrontWait/BackWait wait.
 
-	if l.head == nil || l.tail == nil {
-		l.mtx.Unlock()
-		panic("Remove(e) on empty CList")
-	}
-	if prev == nil && l.head != e {
-		l.mtx.Unlock()
-		panic("Remove(e) with false head")
-	}
-	if next == nil && l.tail != e {
-		l.mtx.Unlock()
-		panic("Remove(e) with false tail")
-	}
+// WaitGroups are difficult to re-use.
 
-	// If we're removing the only item, make CList FrontWait/BackWait wait.
-	if l.curLen == 1 {
-		l.wg = waitGroup1() // WaitGroups are difficult to re-use.
-		l.waitCh = make(chan struct{})
-	}
+// Update l.len
 
-	// Update l.len
-	l.curLen--
+// Connect next/prev and set head/tail
 
-	// Connect next/prev and set head/tail
-	if prev == nil {
-		l.head = next
-	} else {
-		prev.SetNext(next)
-	}
-	if next == nil {
-		l.tail = prev
-	} else {
-		next.SetPrev(prev)
-	}
+// Set .Done() on e, otherwise waiters will wait forever.
 
-	// Set .Done() on e, otherwise waiters will wait forever.
-	e.SetRemoved()
-
-	l.mtx.Unlock()
-	return e.Value
-}
-
-func waitGroup1() (wg *sync.WaitGroup) {
-	wg = &sync.WaitGroup{}
-	wg.Add(1)
-	return
-}
+func waitGroup1() (wg *sync.WaitGroup) { _ = "STUB: not implemented"; return nil }

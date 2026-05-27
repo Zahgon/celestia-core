@@ -2,8 +2,6 @@ package provider
 
 import (
 	"errors"
-	"fmt"
-	"runtime/debug"
 )
 
 var (
@@ -25,10 +23,6 @@ type ErrBadLightBlock struct {
 	Reason error
 }
 
-func (e ErrBadLightBlock) Error() string {
-	return fmt.Sprintf("client provided bad signed header: %s", e.Reason.Error())
-}
+func (e ErrBadLightBlock) Error() string { _ = "STUB: not implemented"; return "" }
 
-func NewNotFound() error {
-	return fmt.Errorf("%s: %w", string(debug.Stack()), ErrLightBlockNotFound)
-}
+func NewNotFound() error { _ = "STUB: not implemented"; return nil }

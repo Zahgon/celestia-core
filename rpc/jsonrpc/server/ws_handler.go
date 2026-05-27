@@ -2,12 +2,7 @@ package server
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
-	"fmt"
 	"net/http"
-	"reflect"
-	"runtime/debug"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -43,60 +38,39 @@ func NewWebsocketManager(
 	funcMap map[string]*RPCFunc,
 	wsConnOptions ...func(*wsConnection),
 ) *WebsocketManager {
-	return &WebsocketManager{
-		funcMap: funcMap,
-		Upgrader: websocket.Upgrader{
-			CheckOrigin: func(r *http.Request) bool {
-				// TODO ???
-				//
-				// The default behavior would be relevant to browser-based clients,
-				// afaik. I suppose having a pass-through is a workaround for allowing
-				// for more complex security schemes, shifting the burden of
-				// AuthN/AuthZ outside the CometBFT RPC.
-				// I can't think of other uses right now that would warrant a TODO
-				// though. The real backstory of this TODO shall remain shrouded in
-				// mystery
-				return true
-			},
-		},
-		logger:        log.NewNopLogger(),
-		wsConnOptions: wsConnOptions,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// TODO ???
+//
+// The default behavior would be relevant to browser-based clients,
+// afaik. I suppose having a pass-through is a workaround for allowing
+// for more complex security schemes, shifting the burden of
+// AuthN/AuthZ outside the CometBFT RPC.
+// I can't think of other uses right now that would warrant a TODO
+// though. The real backstory of this TODO shall remain shrouded in
+// mystery
 
 // SetLogger sets the logger.
 func (wm *WebsocketManager) SetLogger(l log.Logger) {
-	wm.logger = l
+	_ = "STUB: not implemented"
+
+	// WebsocketHandler upgrades the request/response (via http.Hijack) and starts
+	// the wsConnection.
+	return
 }
 
-// WebsocketHandler upgrades the request/response (via http.Hijack) and starts
-// the wsConnection.
 func (wm *WebsocketManager) WebsocketHandler(w http.ResponseWriter, r *http.Request) {
-	wsConn, err := wm.Upgrade(w, r, nil)
-	if err != nil {
-		// TODO - return http error
-		wm.logger.Error("Failed to upgrade connection", "err", err)
-		return
-	}
-	defer func() {
-		if err := wsConn.Close(); err != nil {
-			wm.logger.Error("Failed to close connection", "err", err)
-		}
-	}()
-
-	// register connection
-	con := newWSConnection(wsConn, wm.funcMap, wm.wsConnOptions...)
-	con.SetLogger(wm.logger.With("remote", wsConn.RemoteAddr()))
-	wm.logger.Info("New websocket connection", "remote", con.remoteAddr)
-	err = con.Start() // BLOCKING
-	if err != nil {
-		wm.logger.Error("Failed to start connection", "err", err)
-		return
-	}
-	if err := con.Stop(); err != nil {
-		wm.logger.Error("error while stopping connection", "error", err)
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// TODO - return http error
+
+// register connection
+
+// BLOCKING
 
 // WebSocket connection
 
@@ -151,308 +125,110 @@ func newWSConnection(
 	funcMap map[string]*RPCFunc,
 	options ...func(*wsConnection),
 ) *wsConnection {
-	wsc := &wsConnection{
-		remoteAddr:        baseConn.RemoteAddr().String(),
-		baseConn:          baseConn,
-		funcMap:           funcMap,
-		writeWait:         defaultWSWriteWait,
-		writeChanCapacity: defaultWSWriteChanCapacity,
-		readWait:          defaultWSReadWait,
-		pingPeriod:        defaultWSPingPeriod,
-		readRoutineQuit:   make(chan struct{}),
-	}
-	for _, option := range options {
-		option(wsc)
-	}
-	wsc.baseConn.SetReadLimit(wsc.readLimit)
-	wsc.BaseService = *service.NewBaseService(nil, "wsConnection", wsc)
-	return wsc
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // OnDisconnect sets a callback which is used upon disconnect - not
 // Goroutine-safe. Nop by default.
 func OnDisconnect(onDisconnect func(remoteAddr string)) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.onDisconnect = onDisconnect
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // WriteWait sets the amount of time to wait before a websocket write times out.
 // It should only be used in the constructor - not Goroutine-safe.
-func WriteWait(writeWait time.Duration) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.writeWait = writeWait
-	}
-}
+func WriteWait(writeWait time.Duration) func(*wsConnection) { _ = "STUB: not implemented"; return nil }
 
 // WriteChanCapacity sets the capacity of the websocket write channel.
 // It should only be used in the constructor - not Goroutine-safe.
-func WriteChanCapacity(cap int) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.writeChanCapacity = cap
-	}
-}
+func WriteChanCapacity(cap int) func(*wsConnection) { _ = "STUB: not implemented"; return nil }
 
 // ReadWait sets the amount of time to wait before a websocket read times out.
 // It should only be used in the constructor - not Goroutine-safe.
-func ReadWait(readWait time.Duration) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.readWait = readWait
-	}
-}
+func ReadWait(readWait time.Duration) func(*wsConnection) { _ = "STUB: not implemented"; return nil }
 
 // PingPeriod sets the duration for sending websocket pings.
 // It should only be used in the constructor - not Goroutine-safe.
 func PingPeriod(pingPeriod time.Duration) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.pingPeriod = pingPeriod
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ReadLimit sets the maximum size for reading message.
 // It should only be used in the constructor - not Goroutine-safe.
-func ReadLimit(readLimit int64) func(*wsConnection) {
-	return func(wsc *wsConnection) {
-		wsc.readLimit = readLimit
-	}
-}
+func ReadLimit(readLimit int64) func(*wsConnection) { _ = "STUB: not implemented"; return nil }
 
 // OnStart implements service.Service by starting the read and write routines. It
 // blocks until there's some error.
-func (wsc *wsConnection) OnStart() error {
-	wsc.writeChan = make(chan types.RPCResponse, wsc.writeChanCapacity)
+func (wsc *wsConnection) OnStart() error { _ = "STUB: not implemented"; return nil }
 
-	// Read subscriptions/unsubscriptions to events
-	go wsc.readRoutine()
-	// Write responses, BLOCKING.
-	wsc.writeRoutine()
+// Read subscriptions/unsubscriptions to events
 
-	return nil
-}
+// Write responses, BLOCKING.
 
 // OnStop implements service.Service by unsubscribing remoteAddr from all
 // subscriptions.
-func (wsc *wsConnection) OnStop() {
-	if wsc.onDisconnect != nil {
-		wsc.onDisconnect(wsc.remoteAddr)
-	}
-
-	if wsc.ctx != nil {
-		wsc.cancel()
-	}
-}
+func (wsc *wsConnection) OnStop() { _ = "STUB: not implemented"; return }
 
 // GetRemoteAddr returns the remote address of the underlying connection.
 // It implements WSRPCConnection
-func (wsc *wsConnection) GetRemoteAddr() string {
-	return wsc.remoteAddr
-}
+func (wsc *wsConnection) GetRemoteAddr() string { _ = "STUB: not implemented"; return "" }
 
 // WriteRPCResponse pushes a response to the writeChan, and blocks until it is
 // accepted.
 // It implements WSRPCConnection. It is Goroutine-safe.
 func (wsc *wsConnection) WriteRPCResponse(ctx context.Context, resp types.RPCResponse) error {
-	select {
-	case <-wsc.Quit():
-		return errors.New("connection was stopped")
-	case <-ctx.Done():
-		return ctx.Err()
-	case wsc.writeChan <- resp:
-		return nil
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // TryWriteRPCResponse attempts to push a response to the writeChan, but does
 // not block.
 // It implements WSRPCConnection. It is Goroutine-safe
 func (wsc *wsConnection) TryWriteRPCResponse(resp types.RPCResponse) bool {
-	select {
-	case <-wsc.Quit():
-		return false
-	case wsc.writeChan <- resp:
-		return true
-	default:
-		return false
-	}
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Context returns the connection's context.
 // The context is canceled when the client's connection closes.
 func (wsc *wsConnection) Context() context.Context {
-	if wsc.ctx != nil {
-		return wsc.ctx
-	}
-	wsc.ctx, wsc.cancel = context.WithCancel(context.Background())
-	return wsc.ctx
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
 // Read from the socket and subscribe to or unsubscribe from events
 func (wsc *wsConnection) readRoutine() {
+	_ = "STUB: not implemented"
 	// readRoutine will block until response is written or WS connection is closed
-	writeCtx := context.Background()
-
-	defer func() {
-		if r := recover(); r != nil {
-			err, ok := r.(error)
-			if !ok {
-				err = fmt.Errorf("WSJSONRPC: %v", r)
-			}
-			wsc.Logger.Error("Panic in WSJSONRPC handler", "err", err, "stack", string(debug.Stack()))
-			if err := wsc.WriteRPCResponse(writeCtx, types.RPCInternalError(types.JSONRPCIntID(-1), err)); err != nil {
-				wsc.Logger.Error("Error writing RPC response", "err", err)
-			}
-			go wsc.readRoutine()
-		}
-	}()
-
-	wsc.baseConn.SetPongHandler(func(m string) error {
-		return wsc.baseConn.SetReadDeadline(time.Now().Add(wsc.readWait))
-	})
-
-	for {
-		select {
-		case <-wsc.Quit():
-			return
-		default:
-			// reset deadline for every type of message (control or data)
-			if err := wsc.baseConn.SetReadDeadline(time.Now().Add(wsc.readWait)); err != nil {
-				wsc.Logger.Error("failed to set read deadline", "err", err)
-			}
-
-			_, r, err := wsc.baseConn.NextReader()
-			if err != nil {
-				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
-					wsc.Logger.Info("Client closed the connection")
-				} else {
-					wsc.Logger.Error("Failed to read request", "err", err)
-				}
-				if err := wsc.Stop(); err != nil {
-					wsc.Logger.Error("Error closing websocket connection", "err", err)
-				}
-				close(wsc.readRoutineQuit)
-				return
-			}
-
-			dec := json.NewDecoder(r)
-			var request types.RPCRequest
-			err = dec.Decode(&request)
-			if err != nil {
-				if err := wsc.WriteRPCResponse(writeCtx,
-					types.RPCParseError(fmt.Errorf("error unmarshaling request: %w", err))); err != nil {
-					wsc.Logger.Error("Error writing RPC response", "err", err)
-				}
-				continue
-			}
-
-			// A Notification is a Request object without an "id" member.
-			// The Server MUST NOT reply to a Notification, including those that are within a batch request.
-			if request.ID == nil {
-				wsc.Logger.Trace(
-					"WSJSONRPC received a notification, skipping... (please send a non-empty ID if you want to call a method)",
-					"req", request,
-				)
-				continue
-			}
-
-			// Now, fetch the RPCFunc and execute it.
-			rpcFunc := wsc.funcMap[request.Method]
-			if rpcFunc == nil {
-				if err := wsc.WriteRPCResponse(writeCtx, types.RPCMethodNotFoundError(request.ID)); err != nil {
-					wsc.Logger.Error("Error writing RPC response", "err", err)
-				}
-				continue
-			}
-
-			ctx := &types.Context{JSONReq: &request, WSConn: wsc}
-			args := []reflect.Value{reflect.ValueOf(ctx)}
-			if len(request.Params) > 0 {
-				fnArgs, err := jsonParamsToArgs(rpcFunc, request.Params)
-				if err != nil {
-					if err := wsc.WriteRPCResponse(writeCtx,
-						types.RPCInternalError(request.ID, fmt.Errorf("error converting json params to arguments: %w", err)),
-					); err != nil {
-						wsc.Logger.Error("Error writing RPC response", "err", err)
-					}
-					continue
-				}
-				args = append(args, fnArgs...)
-			}
-
-			returns := rpcFunc.f.Call(args)
-
-			// TODO: Need to encode args/returns to string if we want to log them
-			wsc.Logger.Info("WSJSONRPC", "method", request.Method)
-
-			result, err := unreflectResult(returns)
-			if err != nil {
-				if err := wsc.WriteRPCResponse(writeCtx, types.RPCInternalError(request.ID, err)); err != nil {
-					wsc.Logger.Error("Error writing RPC response", "err", err)
-				}
-				continue
-			}
-
-			if err := wsc.WriteRPCResponse(writeCtx, types.NewRPCSuccessResponse(request.ID, result)); err != nil {
-				wsc.Logger.Error("Error writing RPC response", "err", err)
-			}
-		}
-	}
+	return
 }
+
+// reset deadline for every type of message (control or data)
+
+// A Notification is a Request object without an "id" member.
+// The Server MUST NOT reply to a Notification, including those that are within a batch request.
+
+// Now, fetch the RPCFunc and execute it.
+
+// TODO: Need to encode args/returns to string if we want to log them
 
 // receives on a write channel and writes out on the socket
-func (wsc *wsConnection) writeRoutine() {
-	pingTicker := time.NewTicker(wsc.pingPeriod)
-	defer pingTicker.Stop()
+func (wsc *wsConnection) writeRoutine() { _ = "STUB: not implemented"; return }
 
-	// https://github.com/gorilla/websocket/issues/97
-	pongs := make(chan string, 1)
-	wsc.baseConn.SetPingHandler(func(m string) error {
-		select {
-		case pongs <- m:
-		default:
-		}
-		return nil
-	})
+// https://github.com/gorilla/websocket/issues/97
 
-	for {
-		select {
-		case <-wsc.Quit():
-			return
-		case <-wsc.readRoutineQuit: // error in readRoutine
-			return
-		case m := <-pongs:
-			err := wsc.writeMessageWithDeadline(websocket.PongMessage, []byte(m))
-			if err != nil {
-				wsc.Logger.Info("Failed to write pong (client may disconnect)", "err", err)
-			}
-		case <-pingTicker.C:
-			err := wsc.writeMessageWithDeadline(websocket.PingMessage, []byte{})
-			if err != nil {
-				wsc.Logger.Error("Failed to write ping", "err", err)
-				return
-			}
-		case msg := <-wsc.writeChan:
-			// Use json.MarshalIndent instead of Marshal for pretty output.
-			// Pretty output not necessary, since most consumers of WS events are
-			// automated processes, not humans.
-			jsonBytes, err := json.Marshal(msg)
-			if err != nil {
-				wsc.Logger.Error("Failed to marshal RPCResponse to JSON", "err", err)
-				continue
-			}
-			if err = wsc.writeMessageWithDeadline(websocket.TextMessage, jsonBytes); err != nil {
-				wsc.Logger.Error("Failed to write response", "err", err)
-				return
-			}
-		}
-	}
-}
+// error in readRoutine
+
+// Use json.MarshalIndent instead of Marshal for pretty output.
+// Pretty output not necessary, since most consumers of WS events are
+// automated processes, not humans.
 
 // All writes to the websocket must (re)set the write deadline.
 // If some writes don't set it while others do, they may timeout incorrectly
 // (https://github.com/tendermint/tendermint/issues/553)
 func (wsc *wsConnection) writeMessageWithDeadline(msgType int, msg []byte) error {
-	if err := wsc.baseConn.SetWriteDeadline(time.Now().Add(wsc.writeWait)); err != nil {
-		return err
-	}
-	return wsc.baseConn.WriteMessage(msgType, msg)
+	_ = "STUB: not implemented"
+	return nil
 }

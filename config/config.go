@@ -1,16 +1,9 @@
 package config
 
 import (
-	"encoding/hex"
-	"errors"
-	"fmt"
-	"net/http"
-	"os"
 	"path/filepath"
 	"regexp"
 	"time"
-
-	"github.com/cometbft/cometbft/version"
 )
 
 const (
@@ -94,125 +87,28 @@ type Config struct {
 }
 
 // DefaultConfig returns a default configuration for a CometBFT node
-func DefaultConfig() *Config {
-	return &Config{
-		BaseConfig:      DefaultBaseConfig(),
-		RPC:             DefaultRPCConfig(),
-		P2P:             DefaultP2PConfig(),
-		Mempool:         DefaultMempoolConfig(),
-		StateSync:       DefaultStateSyncConfig(),
-		BlockSync:       DefaultBlockSyncConfig(),
-		Consensus:       DefaultConsensusConfig(),
-		Storage:         DefaultStorageConfig(),
-		TxIndex:         DefaultTxIndexConfig(),
-		Instrumentation: DefaultInstrumentationConfig(),
-	}
-}
+func DefaultConfig() *Config { _ = "STUB: not implemented"; return nil }
 
 // TestConfig returns a configuration that can be used for testing
-func TestConfig() *Config {
-	return &Config{
-		BaseConfig:      TestBaseConfig(),
-		RPC:             TestRPCConfig(),
-		P2P:             TestP2PConfig(),
-		Mempool:         TestMempoolConfig(),
-		StateSync:       TestStateSyncConfig(),
-		BlockSync:       TestBlockSyncConfig(),
-		Consensus:       TestConsensusConfig(),
-		Storage:         TestStorageConfig(),
-		TxIndex:         TestTxIndexConfig(),
-		Instrumentation: TestInstrumentationConfig(),
-	}
-}
+func TestConfig() *Config { _ = "STUB: not implemented"; return nil }
 
 // SetRoot sets the RootDir for all Config structs
-func (cfg *Config) SetRoot(root string) *Config {
-	cfg.BaseConfig.RootDir = root //nolint:staticcheck
-	cfg.RPC.RootDir = root
-	cfg.P2P.RootDir = root
-	cfg.Mempool.RootDir = root
-	cfg.Consensus.RootDir = root
-	return cfg
-}
+func (cfg *Config) SetRoot(root string) *Config { _ = "STUB: not implemented"; return nil }
+
+//nolint:staticcheck
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *Config) ValidateBasic() error {
-	if err := cfg.BaseConfig.ValidateBasic(); err != nil {
-		return err
-	}
-	if err := cfg.RPC.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [rpc] section: %w", err)
-	}
-	if err := cfg.P2P.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [p2p] section: %w", err)
-	}
-	if err := cfg.Mempool.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [mempool] section: %w", err)
-	}
-	if err := cfg.StateSync.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [statesync] section: %w", err)
-	}
-	if err := cfg.BlockSync.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [blocksync] section: %w", err)
-	}
-	if err := cfg.Consensus.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [consensus] section: %w", err)
-	}
-	if err := cfg.Instrumentation.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [instrumentation] section: %w", err)
-	}
-	if err := cfg.Storage.ValidateBasic(); err != nil {
-		return fmt.Errorf("error in [storage] section: %w", err)
-	}
-	if !cfg.Consensus.CreateEmptyBlocks && cfg.Mempool.Type == MempoolTypeNop {
-		return fmt.Errorf("`nop` mempool does not support create_empty_blocks = false")
-	}
-	return nil
-}
+func (cfg *Config) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 // CheckDeprecated returns any deprecation warnings. These are printed to the operator on startup
-func (cfg *Config) CheckDeprecated() []string {
-	var warnings []string
+func (cfg *Config) CheckDeprecated() []string { _ = "STUB: not implemented"; return nil }
 
-	// Deprecated Mempool configs
-	if cfg.Mempool.MaxTxBytes != 0 {
-		warnings = append(warnings, "mempool.max_tx_bytes is deprecated and will be removed in a future version")
-	}
-	if cfg.Mempool.TTLDuration != 0 {
-		warnings = append(warnings, "mempool.ttl-duration is deprecated and will be removed in a future version")
-	}
-	if cfg.Mempool.TTLNumBlocks != 0 {
-		warnings = append(warnings, "mempool.ttl-num-blocks is deprecated and will be removed in a future version")
-	}
-	if cfg.Mempool.MaxGossipDelay != 0 {
-		warnings = append(warnings, "mempool.max-gossip-delay is deprecated and will be removed in a future version")
-	}
+// Deprecated Mempool configs
 
-	// Deprecated Consensus configs
-	if cfg.Consensus.TimeoutPropose != 0 {
-		warnings = append(warnings, "consensus.timeout_propose is deprecated and will be removed in a future version")
-	}
-	if cfg.Consensus.TimeoutProposeDelta != 0 {
-		warnings = append(warnings, "consensus.timeout_propose_delta is deprecated and will be removed in a future version")
-	}
-	if cfg.Consensus.TimeoutPrevote != 0 {
-		warnings = append(warnings, "consensus.timeout_prevote is deprecated and will be removed in a future version")
-	}
-	if cfg.Consensus.TimeoutPrevoteDelta != 0 {
-		warnings = append(warnings, "consensus.timeout_prevote_delta is deprecated and will be removed in a future version")
-	}
-	if cfg.Consensus.TimeoutPrecommit != 0 {
-		warnings = append(warnings, "consensus.timeout_precommit is deprecated and will be removed in a future version")
-	}
-	if cfg.Consensus.TimeoutPrecommitDelta != 0 {
-		warnings = append(warnings, "consensus.timeout_precommit_delta is deprecated and will be removed in a future version")
-	}
-	// CreateEmptyBlocks defaults to true, so we check if it's explicitly set to any value
-	warnings = append(warnings, "consensus.create_empty_blocks is deprecated and will be removed in a future version")
+// Deprecated Consensus configs
 
-	return warnings
-}
+// CreateEmptyBlocks defaults to true, so we check if it's explicitly set to any value
 
 //-----------------------------------------------------------------------------
 // BaseConfig
@@ -283,80 +179,35 @@ type BaseConfig struct {
 }
 
 // DefaultBaseConfig returns a default base configuration for a CometBFT node
-func DefaultBaseConfig() BaseConfig {
-	return BaseConfig{
-		Version:            version.TMCoreSemVer,
-		Genesis:            defaultGenesisJSONPath,
-		PrivValidatorKey:   defaultPrivValKeyPath,
-		PrivValidatorState: defaultPrivValStatePath,
-		NodeKey:            defaultNodeKeyPath,
-		Moniker:            defaultMoniker,
-		ProxyApp:           "tcp://127.0.0.1:36658",
-		ABCI:               "socket",
-		LogLevel:           DefaultLogLevel,
-		LogFormat:          LogFormatPlain,
-		FilterPeers:        false,
-		DBBackend:          "pebbledb",
-		DBPath:             DefaultDataDir,
-		BlockstorePath:     DefaultDataDir,
-	}
-}
+func DefaultBaseConfig() BaseConfig { _ = "STUB: not implemented"; return *new(BaseConfig) }
 
 // TestBaseConfig returns a base configuration for testing a CometBFT node
-func TestBaseConfig() BaseConfig {
-	cfg := DefaultBaseConfig()
-	cfg.ProxyApp = "kvstore"
-	cfg.DBBackend = "memdb"
-	return cfg
-}
+func TestBaseConfig() BaseConfig { _ = "STUB: not implemented"; return *new(BaseConfig) }
 
 // GenesisFile returns the full path to the genesis.json file
-func (cfg BaseConfig) GenesisFile() string {
-	return rootify(cfg.Genesis, cfg.RootDir)
-}
+func (cfg BaseConfig) GenesisFile() string { _ = "STUB: not implemented"; return "" }
 
 // PrivValidatorKeyFile returns the full path to the priv_validator_key.json file
-func (cfg BaseConfig) PrivValidatorKeyFile() string {
-	return rootify(cfg.PrivValidatorKey, cfg.RootDir)
-}
+func (cfg BaseConfig) PrivValidatorKeyFile() string { _ = "STUB: not implemented"; return "" }
 
 // PrivValidatorFile returns the full path to the priv_validator_state.json file
-func (cfg BaseConfig) PrivValidatorStateFile() string {
-	return rootify(cfg.PrivValidatorState, cfg.RootDir)
-}
+func (cfg BaseConfig) PrivValidatorStateFile() string { _ = "STUB: not implemented"; return "" }
 
 // NodeKeyFile returns the full path to the node_key.json file
-func (cfg BaseConfig) NodeKeyFile() string {
-	return rootify(cfg.NodeKey, cfg.RootDir)
-}
+func (cfg BaseConfig) NodeKeyFile() string { _ = "STUB: not implemented"; return "" }
 
 // DBDir returns the full path to the database directory
-func (cfg BaseConfig) DBDir() string {
-	return rootify(cfg.DBPath, cfg.RootDir)
-}
+func (cfg BaseConfig) DBDir() string { _ = "STUB: not implemented"; return "" }
 
 // BlockstoreDir returns the full path to the blockstore directory
-func (cfg BaseConfig) BlockstoreDir() string {
-	if cfg.BlockstorePath == "" {
-		return cfg.DBDir()
-	}
-	return rootify(cfg.BlockstorePath, cfg.RootDir)
-}
+func (cfg BaseConfig) BlockstoreDir() string { _ = "STUB: not implemented"; return "" }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
 func (cfg BaseConfig) ValidateBasic() error {
+	_ = "STUB: not implemented"
 	// version on old config files aren't set so we can't expect it
 	// always to exist
-	if cfg.Version != "" && !semverRegexp.MatchString(cfg.Version) {
-		return fmt.Errorf("invalid version string: %s", cfg.Version)
-	}
-
-	switch cfg.LogFormat {
-	case LogFormatPlain, LogFormatJSON:
-	default:
-		return errors.New("unknown log_format (must be 'plain' or 'json')")
-	}
 	return nil
 }
 
@@ -477,112 +328,29 @@ type RPCConfig struct {
 }
 
 // DefaultRPCConfig returns a default configuration for the RPC server
-func DefaultRPCConfig() *RPCConfig {
-	return &RPCConfig{
-		ListenAddress:          "tcp://127.0.0.1:26657",
-		CORSAllowedOrigins:     []string{},
-		CORSAllowedMethods:     []string{http.MethodHead, http.MethodGet, http.MethodPost},
-		CORSAllowedHeaders:     []string{"Origin", "Accept", "Content-Type", "X-Requested-With", "X-Server-Time"},
-		GRPCListenAddress:      "",
-		GRPCMaxOpenConnections: 900,
+func DefaultRPCConfig() *RPCConfig { _ = "STUB: not implemented"; return nil }
 
-		Unsafe:             false,
-		MaxOpenConnections: 900,
-
-		MaxSubscriptionClients:    100,
-		MaxSubscriptionsPerClient: 5,
-		SubscriptionBufferSize:    defaultSubscriptionBufferSize,
-		TimeoutBroadcastTxCommit:  10 * time.Second,
-		WebSocketWriteBufferSize:  defaultSubscriptionBufferSize,
-
-		MaxRequestBatchSize: 10,             // maximum requests in a JSON-RPC batch request
-		MaxBodyBytes:        int64(1000000), // 1MB
-		MaxHeaderBytes:      1 << 20,        // same as the net/http default
-
-		TLSCertFile: "",
-		TLSKeyFile:  "",
-	}
-}
+// maximum requests in a JSON-RPC batch request
+// 1MB
+// same as the net/http default
 
 // TestRPCConfig returns a configuration for testing the RPC server
-func TestRPCConfig() *RPCConfig {
-	cfg := DefaultRPCConfig()
-	cfg.ListenAddress = "tcp://127.0.0.1:36657"
-	cfg.GRPCListenAddress = "tcp://127.0.0.1:36658"
-	cfg.Unsafe = true
-	return cfg
-}
+func TestRPCConfig() *RPCConfig { _ = "STUB: not implemented"; return nil }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *RPCConfig) ValidateBasic() error {
-	if cfg.GRPCMaxOpenConnections < 0 {
-		return errors.New("grpc_max_open_connections can't be negative")
-	}
-	if cfg.MaxOpenConnections < 0 {
-		return errors.New("max_open_connections can't be negative")
-	}
-	if cfg.MaxSubscriptionClients < 0 {
-		return errors.New("max_subscription_clients can't be negative")
-	}
-	if cfg.MaxSubscriptionsPerClient < 0 {
-		return errors.New("max_subscriptions_per_client can't be negative")
-	}
-	if cfg.SubscriptionBufferSize < minSubscriptionBufferSize {
-		return fmt.Errorf(
-			"experimental_subscription_buffer_size must be >= %d",
-			minSubscriptionBufferSize,
-		)
-	}
-	if cfg.WebSocketWriteBufferSize < cfg.SubscriptionBufferSize {
-		return fmt.Errorf(
-			"experimental_websocket_write_buffer_size must be >= experimental_subscription_buffer_size (%d)",
-			cfg.SubscriptionBufferSize,
-		)
-	}
-	if cfg.TimeoutBroadcastTxCommit < 0 {
-		return errors.New("timeout_broadcast_tx_commit can't be negative")
-	}
-	if cfg.MaxRequestBatchSize < 0 {
-		return errors.New("max_request_batch_size can't be negative")
-	}
-	if cfg.MaxBodyBytes < 0 {
-		return errors.New("max_body_bytes can't be negative")
-	}
-	if cfg.MaxHeaderBytes < 0 {
-		return errors.New("max_header_bytes can't be negative")
-	}
-	return nil
-}
+func (cfg *RPCConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 // IsCorsEnabled returns true if cross-origin resource sharing is enabled.
-func (cfg *RPCConfig) IsCorsEnabled() bool {
-	return len(cfg.CORSAllowedOrigins) != 0
-}
+func (cfg *RPCConfig) IsCorsEnabled() bool { _ = "STUB: not implemented"; return false }
 
-func (cfg *RPCConfig) IsPprofEnabled() bool {
-	return len(cfg.PprofListenAddress) != 0
-}
+func (cfg *RPCConfig) IsPprofEnabled() bool { _ = "STUB: not implemented"; return false }
 
-func (cfg RPCConfig) KeyFile() string {
-	path := cfg.TLSKeyFile
-	if filepath.IsAbs(path) {
-		return path
-	}
-	return rootify(filepath.Join(DefaultConfigDir, path), cfg.RootDir)
-}
+func (cfg RPCConfig) KeyFile() string { _ = "STUB: not implemented"; return "" }
 
-func (cfg RPCConfig) CertFile() string {
-	path := cfg.TLSCertFile
-	if filepath.IsAbs(path) {
-		return path
-	}
-	return rootify(filepath.Join(DefaultConfigDir, path), cfg.RootDir)
-}
+func (cfg RPCConfig) CertFile() string { _ = "STUB: not implemented"; return "" }
 
-func (cfg RPCConfig) IsTLSEnabled() bool {
-	return cfg.TLSCertFile != "" && cfg.TLSKeyFile != ""
-}
+func (cfg RPCConfig) IsTLSEnabled() bool { _ = "STUB: not implemented"; return false }
 
 //-----------------------------------------------------------------------------
 // P2PConfig
@@ -664,70 +432,21 @@ type P2PConfig struct {
 }
 
 // DefaultP2PConfig returns a default configuration for the peer-to-peer layer
-func DefaultP2PConfig() *P2PConfig {
-	return &P2PConfig{
-		ListenAddress:                "tcp://0.0.0.0:26656",
-		ExternalAddress:              "",
-		AddrBook:                     defaultAddrBookPath,
-		AddrBookStrict:               true,
-		MaxNumInboundPeers:           40,
-		MaxNumOutboundPeers:          10,
-		PersistentPeersMaxDialPeriod: 0 * time.Second,
-		FlushThrottleTimeout:         100 * time.Millisecond,
-		MaxPacketMsgPayloadSize:      1024,    // 1 kB
-		SendRate:                     5120000, // 5 mB/s
-		RecvRate:                     5120000, // 5 mB/s
-		PexReactor:                   true,
-		SeedMode:                     false,
-		AllowDuplicateIP:             false,
-		HandshakeTimeout:             20 * time.Second,
-		DialTimeout:                  3 * time.Second,
-		TestDialFail:                 false,
-		TestFuzz:                     false,
-		TestFuzzConfig:               DefaultFuzzConnConfig(),
-	}
-}
+func DefaultP2PConfig() *P2PConfig { _ = "STUB: not implemented"; return nil }
+
+// 1 kB
+// 5 mB/s
+// 5 mB/s
 
 // TestP2PConfig returns a configuration for testing the peer-to-peer layer
-func TestP2PConfig() *P2PConfig {
-	cfg := DefaultP2PConfig()
-	cfg.ListenAddress = "tcp://127.0.0.1:36656"
-	cfg.FlushThrottleTimeout = 10 * time.Millisecond
-	cfg.AllowDuplicateIP = true
-	return cfg
-}
+func TestP2PConfig() *P2PConfig { _ = "STUB: not implemented"; return nil }
 
 // AddrBookFile returns the full path to the address book
-func (cfg *P2PConfig) AddrBookFile() string {
-	return rootify(cfg.AddrBook, cfg.RootDir)
-}
+func (cfg *P2PConfig) AddrBookFile() string { _ = "STUB: not implemented"; return "" }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *P2PConfig) ValidateBasic() error {
-	if cfg.MaxNumInboundPeers < 0 {
-		return errors.New("max_num_inbound_peers can't be negative")
-	}
-	if cfg.MaxNumOutboundPeers < 0 {
-		return errors.New("max_num_outbound_peers can't be negative")
-	}
-	if cfg.FlushThrottleTimeout < 0 {
-		return errors.New("flush_throttle_timeout can't be negative")
-	}
-	if cfg.PersistentPeersMaxDialPeriod < 0 {
-		return errors.New("persistent_peers_max_dial_period can't be negative")
-	}
-	if cfg.MaxPacketMsgPayloadSize < 0 {
-		return errors.New("max_packet_msg_payload_size can't be negative")
-	}
-	if cfg.SendRate < 0 {
-		return errors.New("send_rate can't be negative")
-	}
-	if cfg.RecvRate < 0 {
-		return errors.New("recv_rate can't be negative")
-	}
-	return nil
-}
+func (cfg *P2PConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 // FuzzConnConfig is a FuzzedConnection configuration.
 type FuzzConnConfig struct {
@@ -739,15 +458,7 @@ type FuzzConnConfig struct {
 }
 
 // DefaultFuzzConnConfig returns the default config.
-func DefaultFuzzConnConfig() *FuzzConnConfig {
-	return &FuzzConnConfig{
-		Mode:         FuzzModeDrop,
-		MaxDelay:     3 * time.Second,
-		ProbDropRW:   0.2,
-		ProbDropConn: 0.00,
-		ProbSleep:    0.00,
-	}
-}
+func DefaultFuzzConnConfig() *FuzzConnConfig { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // MempoolConfig
@@ -862,75 +573,27 @@ type MempoolConfig struct {
 }
 
 // DefaultMempoolConfig returns a default configuration for the CometBFT mempool
-func DefaultMempoolConfig() *MempoolConfig {
-	return &MempoolConfig{
-		Type:           MempoolTypeCAT,
-		Recheck:        true,
-		RecheckTimeout: 1000 * time.Millisecond,
-		Broadcast:      true,
-		WalPath:        "",
-		// Each signature verification takes .5ms, Size reduced until we implement
-		// ABCI Recheck
-		Size:        5000,
-		MaxTxsBytes: 1024 * 1024 * 1024, // 1GB
-		CacheSize:   10000,
-		MaxTxBytes:  1024 * 1024, // 1MB
-		ExperimentalMaxGossipConnectionsToNonPersistentPeers: 0,
-		ExperimentalMaxGossipConnectionsToPersistentPeers:    0,
-		TTLDuration:              0 * time.Second,
-		TTLNumBlocks:             0,
-		MaxPersistentStickyPeers: DefaultMaxPersistentStickyPeers,
-	}
-}
+func DefaultMempoolConfig() *MempoolConfig { _ = "STUB: not implemented"; return nil }
+
+// Each signature verification takes .5ms, Size reduced until we implement
+// ABCI Recheck
+
+// 1GB
+
+// 1MB
 
 // TestMempoolConfig returns a configuration for testing the CometBFT mempool
-func TestMempoolConfig() *MempoolConfig {
-	cfg := DefaultMempoolConfig()
-	cfg.CacheSize = 1000
-	return cfg
-}
+func TestMempoolConfig() *MempoolConfig { _ = "STUB: not implemented"; return nil }
 
 // WalDir returns the full path to the mempool's write-ahead log
-func (cfg *MempoolConfig) WalDir() string {
-	return rootify(cfg.WalPath, cfg.RootDir)
-}
+func (cfg *MempoolConfig) WalDir() string { _ = "STUB: not implemented"; return "" }
 
 // WalEnabled returns true if the WAL is enabled.
-func (cfg *MempoolConfig) WalEnabled() bool {
-	return cfg.WalPath != ""
-}
+func (cfg *MempoolConfig) WalEnabled() bool { _ = "STUB: not implemented"; return false }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *MempoolConfig) ValidateBasic() error {
-	switch cfg.Type {
-	case MempoolTypeCAT, MempoolTypeNop:
-	default:
-		return fmt.Errorf("unknown mempool type: %q", cfg.Type)
-	}
-	if cfg.Size < 0 {
-		return errors.New("size can't be negative")
-	}
-	if cfg.MaxTxsBytes < 0 {
-		return errors.New("max_txs_bytes can't be negative")
-	}
-	if cfg.CacheSize < 0 {
-		return errors.New("cache_size can't be negative")
-	}
-	if cfg.MaxTxBytes < 0 {
-		return errors.New("max_tx_bytes can't be negative")
-	}
-	if cfg.ExperimentalMaxGossipConnectionsToPersistentPeers < 0 {
-		return errors.New("experimental_max_gossip_connections_to_persistent_peers can't be negative")
-	}
-	if cfg.ExperimentalMaxGossipConnectionsToNonPersistentPeers < 0 {
-		return errors.New("experimental_max_gossip_connections_to_non_persistent_peers can't be negative")
-	}
-	if cfg.MaxPersistentStickyPeers < 0 {
-		return errors.New("max_persistent_sticky_peers can't be negative")
-	}
-	return nil
-}
+func (cfg *MempoolConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // StateSyncConfig
@@ -950,83 +613,19 @@ type StateSyncConfig struct {
 }
 
 func (cfg *StateSyncConfig) TrustHashBytes() []byte {
+	_ = "STUB: not implemented"
 	// validated in ValidateBasic, so we can safely panic here
-	bytes, err := hex.DecodeString(cfg.TrustHash)
-	if err != nil {
-		panic(err)
-	}
-	return bytes
+	return nil
 }
 
 // DefaultStateSyncConfig returns a default configuration for the state sync service
-func DefaultStateSyncConfig() *StateSyncConfig {
-	return &StateSyncConfig{
-		TrustPeriod:         168 * time.Hour,
-		DiscoveryTime:       15 * time.Second,
-		ChunkRequestTimeout: 10 * time.Second,
-		ChunkFetchers:       4,
-		MaxSnapshotChunks:   100000,
-	}
-}
+func DefaultStateSyncConfig() *StateSyncConfig { _ = "STUB: not implemented"; return nil }
 
 // TestStateSyncConfig returns a default configuration for the state sync service
-func TestStateSyncConfig() *StateSyncConfig {
-	return DefaultStateSyncConfig()
-}
+func TestStateSyncConfig() *StateSyncConfig { _ = "STUB: not implemented"; return nil }
 
 // ValidateBasic performs basic validation.
-func (cfg *StateSyncConfig) ValidateBasic() error {
-	if cfg.Enable {
-		if len(cfg.RPCServers) == 0 {
-			return errors.New("rpc_servers is required")
-		}
-
-		if len(cfg.RPCServers) < 2 {
-			return errors.New("at least two rpc_servers entries is required")
-		}
-
-		for _, server := range cfg.RPCServers {
-			if len(server) == 0 {
-				return errors.New("found empty rpc_servers entry")
-			}
-		}
-
-		if cfg.DiscoveryTime != 0 && cfg.DiscoveryTime < 5*time.Second {
-			return errors.New("discovery time must be 0s or greater than five seconds")
-		}
-
-		if cfg.TrustPeriod <= 0 {
-			return errors.New("trusted_period is required")
-		}
-
-		if cfg.TrustHeight <= 0 {
-			return errors.New("trusted_height is required")
-		}
-
-		if len(cfg.TrustHash) == 0 {
-			return errors.New("trusted_hash is required")
-		}
-
-		_, err := hex.DecodeString(cfg.TrustHash)
-		if err != nil {
-			return fmt.Errorf("invalid trusted_hash: %w", err)
-		}
-
-		if cfg.ChunkRequestTimeout < 5*time.Second {
-			return errors.New("chunk_request_timeout must be at least 5 seconds")
-		}
-
-		if cfg.ChunkFetchers <= 0 {
-			return errors.New("chunk_fetchers is required")
-		}
-
-		if cfg.MaxSnapshotChunks == 0 {
-			cfg.MaxSnapshotChunks = 100000
-		}
-	}
-
-	return nil
-}
+func (cfg *StateSyncConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // BlockSyncConfig
@@ -1038,29 +637,13 @@ type BlockSyncConfig struct {
 }
 
 // DefaultBlockSyncConfig returns a default configuration for the block sync service
-func DefaultBlockSyncConfig() *BlockSyncConfig {
-	return &BlockSyncConfig{
-		Version:    "v0",
-		VerifyData: true,
-	}
-}
+func DefaultBlockSyncConfig() *BlockSyncConfig { _ = "STUB: not implemented"; return nil }
 
 // TestBlockSyncConfig returns a default configuration for the block sync.
-func TestBlockSyncConfig() *BlockSyncConfig {
-	return DefaultBlockSyncConfig()
-}
+func TestBlockSyncConfig() *BlockSyncConfig { _ = "STUB: not implemented"; return nil }
 
 // ValidateBasic performs basic validation.
-func (cfg *BlockSyncConfig) ValidateBasic() error {
-	switch cfg.Version {
-	case "v0":
-		return nil
-	case "v1", "v2":
-		return fmt.Errorf("blocksync version %s has been deprecated. Please use v0 instead", cfg.Version)
-	default:
-		return fmt.Errorf("unknown blocksync version %s", cfg.Version)
-	}
-}
+func (cfg *BlockSyncConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // ConsensusConfig
@@ -1125,79 +708,39 @@ type ConsensusConfig struct {
 }
 
 // DefaultConsensusConfig returns a default configuration for the consensus service
-func DefaultConsensusConfig() *ConsensusConfig {
-	return &ConsensusConfig{
-		OnlyInternalWal:             true,
-		WalPath:                     filepath.Join(DefaultDataDir, "cs.wal", "wal"),
-		TimeoutPropose:              3000 * time.Millisecond,
-		TimeoutProposeDelta:         500 * time.Millisecond,
-		TimeoutPrevote:              1000 * time.Millisecond,
-		TimeoutPrevoteDelta:         500 * time.Millisecond,
-		TimeoutPrecommit:            1000 * time.Millisecond,
-		TimeoutPrecommitDelta:       500 * time.Millisecond,
-		TimeoutCommit:               1000 * time.Millisecond,
-		DelayedPrecommitTimeout:     1000 * time.Millisecond,
-		SkipTimeoutCommit:           false,
-		CreateEmptyBlocks:           true,
-		CreateEmptyBlocksInterval:   0 * time.Second,
-		PeerGossipSleepDuration:     100 * time.Millisecond,
-		PeerQueryMaj23SleepDuration: 2000 * time.Millisecond,
-		DoubleSignCheckHeight:       int64(0),
-		DisablePropagationReactor:   false,
-		EnableLegacyBlockProp:       false,
-	}
-}
+func DefaultConsensusConfig() *ConsensusConfig { _ = "STUB: not implemented"; return nil }
 
 // TestConsensusConfig returns a configuration for testing the consensus service
-func TestConsensusConfig() *ConsensusConfig {
-	cfg := DefaultConsensusConfig()
-	cfg.OnlyInternalWal = false
-	cfg.TimeoutPropose = 40 * time.Millisecond
-	cfg.TimeoutProposeDelta = 1 * time.Millisecond
-	cfg.TimeoutPrevote = 10 * time.Millisecond
-	cfg.TimeoutPrevoteDelta = 1 * time.Millisecond
-	cfg.TimeoutPrecommit = 10 * time.Millisecond
-	cfg.TimeoutPrecommitDelta = 1 * time.Millisecond
-	cfg.DelayedPrecommitTimeout = 0
-	// NOTE: when modifying, make sure to update time_iota_ms (testGenesisFmt) in toml.go
-	cfg.TimeoutCommit = 10 * time.Millisecond
-	cfg.SkipTimeoutCommit = true
-	cfg.PeerGossipSleepDuration = 5 * time.Millisecond
-	cfg.PeerQueryMaj23SleepDuration = 250 * time.Millisecond
-	cfg.DoubleSignCheckHeight = int64(0)
-	return cfg
-}
+func TestConsensusConfig() *ConsensusConfig { _ = "STUB: not implemented"; return nil }
+
+// NOTE: when modifying, make sure to update time_iota_ms (testGenesisFmt) in toml.go
 
 // WaitForTxs returns true if the consensus should wait for transactions before entering the propose step
-func (cfg *ConsensusConfig) WaitForTxs() bool {
-	return !cfg.CreateEmptyBlocks || cfg.CreateEmptyBlocksInterval > 0
-}
+func (cfg *ConsensusConfig) WaitForTxs() bool { _ = "STUB: not implemented"; return false }
 
 // Propose returns the amount of time to wait for a proposal
 func (cfg *ConsensusConfig) Propose(round int32) time.Duration {
-	return time.Duration(
-		cfg.TimeoutPropose.Nanoseconds()+cfg.TimeoutProposeDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Prevote returns the amount of time to wait for straggler votes after receiving any +2/3 prevotes
 func (cfg *ConsensusConfig) Prevote(round int32) time.Duration {
-	return time.Duration(
-		cfg.TimeoutPrevote.Nanoseconds()+cfg.TimeoutPrevoteDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Precommit returns the amount of time to wait for straggler votes after receiving any +2/3 precommits
 func (cfg *ConsensusConfig) Precommit(round int32) time.Duration {
-	return time.Duration(
-		cfg.TimeoutPrecommit.Nanoseconds()+cfg.TimeoutPrecommitDelta.Nanoseconds()*int64(round),
-	) * time.Nanosecond
+	_ = "STUB: not implemented"
+	return *new(time.Duration)
 }
 
 // Commit returns the amount of time to wait for straggler votes after receiving +2/3 precommits
 // for a single block (ie. a commit).
 func (cfg *ConsensusConfig) Commit(t time.Time) time.Time {
-	return t.Add(cfg.TimeoutCommit)
+	_ = "STUB: not implemented"
+	return *new(time.Time)
 }
 
 // ProposeWithCustomTimeout is identical to Propose. However,
@@ -1205,78 +748,32 @@ func (cfg *ConsensusConfig) Commit(t time.Time) time.Time {
 // customTimeout.
 // If customTimeout is 0, the TimeoutPropose from cfg is used.
 func (cfg *ConsensusConfig) ProposeWithCustomTimeout(round int32, customTimeout time.Duration) time.Duration {
+	_ = "STUB: not implemented"
 	// this is to capture any unforeseen cases where the customTimeout is 0
-	var timeoutPropose = customTimeout
-	if timeoutPropose == 0 {
-		// falling back to default timeout
-		timeoutPropose = cfg.TimeoutPropose
-	}
-	return time.Duration(timeoutPropose.Nanoseconds()+cfg.TimeoutProposeDelta.Nanoseconds()*int64(round)) * time.Nanosecond
+	return *new(time.Duration)
 }
+
+// falling back to default timeout
 
 // CommitWithCustomTimeout is identical to Commit. However, it calculates the time for commit using the supplied customTimeout.
 // If customTimeout is 0, the TimeoutCommit from cfg is used.
 func (cfg *ConsensusConfig) CommitWithCustomTimeout(t time.Time, customTimeout time.Duration) time.Time {
+	_ = "STUB: not implemented"
 	// this is to capture any unforeseen cases where the customTimeout is 0
-	var timeoutCommit = customTimeout
-	if timeoutCommit == 0 {
-		// falling back to default timeout
-		timeoutCommit = cfg.TimeoutCommit
-	}
-	return t.Add(timeoutCommit)
+	return *new(time.Time)
 }
+
+// falling back to default timeout
 
 // WalFile returns the full path to the write-ahead log file
-func (cfg *ConsensusConfig) WalFile() string {
-	if cfg.walFile != "" {
-		return cfg.walFile
-	}
-	return rootify(cfg.WalPath, cfg.RootDir)
-}
+func (cfg *ConsensusConfig) WalFile() string { _ = "STUB: not implemented"; return "" }
 
 // SetWalFile sets the path to the write-ahead log file
-func (cfg *ConsensusConfig) SetWalFile(walFile string) {
-	cfg.walFile = walFile
-}
+func (cfg *ConsensusConfig) SetWalFile(walFile string) { _ = "STUB: not implemented"; return }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *ConsensusConfig) ValidateBasic() error {
-	if cfg.TimeoutPropose < 0 {
-		return errors.New("timeout_propose can't be negative")
-	}
-	if cfg.TimeoutProposeDelta < 0 {
-		return errors.New("timeout_propose_delta can't be negative")
-	}
-	if cfg.TimeoutPrevote < 0 {
-		return errors.New("timeout_prevote can't be negative")
-	}
-	if cfg.TimeoutPrevoteDelta < 0 {
-		return errors.New("timeout_prevote_delta can't be negative")
-	}
-	if cfg.TimeoutPrecommit < 0 {
-		return errors.New("timeout_precommit can't be negative")
-	}
-	if cfg.TimeoutPrecommitDelta < 0 {
-		return errors.New("timeout_precommit_delta can't be negative")
-	}
-	if cfg.TimeoutCommit < 0 {
-		return errors.New("timeout_commit can't be negative")
-	}
-	if cfg.CreateEmptyBlocksInterval < 0 {
-		return errors.New("create_empty_blocks_interval can't be negative")
-	}
-	if cfg.PeerGossipSleepDuration < 0 {
-		return errors.New("peer_gossip_sleep_duration can't be negative")
-	}
-	if cfg.PeerQueryMaj23SleepDuration < 0 {
-		return errors.New("peer_query_maj23_sleep_duration can't be negative")
-	}
-	if cfg.DoubleSignCheckHeight < 0 {
-		return errors.New("double_sign_check_height can't be negative")
-	}
-	return nil
-}
+func (cfg *ConsensusConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // StorageConfig
@@ -1307,30 +804,15 @@ type StorageConfig struct {
 
 // DefaultStorageConfig returns the default configuration options relating to
 // CometBFT storage optimization.
-func DefaultStorageConfig() *StorageConfig {
-	return &StorageConfig{
-		DiscardABCIResponses: false,
-		Compact:              false,
-		CompactionInterval:   10000,
-	}
-}
+func DefaultStorageConfig() *StorageConfig { _ = "STUB: not implemented"; return nil }
 
 // TestStorageConfig returns storage configuration that can be used for
 // testing.
-func TestStorageConfig() *StorageConfig {
-	return &StorageConfig{
-		DiscardABCIResponses: false,
-	}
-}
+func TestStorageConfig() *StorageConfig { _ = "STUB: not implemented"; return nil }
 
 // ValidateBasic performs basic validation, returning an error if any check
 // fails.
-func (cfg *StorageConfig) ValidateBasic() error {
-	if cfg.Compact && cfg.CompactionInterval <= 0 {
-		return fmt.Errorf("compaction_interval must be positive when compact is true, got %d", cfg.CompactionInterval)
-	}
-	return nil
-}
+func (cfg *StorageConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 // -----------------------------------------------------------------------------
 // TxIndexConfig
@@ -1355,19 +837,11 @@ type TxIndexConfig struct {
 }
 
 // DefaultTxIndexConfig returns a default configuration for the transaction indexer.
-func DefaultTxIndexConfig() *TxIndexConfig {
-	return &TxIndexConfig{
-		Indexer: "null",
-	}
-}
+func DefaultTxIndexConfig() *TxIndexConfig { _ = "STUB: not implemented"; return nil }
 
 // TestTxIndexConfig returns a test configuration for the transaction indexer
 // with "kv" enabled so that RPC tests can still use indexer-dependent endpoints.
-func TestTxIndexConfig() *TxIndexConfig {
-	return &TxIndexConfig{
-		Indexer: "kv",
-	}
-}
+func TestTxIndexConfig() *TxIndexConfig { _ = "STUB: not implemented"; return nil }
 
 //-----------------------------------------------------------------------------
 // InstrumentationConfig
@@ -1426,78 +900,29 @@ type InstrumentationConfig struct {
 
 // DefaultInstrumentationConfig returns a default configuration for metrics
 // reporting.
-func DefaultInstrumentationConfig() *InstrumentationConfig {
-	return &InstrumentationConfig{
-		Prometheus:           false,
-		PrometheusListenAddr: ":26660",
-		MaxOpenConnections:   3,
-		Namespace:            "cometbft",
-		TracePushConfig:      "",
-		TracePullAddress:     "",
-		TraceType:            "noop",
-		TraceBufferSize:      1000,
-		TracingTables:        DefaultTracingTables,
-		PyroscopeURL:         "",
-		PyroscopeTrace:       false,
-		PyroscopeProfileTypes: []string{
-			"cpu",
-			"alloc_objects",
-			"inuse_objects",
-			"goroutines",
-			"mutex_count",
-			"mutex_duration",
-			"block_count",
-			"block_duration",
-		},
-	}
-}
+func DefaultInstrumentationConfig() *InstrumentationConfig { _ = "STUB: not implemented"; return nil }
 
 // TestInstrumentationConfig returns a default configuration for metrics
 // reporting.
-func TestInstrumentationConfig() *InstrumentationConfig {
-	return DefaultInstrumentationConfig()
-}
+func TestInstrumentationConfig() *InstrumentationConfig { _ = "STUB: not implemented"; return nil }
 
 // ValidateBasic performs basic validation (checking param bounds, etc.) and
 // returns an error if any check fails.
-func (cfg *InstrumentationConfig) ValidateBasic() error {
-	if cfg.MaxOpenConnections < 0 {
-		return errors.New("max_open_connections can't be negative")
-	}
-	if cfg.PyroscopeTrace && cfg.PyroscopeURL == "" {
-		return errors.New("pyroscope_trace can't be enabled if profiling is disabled")
-	}
-	// if there is not TracePushConfig configured, then we do not need to validate the rest
-	// of the config because we are not connecting.
-	if cfg.TracePushConfig == "" {
-		return nil
-	}
-	if cfg.TracePullAddress == "" {
-		return errors.New("token is required")
-	}
-	if cfg.TraceType == "" {
-		return errors.New("org is required")
-	}
-	if cfg.TraceBufferSize <= 0 {
-		return errors.New("batch size must be greater than 0")
-	}
-	return nil
-}
+func (cfg *InstrumentationConfig) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
+
+// if there is not TracePushConfig configured, then we do not need to validate the rest
+// of the config because we are not connecting.
 
 func (cfg *InstrumentationConfig) IsPrometheusEnabled() bool {
-	return cfg.Prometheus && cfg.PrometheusListenAddr != ""
+	_ = "STUB: not implemented"
+	return false
 }
 
 //-----------------------------------------------------------------------------
 // Utils
 
 // helper function to make config creation independent of root dir
-func rootify(path, root string) string {
-	if filepath.IsAbs(path) {
-		return path
-	}
-	return filepath.Join(root, path)
-}
+func rootify(path, root string) string { _ = "STUB: not implemented"; return "" }
 
 //-----------------------------------------------------------------------------
 // Moniker
@@ -1506,10 +931,4 @@ var defaultMoniker = getDefaultMoniker()
 
 // getDefaultMoniker returns a default moniker, which is the host name. If runtime
 // fails to get the host name, "anonymous" will be returned.
-func getDefaultMoniker() string {
-	moniker, err := os.Hostname()
-	if err != nil {
-		moniker = "anonymous"
-	}
-	return moniker
-}
+func getDefaultMoniker() string { _ = "STUB: not implemented"; return "" }

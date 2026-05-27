@@ -1,17 +1,13 @@
 package p2p
 
 import (
-	"fmt"
 	"net"
-	"strings"
 )
 
 // ErrFilterTimeout indicates that a filter operation timed out.
 type ErrFilterTimeout struct{}
 
-func (e ErrFilterTimeout) Error() string {
-	return "filter timed out"
-}
+func (e ErrFilterTimeout) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrRejected indicates that a Peer was rejected carrying additional
 // information as to the reason.
@@ -38,73 +34,15 @@ type ErrRejected struct {
 }
 
 // Addr returns the NetAddress for the rejected Peer.
-func (e ErrRejected) Addr() NetAddress {
-	return e.addr
-}
+func (e ErrRejected) Addr() NetAddress { _ = "STUB: not implemented"; return *new(NetAddress) }
 
-func (e ErrRejected) Error() string {
-	var base string
-	switch {
-	case e.isAuthFailure:
-		base = fmt.Sprintf("auth failure: %s", e.err)
-	case e.isDuplicate:
-		if e.conn != nil {
-			base = fmt.Sprintf("duplicate CONN<%s>", e.conn.RemoteAddr().String())
-		} else if e.id != "" {
-			base = fmt.Sprintf("duplicate ID<%v>", e.id)
-		}
-	case e.isFiltered:
-		if e.conn != nil {
-			base = fmt.Sprintf("filtered CONN<%s>: %s", e.conn.RemoteAddr().String(), e.err)
-		} else if e.id != "" {
-			base = fmt.Sprintf("filtered ID<%v>: %s", e.id, e.err)
-		}
-	case e.isIncompatible:
-		base = fmt.Sprintf("incompatible: %s", e.err)
-	case e.isNodeInfoInvalid:
-		base = fmt.Sprintf("invalid NodeInfo: %s", e.err)
-	case e.isSelf:
-		base = fmt.Sprintf("self ID<%v>", e.id)
-	default:
-		base = fmt.Sprintf("%s", e.err)
-	}
-
-	fields := []string{base}
-	if e.localNodeID != "" {
-		fields = append(fields, "localNodeID="+e.localNodeID)
-	}
-	if e.remoteNodeID != "" {
-		fields = append(fields, "remoteNodeID="+e.remoteNodeID)
-	}
-	if e.localAddr != "" {
-		fields = append(fields, "localAddr="+e.localAddr)
-	}
-	if e.remoteAddr != "" {
-		fields = append(fields, "remoteAddr="+e.remoteAddr)
-	}
-	if e.handshakeStage != "" {
-		fields = append(fields, "handshakeStage="+e.handshakeStage)
-	}
-	if e.traceID != "" {
-		fields = append(fields, "traceID="+e.traceID)
-	}
-	if e.chainID != "" {
-		fields = append(fields, "chainID="+e.chainID)
-	}
-	if e.peerChainID != "" {
-		fields = append(fields, "peerChainID="+e.peerChainID)
-	}
-	if e.malformedHandshake {
-		fields = append(fields, "malformed_handshake=true")
-	}
-	return strings.Join(fields, " | ")
-}
+func (e ErrRejected) Error() string { _ = "STUB: not implemented"; return "" }
 
 // IsAuthFailure when Peer authentication was unsuccessful.
-func (e ErrRejected) IsAuthFailure() bool { return e.isAuthFailure }
+func (e ErrRejected) IsAuthFailure() bool { _ = "STUB: not implemented"; return false }
 
 // IsDuplicate when Peer ID or IP are present already.
-func (e ErrRejected) IsDuplicate() bool { return e.isDuplicate }
+func (e ErrRejected) IsDuplicate() bool { _ = "STUB: not implemented"; return false }
 
 // DuplicatePeerID returns the peer ID and true when the rejection was caused
 // by a duplicate peer ID. Returns "", false for duplicate-IP rejections or
@@ -112,10 +50,8 @@ func (e ErrRejected) IsDuplicate() bool { return e.isDuplicate }
 // duplicate (e.g. to decide whether to penalize the dialed address) should
 // use this in preference to IsDuplicate.
 func (e ErrRejected) DuplicatePeerID() (ID, bool) {
-	if e.isDuplicate && e.id != "" {
-		return e.id, true
-	}
-	return "", false
+	_ = "STUB: not implemented"
+	return *new(ID), false
 }
 
 // NewErrRejectedDuplicateID builds a duplicate-by-peer-ID rejection. The
@@ -123,38 +59,43 @@ func (e ErrRejected) DuplicatePeerID() (ID, bool) {
 // so tests outside the p2p package can construct rejections without
 // reaching into unexported fields.
 func NewErrRejectedDuplicateID(id ID) ErrRejected {
-	return ErrRejected{id: id, isDuplicate: true}
+	_ = "STUB: not implemented"
+	return *new(ErrRejected)
 }
 
 // NewErrRejectedDuplicateIP builds a duplicate-by-IP rejection (no peer ID
 // recorded). The returned error reports IsDuplicate() == true but
 // DuplicatePeerID() == ("", false). Mirrors the rejection produced by the
 // duplicate-IP filter in the transport layer.
-func NewErrRejectedDuplicateIP() ErrRejected {
-	return ErrRejected{isDuplicate: true}
-}
+func NewErrRejectedDuplicateIP() ErrRejected { _ = "STUB: not implemented"; return *new(ErrRejected) }
 
 // IsFiltered when Peer ID or IP was filtered.
-func (e ErrRejected) IsFiltered() bool { return e.isFiltered }
+func (e ErrRejected) IsFiltered() bool {
+	_ = "STUB: not implemented"
 
-// IsIncompatible when Peer NodeInfo is not compatible with our own.
-func (e ErrRejected) IsIncompatible() bool { return e.isIncompatible }
+	// IsIncompatible when Peer NodeInfo is not compatible with our own.
+	return false
+}
+
+func (e ErrRejected) IsIncompatible() bool { _ = "STUB: not implemented"; return false }
 
 // IsNodeInfoInvalid when the sent NodeInfo is not valid.
-func (e ErrRejected) IsNodeInfoInvalid() bool { return e.isNodeInfoInvalid }
+func (e ErrRejected) IsNodeInfoInvalid() bool { _ = "STUB: not implemented"; return false }
 
 // IsSelf when Peer is our own node.
-func (e ErrRejected) IsSelf() bool { return e.isSelf }
+func (e ErrRejected) IsSelf() bool {
+	_ = "STUB: not implemented"
 
-// ErrSwitchDuplicatePeerID to be raised when a peer is connecting with a known
-// ID.
+	// ErrSwitchDuplicatePeerID to be raised when a peer is connecting with a known
+	// ID.
+	return false
+}
+
 type ErrSwitchDuplicatePeerID struct {
 	ID ID
 }
 
-func (e ErrSwitchDuplicatePeerID) Error() string {
-	return fmt.Sprintf("duplicate peer ID %v", e.ID)
-}
+func (e ErrSwitchDuplicatePeerID) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrSwitchDuplicatePeerIP to be raised whena a peer is connecting with a known
 // IP.
@@ -162,45 +103,31 @@ type ErrSwitchDuplicatePeerIP struct {
 	IP net.IP
 }
 
-func (e ErrSwitchDuplicatePeerIP) Error() string {
-	return fmt.Sprintf("duplicate peer IP %v", e.IP.String())
-}
+func (e ErrSwitchDuplicatePeerIP) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrSwitchConnectToSelf to be raised when trying to connect to itself.
 type ErrSwitchConnectToSelf struct {
 	Addr *NetAddress
 }
 
-func (e ErrSwitchConnectToSelf) Error() string {
-	return fmt.Sprintf("connect to self: %v", e.Addr)
-}
+func (e ErrSwitchConnectToSelf) Error() string { _ = "STUB: not implemented"; return "" }
 
 type ErrSwitchAuthenticationFailure struct {
 	Dialed *NetAddress
 	Got    ID
 }
 
-func (e ErrSwitchAuthenticationFailure) Error() string {
-	return fmt.Sprintf(
-		"failed to authenticate peer. Dialed %v, but got peer with ID %s",
-		e.Dialed,
-		e.Got,
-	)
-}
+func (e ErrSwitchAuthenticationFailure) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrTransportClosed is raised when the Transport has been closed.
 type ErrTransportClosed struct{}
 
-func (e ErrTransportClosed) Error() string {
-	return "transport has been closed"
-}
+func (e ErrTransportClosed) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrPeerRemoval is raised when attempting to remove a peer results in an error.
 type ErrPeerRemoval struct{}
 
-func (e ErrPeerRemoval) Error() string {
-	return "peer removal failed"
-}
+func (e ErrPeerRemoval) Error() string { _ = "STUB: not implemented"; return "" }
 
 //-------------------------------------------------------------------
 
@@ -208,27 +135,21 @@ type ErrNetAddressNoID struct {
 	Addr string
 }
 
-func (e ErrNetAddressNoID) Error() string {
-	return fmt.Sprintf("address (%s) does not contain ID", e.Addr)
-}
+func (e ErrNetAddressNoID) Error() string { _ = "STUB: not implemented"; return "" }
 
 type ErrNetAddressInvalid struct {
 	Addr string
 	Err  error
 }
 
-func (e ErrNetAddressInvalid) Error() string {
-	return fmt.Sprintf("invalid address (%s): %v", e.Addr, e.Err)
-}
+func (e ErrNetAddressInvalid) Error() string { _ = "STUB: not implemented"; return "" }
 
 type ErrNetAddressLookup struct {
 	Addr string
 	Err  error
 }
 
-func (e ErrNetAddressLookup) Error() string {
-	return fmt.Sprintf("error looking up host (%s): %v", e.Addr, e.Err)
-}
+func (e ErrNetAddressLookup) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrCurrentlyDialingOrExistingAddress indicates that we're currently
 // dialing this address or it belongs to an existing peer.
@@ -236,6 +157,4 @@ type ErrCurrentlyDialingOrExistingAddress struct {
 	Addr string
 }
 
-func (e ErrCurrentlyDialingOrExistingAddress) Error() string {
-	return fmt.Sprintf("connection with %s has been established or dialed", e.Addr)
-}
+func (e ErrCurrentlyDialingOrExistingAddress) Error() string { _ = "STUB: not implemented"; return "" }

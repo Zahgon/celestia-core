@@ -9,5 +9,6 @@ import (
 // response - in case of an error.
 // More: https://docs.cometbft.com/v0.38.x/rpc/#/Info/health
 func (env *Environment) Health(*rpctypes.Context) (*ctypes.ResultHealth, error) {
-	return &ctypes.ResultHealth{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

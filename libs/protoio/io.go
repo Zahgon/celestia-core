@@ -58,18 +58,7 @@ type marshaler interface {
 	MarshalTo(data []byte) (n int, err error)
 }
 
-func getSize(v interface{}) (int, bool) {
-	if sz, ok := v.(interface {
-		Size() (n int)
-	}); ok {
-		return sz.Size(), true
-	} else if sz, ok := v.(interface {
-		ProtoSize() (n int)
-	}); ok {
-		return sz.ProtoSize(), true
-	}
-	return 0, false
-}
+func getSize(v interface{}) (int, bool) { _ = "STUB: not implemented"; return 0, false }
 
 // byteReader wraps an io.Reader and implements io.ByteReader, required by
 // binary.ReadUvarint(). Reading one byte at a time is extremely slow, but this
@@ -81,22 +70,8 @@ type byteReader struct {
 	bytesRead int // keeps track of bytes read via ReadByte()
 }
 
-func newByteReader(r io.Reader) *byteReader {
-	return &byteReader{
-		reader: r,
-		buf:    make([]byte, 1),
-	}
-}
+func newByteReader(r io.Reader) *byteReader { _ = "STUB: not implemented"; return nil }
 
-func (r *byteReader) ReadByte() (byte, error) {
-	n, err := r.reader.Read(r.buf)
-	r.bytesRead += n
-	if err != nil {
-		return 0x00, err
-	}
-	return r.buf[0], nil
-}
+func (r *byteReader) ReadByte() (byte, error) { _ = "STUB: not implemented"; return 0, nil }
 
-func (r *byteReader) resetBytesRead() {
-	r.bytesRead = 0
-}
+func (r *byteReader) resetBytesRead() { _ = "STUB: not implemented"; return }

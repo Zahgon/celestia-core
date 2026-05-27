@@ -38,106 +38,56 @@ type timeoutTicker struct {
 }
 
 // NewTimeoutTicker returns a new TimeoutTicker.
-func NewTimeoutTicker() TimeoutTicker {
-	tt := &timeoutTicker{
-		timer: time.NewTimer(0),
-		// An indicator variable to check if the timer is active or not.
-		// Concurrency safe because the timer is only accessed by a single goroutine.
-		timerActive: true,
-		tickChan:    make(chan timeoutInfo, tickTockBufferSize),
-		tockChan:    make(chan timeoutInfo, tickTockBufferSize),
-	}
-	tt.BaseService = *service.NewBaseService(nil, "TimeoutTicker", tt)
-	tt.stopTimer() // don't want to fire until the first scheduled timeout
-	return tt
-}
+func NewTimeoutTicker() TimeoutTicker { _ = "STUB: not implemented"; return *new(TimeoutTicker) }
+
+// An indicator variable to check if the timer is active or not.
+// Concurrency safe because the timer is only accessed by a single goroutine.
+
+// don't want to fire until the first scheduled timeout
 
 // OnStart implements service.Service. It starts the timeout routine.
-func (t *timeoutTicker) OnStart() error {
-
-	go t.timeoutRoutine()
-
-	return nil
-}
+func (t *timeoutTicker) OnStart() error { _ = "STUB: not implemented"; return nil }
 
 // OnStop implements service.Service. It stops the timeout routine.
-func (t *timeoutTicker) OnStop() {
-	t.BaseService.OnStop()
-}
+func (t *timeoutTicker) OnStop() { _ = "STUB: not implemented"; return }
 
 // Chan returns a channel on which timeouts are sent.
 func (t *timeoutTicker) Chan() <-chan timeoutInfo {
-	return t.tockChan
+	_ = "STUB: not implemented"
+
+	// ScheduleTimeout schedules a new timeout by sending on the internal tickChan.
+	// The timeoutRoutine is always available to read from tickChan, so this won't block.
+	// The scheduling may fail if the timeoutRoutine has already scheduled a timeout for a later height/round/step.
+	return nil
 }
 
-// ScheduleTimeout schedules a new timeout by sending on the internal tickChan.
-// The timeoutRoutine is always available to read from tickChan, so this won't block.
-// The scheduling may fail if the timeoutRoutine has already scheduled a timeout for a later height/round/step.
 func (t *timeoutTicker) ScheduleTimeout(ti timeoutInfo) {
-	t.tickChan <- ti
-}
+	_ = "STUB: not implemented"
 
-//-------------------------------------------------------------
+	// -------------------------------------------------------------
+	return
+}
 
 // if the timer is active, stop it and drain the channel.
-func (t *timeoutTicker) stopTimer() {
-	if !t.timerActive {
-		return
-	}
-	// Stop() returns false if it was already fired or was stopped
-	if !t.timer.Stop() {
-		<-t.timer.C
-	}
-	t.timerActive = false
-}
+func (t *timeoutTicker) stopTimer() { _ = "STUB: not implemented"; return }
+
+// Stop() returns false if it was already fired or was stopped
 
 // send on tickChan to start a new timer.
 // timers are interrupted and replaced by new ticks from later steps
 // timeouts of 0 on the tickChan will be immediately relayed to the tockChan.
 // NOTE: timerActive is not concurrency safe, but it's only accessed in NewTimer and timeoutRoutine,
 // making it single-threaded access.
-func (t *timeoutTicker) timeoutRoutine() {
-	t.Logger.Trace("Starting timeout routine")
-	var ti timeoutInfo
-	for {
-		select {
-		case newti := <-t.tickChan:
-			t.Logger.Trace("Received tick", "old_ti", ti, "new_ti", newti)
+func (t *timeoutTicker) timeoutRoutine() { _ = "STUB: not implemented"; return }
 
-			// ignore tickers for old height/round/step
-			if newti.Height < ti.Height {
-				continue
-			} else if newti.Height == ti.Height {
-				if newti.Round < ti.Round {
-					continue
-				} else if newti.Round == ti.Round {
-					if ti.Step > 0 && newti.Step <= ti.Step {
-						continue
-					}
-				}
-			}
+// ignore tickers for old height/round/step
 
-			// stop the last timer if it exists
-			t.stopTimer()
+// stop the last timer if it exists
 
-			// update timeoutInfo, reset timer, and mark timer as active
-			// NOTE time.Timer allows duration to be non-positive
-			ti = newti
-			t.timer.Reset(ti.Duration)
-			t.timerActive = true
+// update timeoutInfo, reset timer, and mark timer as active
+// NOTE time.Timer allows duration to be non-positive
 
-			t.Logger.Trace("Scheduled timeout", "dur", ti.Duration, "height", ti.Height, "round", ti.Round, "step", ti.Step)
-		case <-t.timer.C:
-			t.timerActive = false
-			t.Logger.Info("Timed out", "dur", ti.Duration, "height", ti.Height, "round", ti.Round, "step", ti.Step)
-			// go routine here guarantees timeoutRoutine doesn't block.
-			// Determinism comes from playback in the receiveRoutine.
-			// We can eliminate it by merging the timeoutRoutine into receiveRoutine
-			//  and managing the timeouts ourselves with a millisecond ticker
-			go func(toi timeoutInfo) { t.tockChan <- toi }(ti)
-		case <-t.Quit():
-			t.stopTimer()
-			return
-		}
-	}
-}
+// go routine here guarantees timeoutRoutine doesn't block.
+// Determinism comes from playback in the receiveRoutine.
+// We can eliminate it by merging the timeoutRoutine into receiveRoutine
+//  and managing the timeouts ourselves with a millisecond ticker

@@ -2,7 +2,6 @@ package types
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/cometbft/cometbft/libs/bytes"
@@ -31,33 +30,12 @@ const (
 )
 
 // IsValid returns true if the step is valid, false if unknown/undefined.
-func (rs RoundStepType) IsValid() bool {
-	return uint8(rs) >= 0x01 && uint8(rs) <= 0x08
-}
+func (rs RoundStepType) IsValid() bool { _ = "STUB: not implemented"; return false }
 
 // String returns a string
-func (rs RoundStepType) String() string {
-	switch rs {
-	case RoundStepNewHeight:
-		return "RoundStepNewHeight"
-	case RoundStepNewRound:
-		return "RoundStepNewRound"
-	case RoundStepPropose:
-		return "RoundStepPropose"
-	case RoundStepPrevote:
-		return "RoundStepPrevote"
-	case RoundStepPrevoteWait:
-		return "RoundStepPrevoteWait"
-	case RoundStepPrecommit:
-		return "RoundStepPrecommit"
-	case RoundStepPrecommitWait:
-		return "RoundStepPrecommitWait"
-	case RoundStepCommit:
-		return "RoundStepCommit"
-	default:
-		return "RoundStepUnknown" // Cannot panic.
-	}
-}
+func (rs RoundStepType) String() string { _ = "STUB: not implemented"; return "" }
+
+// Cannot panic.
 
 //-----------------------------------------------------------------------------
 
@@ -115,110 +93,35 @@ type RoundStateSimple struct {
 
 // Compress the RoundState to RoundStateSimple
 func (rs *RoundState) RoundStateSimple() RoundStateSimple {
-	votesJSON, err := rs.Votes.MarshalJSON()
-	if err != nil {
-		panic(err)
-	}
-
-	addr := rs.Validators.GetProposer().Address
-	idx, _ := rs.Validators.GetByAddress(addr)
-
-	return RoundStateSimple{
-		HeightRoundStep:   fmt.Sprintf("%d/%d/%d", rs.Height, rs.Round, rs.Step),
-		StartTime:         rs.StartTime,
-		ProposalBlockHash: rs.ProposalBlock.Hash(),
-		LockedBlockHash:   rs.LockedBlock.Hash(),
-		ValidBlockHash:    rs.ValidBlock.Hash(),
-		Votes:             votesJSON,
-		Proposer: types.ValidatorInfo{
-			Address: addr,
-			Index:   idx,
-		},
-	}
+	_ = "STUB: not implemented"
+	return *new(RoundStateSimple)
 }
 
 // NewRoundEvent returns the RoundState with proposer information as an event.
 func (rs *RoundState) NewRoundEvent() types.EventDataNewRound {
-	addr := rs.Validators.GetProposer().Address
-	idx, _ := rs.Validators.GetByAddress(addr)
-
-	return types.EventDataNewRound{
-		Height: rs.Height,
-		Round:  rs.Round,
-		Step:   rs.Step.String(),
-		Proposer: types.ValidatorInfo{
-			Address: addr,
-			Index:   idx,
-		},
-	}
+	_ = "STUB: not implemented"
+	return *new(types.EventDataNewRound)
 }
 
 // CompleteProposalEvent returns information about a proposed block as an event.
 func (rs *RoundState) CompleteProposalEvent() types.EventDataCompleteProposal {
+	_ = "STUB: not implemented"
 	// We must construct BlockID from ProposalBlock and ProposalBlockParts
 	// cs.Proposal is not guaranteed to be set when this function is called
-	blockID := types.BlockID{
-		Hash:          rs.ProposalBlock.Hash(),
-		PartSetHeader: rs.ProposalBlockParts.Header(),
-	}
-
-	return types.EventDataCompleteProposal{
-		Height:  rs.Height,
-		Round:   rs.Round,
-		Step:    rs.Step.String(),
-		BlockID: blockID,
-	}
+	return *new(types.EventDataCompleteProposal)
 }
 
 // RoundStateEvent returns the H/R/S of the RoundState as an event.
 func (rs *RoundState) RoundStateEvent() types.EventDataRoundState {
-	return types.EventDataRoundState{
-		Height: rs.Height,
-		Round:  rs.Round,
-		Step:   rs.Step.String(),
-	}
+	_ = "STUB: not implemented"
+	return *new(types.EventDataRoundState)
 }
 
 // String returns a string
-func (rs *RoundState) String() string {
-	return rs.StringIndented("")
-}
+func (rs *RoundState) String() string { _ = "STUB: not implemented"; return "" }
 
 // StringIndented returns a string
-func (rs *RoundState) StringIndented(indent string) string {
-	return fmt.Sprintf(`RoundState{
-%s  H:%v R:%v S:%v
-%s  StartTime:     %v
-%s  CommitTime:    %v
-%s  Validators:    %v
-%s  Proposal:      %v
-%s  ProposalBlock: %v %v
-%s  LockedRound:   %v
-%s  LockedBlock:   %v %v
-%s  ValidRound:    %v
-%s  ValidBlock:    %v %v
-%s  Votes:         %v
-%s  LastCommit:    %v
-%s  LastValidators:%v
-%s}`,
-		indent, rs.Height, rs.Round, rs.Step,
-		indent, rs.StartTime,
-		indent, rs.CommitTime,
-		indent, rs.Validators.StringIndented(indent+"  "),
-		indent, rs.Proposal,
-		indent, rs.ProposalBlockParts.StringShort(), rs.ProposalBlock.StringShort(),
-		indent, rs.LockedRound,
-		indent, rs.LockedBlockParts.StringShort(), rs.LockedBlock.StringShort(),
-		indent, rs.ValidRound,
-		indent, rs.ValidBlockParts.StringShort(), rs.ValidBlock.StringShort(),
-		indent, rs.Votes.StringIndented(indent+"  "),
-		indent, rs.LastCommit.StringShort(),
-		indent, rs.LastValidators.StringIndented(indent+"  "),
-		indent)
-}
+func (rs *RoundState) StringIndented(indent string) string { _ = "STUB: not implemented"; return "" }
 
 // StringShort returns a string
-func (rs *RoundState) StringShort() string {
-	return fmt.Sprintf(`RoundState{H:%v R:%v S:%v ST:%v}`,
-		rs.Height, rs.Round, rs.Step, rs.StartTime)
-}
+func (rs *RoundState) StringShort() string { _ = "STUB: not implemented"; return "" }

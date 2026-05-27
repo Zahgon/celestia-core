@@ -33,5 +33,6 @@ type ProviderData struct {
 
 // Returns the the provider's infrastructure data
 func (pd ProviderData) GetInfrastructureData() *e2e.InfrastructureData {
-	return &pd.InfrastructureData
+	_ = "STUB: not implemented"
+	return nil
 }

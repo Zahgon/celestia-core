@@ -1,17 +1,10 @@
 package types
 
 import (
-	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"math"
-	"math/big"
-	"sort"
-	"strings"
 
-	"github.com/cometbft/cometbft/crypto/merkle"
-	"github.com/cometbft/cometbft/crypto/tmhash"
 	cmtmath "github.com/cometbft/cometbft/libs/math"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
@@ -74,222 +67,85 @@ type ValidatorSet struct {
 // Note the validator set size has an implied limit equal to that of the
 // MaxVotesCount - commits by a validator set larger than this will fail
 // validation.
-func NewValidatorSet(valz []*Validator) *ValidatorSet {
-	vals := &ValidatorSet{
-		allKeysHaveSameType: true,
-	}
-	err := vals.updateWithChangeSet(valz, false)
-	if err != nil {
-		panic(fmt.Sprintf("Cannot create validator set: %v", err))
-	}
-	if len(valz) > 0 {
-		vals.IncrementProposerPriority(1)
-	}
-	return vals
-}
+func NewValidatorSet(valz []*Validator) *ValidatorSet { _ = "STUB: not implemented"; return nil }
 
-func (vals *ValidatorSet) ValidateBasic() error {
-	if vals.IsNilOrEmpty() {
-		return errors.New("validator set is nil or empty")
-	}
-
-	for idx, val := range vals.Validators {
-		if err := val.ValidateBasic(); err != nil {
-			return fmt.Errorf("invalid validator #%d: %w", idx, err)
-		}
-	}
-
-	if err := vals.Proposer.ValidateBasic(); err != nil {
-		return fmt.Errorf("proposer failed validate basic, error: %w", err)
-	}
-
-	for _, val := range vals.Validators {
-		if bytes.Equal(val.Address, vals.Proposer.Address) {
-			return nil
-		}
-	}
-
-	return ErrProposerNotInVals
-}
+func (vals *ValidatorSet) ValidateBasic() error { _ = "STUB: not implemented"; return nil }
 
 // IsNilOrEmpty returns true if validator set is nil or empty.
-func (vals *ValidatorSet) IsNilOrEmpty() bool {
-	return vals == nil || len(vals.Validators) == 0
-}
+func (vals *ValidatorSet) IsNilOrEmpty() bool { _ = "STUB: not implemented"; return false }
 
 // CopyIncrementProposerPriority increments ProposerPriority and updates the
 // proposer on a copy, and returns it.
 func (vals *ValidatorSet) CopyIncrementProposerPriority(times int32) *ValidatorSet {
-	cp := vals.Copy()
-	cp.IncrementProposerPriority(times)
-	return cp
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // IncrementProposerPriority increments ProposerPriority of each validator and
 // updates the proposer. Panics if validator set is empty.
 // `times` must be positive.
-func (vals *ValidatorSet) IncrementProposerPriority(times int32) {
-	if vals.IsNilOrEmpty() {
-		panic("empty validator set")
-	}
-	if times <= 0 {
-		panic("Cannot call IncrementProposerPriority with non-positive times")
-	}
+func (vals *ValidatorSet) IncrementProposerPriority(times int32) { _ = "STUB: not implemented"; return }
 
-	// Cap the difference between priorities to be proportional to 2*totalPower by
-	// re-normalizing priorities, i.e., rescale all priorities by multiplying with:
-	//  2*totalVotingPower/(maxPriority - minPriority)
-	diffMax := PriorityWindowSizeFactor * vals.TotalVotingPower()
-	vals.RescalePriorities(diffMax)
-	vals.shiftByAvgProposerPriority()
+// Cap the difference between priorities to be proportional to 2*totalPower by
+// re-normalizing priorities, i.e., rescale all priorities by multiplying with:
+//  2*totalVotingPower/(maxPriority - minPriority)
 
-	var proposer *Validator
-	// Call IncrementProposerPriority(1) times times.
-	for i := int32(0); i < times; i++ {
-		proposer = vals.incrementProposerPriority()
-	}
-
-	vals.Proposer = proposer
-}
+// Call IncrementProposerPriority(1) times times.
 
 // RescalePriorities rescales the priorities such that the distance between the
 // maximum and minimum is smaller than `diffMax`. Panics if validator set is
 // empty.
-func (vals *ValidatorSet) RescalePriorities(diffMax int64) {
-	if vals.IsNilOrEmpty() {
-		panic("empty validator set")
-	}
-	// NOTE: This check is merely a sanity check which could be
-	// removed if all tests would init. voting power appropriately;
-	// i.e. diffMax should always be > 0
-	if diffMax <= 0 {
-		return
-	}
+func (vals *ValidatorSet) RescalePriorities(diffMax int64) { _ = "STUB: not implemented"; return }
 
-	// Calculating ceil(diff/diffMax):
-	// Re-normalization is performed by dividing by an integer for simplicity.
-	// NOTE: This may make debugging priority issues easier as well.
-	diff := computeMaxMinPriorityDiff(vals)
-	ratio := (diff + diffMax - 1) / diffMax
-	if diff > diffMax {
-		for _, val := range vals.Validators {
-			val.ProposerPriority /= ratio
-		}
-	}
-}
+// NOTE: This check is merely a sanity check which could be
+// removed if all tests would init. voting power appropriately;
+// i.e. diffMax should always be > 0
+
+// Calculating ceil(diff/diffMax):
+// Re-normalization is performed by dividing by an integer for simplicity.
+// NOTE: This may make debugging priority issues easier as well.
 
 func (vals *ValidatorSet) incrementProposerPriority() *Validator {
-	for _, val := range vals.Validators {
-		// Check for overflow for sum.
-		newPrio := safeAddClip(val.ProposerPriority, val.VotingPower)
-		val.ProposerPriority = newPrio
-	}
-	// Decrement the validator with most ProposerPriority.
-	mostest := vals.getValWithMostPriority()
-	// Mind the underflow.
-	mostest.ProposerPriority = safeSubClip(mostest.ProposerPriority, vals.TotalVotingPower())
-
-	return mostest
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Check for overflow for sum.
+
+// Decrement the validator with most ProposerPriority.
+
+// Mind the underflow.
 
 // Should not be called on an empty validator set.
-func (vals *ValidatorSet) computeAvgProposerPriority() int64 {
-	n := int64(len(vals.Validators))
-	sum := big.NewInt(0)
-	for _, val := range vals.Validators {
-		sum.Add(sum, big.NewInt(val.ProposerPriority))
-	}
-	avg := sum.Div(sum, big.NewInt(n))
-	if avg.IsInt64() {
-		return avg.Int64()
-	}
+func (vals *ValidatorSet) computeAvgProposerPriority() int64 { _ = "STUB: not implemented"; return 0 }
 
-	// This should never happen: each val.ProposerPriority is in bounds of int64.
-	panic(fmt.Sprintf("Cannot represent avg ProposerPriority as an int64 %v", avg))
-}
+// This should never happen: each val.ProposerPriority is in bounds of int64.
 
 // Compute the difference between the max and min ProposerPriority of that set.
-func computeMaxMinPriorityDiff(vals *ValidatorSet) int64 {
-	if vals.IsNilOrEmpty() {
-		panic("empty validator set")
-	}
-	max := int64(math.MinInt64)
-	min := int64(math.MaxInt64)
-	for _, v := range vals.Validators {
-		if v.ProposerPriority < min {
-			min = v.ProposerPriority
-		}
-		if v.ProposerPriority > max {
-			max = v.ProposerPriority
-		}
-	}
-	diff := max - min
-	if diff < 0 {
-		return -1 * diff
-	}
-	return diff
-}
+func computeMaxMinPriorityDiff(vals *ValidatorSet) int64 { _ = "STUB: not implemented"; return 0 }
 
 func (vals *ValidatorSet) getValWithMostPriority() *Validator {
-	var res *Validator
-	for _, val := range vals.Validators {
-		res = res.CompareProposerPriority(val)
-	}
-	return res
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (vals *ValidatorSet) shiftByAvgProposerPriority() {
-	if vals.IsNilOrEmpty() {
-		panic("empty validator set")
-	}
-	avgProposerPriority := vals.computeAvgProposerPriority()
-	for _, val := range vals.Validators {
-		val.ProposerPriority = safeSubClip(val.ProposerPriority, avgProposerPriority)
-	}
-}
+func (vals *ValidatorSet) shiftByAvgProposerPriority() { _ = "STUB: not implemented"; return }
 
 // Makes a copy of the validator list.
-func validatorListCopy(valsList []*Validator) []*Validator {
-	if valsList == nil {
-		return nil
-	}
-	valsCopy := make([]*Validator, len(valsList))
-	for i, val := range valsList {
-		valsCopy[i] = val.Copy()
-	}
-	return valsCopy
-}
+func validatorListCopy(valsList []*Validator) []*Validator { _ = "STUB: not implemented"; return nil }
 
 // Copy each validator into a new ValidatorSet.
-func (vals *ValidatorSet) Copy() *ValidatorSet {
-	return &ValidatorSet{
-		Validators:          validatorListCopy(vals.Validators),
-		Proposer:            vals.Proposer,
-		totalVotingPower:    vals.totalVotingPower,
-		allKeysHaveSameType: vals.allKeysHaveSameType,
-	}
-}
+func (vals *ValidatorSet) Copy() *ValidatorSet { _ = "STUB: not implemented"; return nil }
 
 // HasAddress returns true if address given is in the validator set, false -
 // otherwise.
-func (vals *ValidatorSet) HasAddress(address []byte) bool {
-	for _, val := range vals.Validators {
-		if bytes.Equal(val.Address, address) {
-			return true
-		}
-	}
-	return false
-}
+func (vals *ValidatorSet) HasAddress(address []byte) bool { _ = "STUB: not implemented"; return false }
 
 // GetByAddress returns an index of the validator with address and validator
 // itself (copy) if found. Otherwise, -1 and nil are returned.
 func (vals *ValidatorSet) GetByAddress(address []byte) (index int32, val *Validator) {
-	for idx, val := range vals.Validators {
-		if bytes.Equal(val.Address, address) {
-			return int32(idx), val.Copy()
-		}
-	}
-	return -1, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // GetByIndex returns the validator's address and validator itself (copy) by
@@ -297,116 +153,54 @@ func (vals *ValidatorSet) GetByAddress(address []byte) (index int32, val *Valida
 // It returns nil values if index is less than 0 or greater or equal to
 // len(ValidatorSet.Validators).
 func (vals *ValidatorSet) GetByIndex(index int32) (address []byte, val *Validator) {
-	if index < 0 || int(index) >= len(vals.Validators) {
-		return nil, nil
-	}
-	val = vals.Validators[index]
-	return val.Address, val.Copy()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // Size returns the length of the validator set.
-func (vals *ValidatorSet) Size() int {
-	return len(vals.Validators)
-}
+func (vals *ValidatorSet) Size() int { _ = "STUB: not implemented"; return 0 }
 
 // Forces recalculation of the set's total voting power.
 // Returns an error if total voting power exceeds MaxTotalVotingPower.
-func (vals *ValidatorSet) updateTotalVotingPower() error {
-	sum := int64(0)
-	for _, val := range vals.Validators {
-		// mind overflow
-		sum = safeAddClip(sum, val.VotingPower)
-		if sum > MaxTotalVotingPower {
-			return fmt.Errorf("total voting power %d exceeds maximum %d", sum, MaxTotalVotingPower)
-		}
-	}
+func (vals *ValidatorSet) updateTotalVotingPower() error { _ = "STUB: not implemented"; return nil }
 
-	vals.totalVotingPower = sum
-	return nil
-}
+// mind overflow
 
 // TotalVotingPowerSafe returns the sum of the voting powers of all validators,
 // or an error if the total exceeds MaxTotalVotingPower.
 func (vals *ValidatorSet) TotalVotingPowerSafe() (int64, error) {
-	if vals.totalVotingPower == 0 {
-		if err := vals.updateTotalVotingPower(); err != nil {
-			return 0, err
-		}
-	}
-	return vals.totalVotingPower, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // TotalVotingPower returns the sum of the voting powers of all validators.
 // It recomputes the total voting power if required.
-func (vals *ValidatorSet) TotalVotingPower() int64 {
-	if vals.totalVotingPower == 0 {
-		err := vals.updateTotalVotingPower()
-		if err != nil {
-			panic(err)
-		}
-	}
-	return vals.totalVotingPower
-}
+func (vals *ValidatorSet) TotalVotingPower() int64 { _ = "STUB: not implemented"; return 0 }
 
 // GetProposer returns the current proposer. If the validator set is empty, nil
 // is returned.
 func (vals *ValidatorSet) GetProposer() (proposer *Validator) {
-	if len(vals.Validators) == 0 {
-		return nil
-	}
-	if vals.Proposer == nil {
-		vals.Proposer = vals.findProposer()
-	}
-	return vals.Proposer.Copy()
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (vals *ValidatorSet) findProposer() *Validator {
-	var proposer *Validator
-	for _, val := range vals.Validators {
-		if proposer == nil || !bytes.Equal(val.Address, proposer.Address) {
-			proposer = proposer.CompareProposerPriority(val)
-		}
-	}
-	return proposer
-}
+func (vals *ValidatorSet) findProposer() *Validator { _ = "STUB: not implemented"; return nil }
 
 // Hash returns the Merkle root hash build using validators (as leaves) in the
 // set.
 //
 // See merkle.HashFromByteSlices.
-func (vals *ValidatorSet) Hash() []byte {
-	bzs := make([][]byte, len(vals.Validators))
-	for i, val := range vals.Validators {
-		bzs[i] = val.Bytes()
-	}
-	return merkle.HashFromByteSlices(bzs)
-}
+func (vals *ValidatorSet) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
 // ProposerPriorityHash returns the tmhash of the proposer priorities.
 // Validator set must be sorted to get the same hash.
 // If the validator set is empty, nil is returned.
-func (vals *ValidatorSet) ProposerPriorityHash() []byte {
-	if len(vals.Validators) == 0 {
-		return nil
-	}
-
-	buf := make([]byte, binary.MaxVarintLen64*len(vals.Validators))
-	offset := 0
-	for _, val := range vals.Validators {
-		n := binary.PutVarint(buf[offset:], val.ProposerPriority)
-		offset += n
-	}
-	return tmhash.Sum(buf[:offset])
-}
+func (vals *ValidatorSet) ProposerPriorityHash() []byte { _ = "STUB: not implemented"; return nil }
 
 // Iterate will run the given function over the set.
 func (vals *ValidatorSet) Iterate(fn func(index int, val *Validator) bool) {
-	for i, val := range vals.Validators {
-		stop := fn(i, val.Copy())
-		if stop {
-			break
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // Checks changes against duplicates, splits the changes in updates and
@@ -418,40 +212,12 @@ func (vals *ValidatorSet) Iterate(fn func(index int, val *Validator) bool) {
 //
 // No changes are made to 'origChanges'.
 func processChanges(origChanges []*Validator) (updates, removals []*Validator, err error) {
+	_ = "STUB: not implemented"
 	// Make a deep copy of the changes and sort by address.
-	changes := validatorListCopy(origChanges)
-	sort.Sort(ValidatorsByAddress(changes))
-
-	removals = make([]*Validator, 0, len(changes))
-	updates = make([]*Validator, 0, len(changes))
-	var prevAddr Address
-
-	// Scan changes by address and append valid validators to updates or removals lists.
-	for _, valUpdate := range changes {
-		if bytes.Equal(valUpdate.Address, prevAddr) {
-			err = fmt.Errorf("duplicate entry %v in %v", valUpdate, changes)
-			return nil, nil, err
-		}
-
-		switch {
-		case valUpdate.VotingPower < 0:
-			err = fmt.Errorf("voting power can't be negative: %d", valUpdate.VotingPower)
-			return nil, nil, err
-		case valUpdate.VotingPower > MaxTotalVotingPower:
-			err = fmt.Errorf("to prevent clipping/overflow, voting power can't be higher than %d, got %d",
-				MaxTotalVotingPower, valUpdate.VotingPower)
-			return nil, nil, err
-		case valUpdate.VotingPower == 0:
-			removals = append(removals, valUpdate)
-		default:
-			updates = append(updates, valUpdate)
-		}
-
-		prevAddr = valUpdate.Address
-	}
-
-	return updates, removals, err
+	return nil, nil, nil
 }
+
+// Scan changes by address and append valid validators to updates or removals lists.
 
 // verifyUpdates verifies a list of updates against a validator set, making sure the allowed
 // total voting power would not be exceeded if these updates would be applied to the set.
@@ -476,37 +242,13 @@ func verifyUpdates(
 	vals *ValidatorSet,
 	removedPower int64,
 ) (tvpAfterUpdatesBeforeRemovals int64, err error) {
-	delta := func(update *Validator, vals *ValidatorSet) int64 {
-		_, val := vals.GetByAddress(update.Address)
-		if val != nil {
-			return update.VotingPower - val.VotingPower
-		}
-		return update.VotingPower
-	}
-
-	updatesCopy := validatorListCopy(updates)
-	sort.Slice(updatesCopy, func(i, j int) bool {
-		return delta(updatesCopy[i], vals) < delta(updatesCopy[j], vals)
-	})
-
-	tvpAfterRemovals := vals.TotalVotingPower() - removedPower
-	for _, upd := range updatesCopy {
-		tvpAfterRemovals += delta(upd, vals)
-		if tvpAfterRemovals > MaxTotalVotingPower {
-			return 0, ErrTotalVotingPowerOverflow
-		}
-	}
-	return tvpAfterRemovals + removedPower, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func numNewValidators(updates []*Validator, vals *ValidatorSet) int {
-	numNewValidators := 0
-	for _, valUpdate := range updates {
-		if !vals.HasAddress(valUpdate.Address) {
-			numNewValidators++
-		}
-	}
-	return numNewValidators
+	_ = "STUB: not implemented"
+	return 0
 }
 
 // computeNewPriorities computes the proposer priority for the validators not present in the set based on
@@ -522,173 +264,79 @@ func numNewValidators(updates []*Validator, vals *ValidatorSet) int {
 //
 // No changes are made to the validator set 'vals'.
 func computeNewPriorities(updates []*Validator, vals *ValidatorSet, updatedTotalVotingPower int64) {
-	for _, valUpdate := range updates {
-		address := valUpdate.Address
-		_, val := vals.GetByAddress(address)
-		if val == nil {
-			// add val
-			// Set ProposerPriority to -C*totalVotingPower (with C ~= 1.125) to make sure validators can't
-			// un-bond and then re-bond to reset their (potentially previously negative) ProposerPriority to zero.
-			//
-			// Contract: updatedVotingPower < 2 * MaxTotalVotingPower to ensure ProposerPriority does
-			// not exceed the bounds of int64.
-			//
-			// Compute ProposerPriority = -1.125*totalVotingPower == -(updatedVotingPower + (updatedVotingPower >> 3)).
-			valUpdate.ProposerPriority = -(updatedTotalVotingPower + (updatedTotalVotingPower >> 3))
-		} else {
-			valUpdate.ProposerPriority = val.ProposerPriority
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// add val
+// Set ProposerPriority to -C*totalVotingPower (with C ~= 1.125) to make sure validators can't
+// un-bond and then re-bond to reset their (potentially previously negative) ProposerPriority to zero.
+//
+// Contract: updatedVotingPower < 2 * MaxTotalVotingPower to ensure ProposerPriority does
+// not exceed the bounds of int64.
+//
+// Compute ProposerPriority = -1.125*totalVotingPower == -(updatedVotingPower + (updatedVotingPower >> 3)).
 
 // Merges the vals' validator list with the updates list.
 // When two elements with same address are seen, the one from updates is selected.
 // Expects updates to be a list of updates sorted by address with no duplicates or errors,
 // must have been validated with verifyUpdates() and priorities computed with computeNewPriorities().
-func (vals *ValidatorSet) applyUpdates(updates []*Validator) {
-	existing := vals.Validators
-	sort.Sort(ValidatorsByAddress(existing))
+func (vals *ValidatorSet) applyUpdates(updates []*Validator) { _ = "STUB: not implemented"; return }
 
-	merged := make([]*Validator, len(existing)+len(updates))
-	i := 0
+// unchanged validator
 
-	for len(existing) > 0 && len(updates) > 0 {
-		if bytes.Compare(existing[0].Address, updates[0].Address) < 0 { // unchanged validator
-			merged[i] = existing[0]
-			existing = existing[1:]
-		} else {
-			// Apply add or update.
-			merged[i] = updates[0]
-			if bytes.Equal(existing[0].Address, updates[0].Address) {
-				// Validator is present in both, advance existing.
-				existing = existing[1:]
-			}
-			updates = updates[1:]
-		}
-		i++
-	}
+// Apply add or update.
 
-	// Add the elements which are left.
-	for j := 0; j < len(existing); j++ {
-		merged[i] = existing[j]
-		i++
-	}
-	// OR add updates which are left.
-	for j := 0; j < len(updates); j++ {
-		merged[i] = updates[j]
-		i++
-	}
+// Validator is present in both, advance existing.
 
-	vals.Validators = merged[:i]
-}
+// Add the elements which are left.
+
+// OR add updates which are left.
 
 // Checks that the validators to be removed are part of the validator set.
 // No changes are made to the validator set 'vals'.
 func verifyRemovals(deletes []*Validator, vals *ValidatorSet) (votingPower int64, err error) {
-	removedVotingPower := int64(0)
-	for _, valUpdate := range deletes {
-		address := valUpdate.Address
-		_, val := vals.GetByAddress(address)
-		if val == nil {
-			return removedVotingPower, fmt.Errorf("failed to find validator %X to remove", address)
-		}
-		removedVotingPower += val.VotingPower
-	}
-	if len(deletes) > len(vals.Validators) {
-		panic("more deletes than validators")
-	}
-	return removedVotingPower, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // Removes the validators specified in 'deletes' from validator set 'vals'.
 // Should not fail as verification has been done before.
 // Expects vals to be sorted by address (done by applyUpdates).
-func (vals *ValidatorSet) applyRemovals(deletes []*Validator) {
-	existing := vals.Validators
+func (vals *ValidatorSet) applyRemovals(deletes []*Validator) { _ = "STUB: not implemented"; return }
 
-	merged := make([]*Validator, len(existing)-len(deletes))
-	i := 0
+// Loop over deletes until we removed all of them.
 
-	// Loop over deletes until we removed all of them.
-	for len(deletes) > 0 {
-		if bytes.Equal(existing[0].Address, deletes[0].Address) {
-			deletes = deletes[1:]
-		} else { // Leave it in the resulting slice.
-			merged[i] = existing[0]
-			i++
-		}
-		existing = existing[1:]
-	}
+// Leave it in the resulting slice.
 
-	// Add the elements which are left.
-	for j := 0; j < len(existing); j++ {
-		merged[i] = existing[j]
-		i++
-	}
-
-	vals.Validators = merged[:i]
-}
+// Add the elements which are left.
 
 // Main function used by UpdateWithChangeSet() and NewValidatorSet().
 // If 'allowDeletes' is false then delete operations (identified by validators with voting power 0)
 // are not allowed and will trigger an error if present in 'changes'.
 // The 'allowDeletes' flag is set to false by NewValidatorSet() and to true by UpdateWithChangeSet().
 func (vals *ValidatorSet) updateWithChangeSet(changes []*Validator, allowDeletes bool) error {
-	if len(changes) == 0 {
-		return nil
-	}
-
-	// Check for duplicates within changes, split in 'updates' and 'deletes' lists (sorted).
-	updates, deletes, err := processChanges(changes)
-	if err != nil {
-		return err
-	}
-
-	if !allowDeletes && len(deletes) != 0 {
-		return fmt.Errorf("cannot process validators with voting power 0: %v", deletes)
-	}
-
-	// Check that the resulting set will not be empty.
-	if numNewValidators(updates, vals) == 0 && len(vals.Validators) == len(deletes) {
-		return errors.New("applying the validator changes would result in empty set")
-	}
-
-	// Verify that applying the 'deletes' against 'vals' will not result in error.
-	// Get the voting power that is going to be removed.
-	removedVotingPower, err := verifyRemovals(deletes, vals)
-	if err != nil {
-		return err
-	}
-
-	// Verify that applying the 'updates' against 'vals' will not result in error.
-	// Get the updated total voting power before removal. Note that this is < 2 * MaxTotalVotingPower
-	tvpAfterUpdatesBeforeRemovals, err := verifyUpdates(updates, vals, removedVotingPower)
-	if err != nil {
-		return err
-	}
-
-	// Compute the priorities for updates.
-	computeNewPriorities(updates, vals, tvpAfterUpdatesBeforeRemovals)
-
-	// Apply updates and removals.
-	vals.applyUpdates(updates)
-	vals.applyRemovals(deletes)
-
-	// Should go after additions.
-	vals.checkAllKeysHaveSameType()
-
-	if err = vals.updateTotalVotingPower(); err != nil {
-		panic(err)
-	}
-
-	// Scale and center.
-	vals.RescalePriorities(PriorityWindowSizeFactor * vals.TotalVotingPower())
-	vals.shiftByAvgProposerPriority()
-
-	sort.Sort(ValidatorsByVotingPower(vals.Validators))
-
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// Check for duplicates within changes, split in 'updates' and 'deletes' lists (sorted).
+
+// Check that the resulting set will not be empty.
+
+// Verify that applying the 'deletes' against 'vals' will not result in error.
+// Get the voting power that is going to be removed.
+
+// Verify that applying the 'updates' against 'vals' will not result in error.
+// Get the updated total voting power before removal. Note that this is < 2 * MaxTotalVotingPower
+
+// Compute the priorities for updates.
+
+// Apply updates and removals.
+
+// Should go after additions.
+
+// Scale and center.
 
 // UpdateWithChangeSet attempts to update the validator set with 'changes'.
 // It performs the following steps:
@@ -704,7 +352,8 @@ func (vals *ValidatorSet) updateWithChangeSet(changes []*Validator, allowDeletes
 // If an error is detected during verification steps, it is returned and the validator set
 // is not changed.
 func (vals *ValidatorSet) UpdateWithChangeSet(changes []*Validator) error {
-	return vals.updateWithChangeSet(changes, true)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // VerifyCommit verifies +2/3 of the set had signed the given commit and all
@@ -712,7 +361,8 @@ func (vals *ValidatorSet) UpdateWithChangeSet(changes []*Validator) error {
 func (vals *ValidatorSet) VerifyCommit(chainID string, blockID BlockID,
 	height int64, commit *Commit,
 ) error {
-	return VerifyCommit(chainID, vals, blockID, height, commit)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // LIGHT CLIENT VERIFICATION METHODS
@@ -722,7 +372,8 @@ func (vals *ValidatorSet) VerifyCommit(chainID string, blockID BlockID,
 func (vals *ValidatorSet) VerifyCommitLight(chainID string, blockID BlockID,
 	height int64, commit *Commit,
 ) error {
-	return VerifyCommitLight(chainID, vals, blockID, height, commit)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // VerifyCommitLight verifies +2/3 of the set had signed the given commit.
@@ -730,7 +381,8 @@ func (vals *ValidatorSet) VerifyCommitLight(chainID string, blockID BlockID,
 func (vals *ValidatorSet) VerifyCommitLightAllSignatures(chainID string, blockID BlockID,
 	height int64, commit *Commit,
 ) error {
-	return VerifyCommitLightAllSignatures(chainID, vals, blockID, height, commit)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // VerifyCommitLightTrusting verifies that trustLevel of the validator set signed
@@ -741,7 +393,8 @@ func (vals *ValidatorSet) VerifyCommitLightTrusting(
 	commit *Commit,
 	trustLevel cmtmath.Fraction,
 ) error {
-	return VerifyCommitLightTrusting(chainID, vals, commit, trustLevel)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // VerifyCommitLightTrusting verifies that trustLevel of the validator set signed
@@ -752,64 +405,29 @@ func (vals *ValidatorSet) VerifyCommitLightTrustingAllSignatures(
 	commit *Commit,
 	trustLevel cmtmath.Fraction,
 ) error {
-	return VerifyCommitLightTrustingAllSignatures(chainID, vals, commit, trustLevel)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // findPreviousProposer reverses the compare proposer priority function to find the validator
 // with the lowest proposer priority which would have been the previous proposer.
 //
 // Is used when recreating a validator set from an existing array of validators.
-func (vals *ValidatorSet) findPreviousProposer() *Validator {
-	var previousProposer *Validator
-	for _, val := range vals.Validators {
-		if previousProposer == nil {
-			previousProposer = val
-			continue
-		}
-		if previousProposer == previousProposer.CompareProposerPriority(val) {
-			previousProposer = val
-		}
-	}
-	return previousProposer
-}
+func (vals *ValidatorSet) findPreviousProposer() *Validator { _ = "STUB: not implemented"; return nil }
 
-func (vals *ValidatorSet) checkAllKeysHaveSameType() {
-	if vals.Size() == 0 {
-		vals.allKeysHaveSameType = true
-		return
-	}
+func (vals *ValidatorSet) checkAllKeysHaveSameType() { _ = "STUB: not implemented"; return }
 
-	firstKeyType := ""
-	for _, val := range vals.Validators {
-		if firstKeyType == "" {
-			// XXX: Should only be the case in tests.
-			if val.PubKey == nil {
-				continue
-			}
-			firstKeyType = val.PubKey.Type()
-		}
-		if val.PubKey.Type() != firstKeyType {
-			vals.allKeysHaveSameType = false
-			return
-		}
-	}
-
-	vals.allKeysHaveSameType = true
-}
+// XXX: Should only be the case in tests.
 
 // AllKeysHaveSameType returns true if all validators have the same type of
 // public key or if the set is empty.
-func (vals *ValidatorSet) AllKeysHaveSameType() bool {
-	return vals.allKeysHaveSameType
-}
+func (vals *ValidatorSet) AllKeysHaveSameType() bool { _ = "STUB: not implemented"; return false }
 
 // -----------------
 
 // IsErrNotEnoughVotingPowerSigned returns true if err is
 // ErrNotEnoughVotingPowerSigned.
-func IsErrNotEnoughVotingPowerSigned(err error) bool {
-	return errors.As(err, &ErrNotEnoughVotingPowerSigned{})
-}
+func IsErrNotEnoughVotingPowerSigned(err error) bool { _ = "STUB: not implemented"; return false }
 
 // ErrNotEnoughVotingPowerSigned is returned when not enough validators signed
 // a commit.
@@ -818,40 +436,21 @@ type ErrNotEnoughVotingPowerSigned struct {
 	Needed int64
 }
 
-func (e ErrNotEnoughVotingPowerSigned) Error() string {
-	return fmt.Sprintf("invalid commit -- insufficient voting power: got %d, needed more than %d", e.Got, e.Needed)
-}
+func (e ErrNotEnoughVotingPowerSigned) Error() string { _ = "STUB: not implemented"; return "" }
 
 //----------------
 
 // String returns a string representation of ValidatorSet.
 //
 // See StringIndented.
-func (vals *ValidatorSet) String() string {
-	return vals.StringIndented("")
-}
+func (vals *ValidatorSet) String() string { _ = "STUB: not implemented"; return "" }
 
 // StringIndented returns an intended String.
 //
 // See Validator#String.
 func (vals *ValidatorSet) StringIndented(indent string) string {
-	if vals == nil {
-		return "nil-ValidatorSet"
-	}
-	var valStrings []string
-	vals.Iterate(func(index int, val *Validator) bool {
-		valStrings = append(valStrings, val.String())
-		return false
-	})
-	return fmt.Sprintf(`ValidatorSet{
-%s  Proposer: %v
-%s  Validators:
-%s    %v
-%s}`,
-		indent, vals.GetProposer().String(),
-		indent,
-		indent, strings.Join(valStrings, "\n"+indent+"    "),
-		indent)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 //-------------------------------------
@@ -860,128 +459,57 @@ func (vals *ValidatorSet) StringIndented(indent string) string {
 // the VotingPower and Address fields.
 type ValidatorsByVotingPower []*Validator
 
-func (valz ValidatorsByVotingPower) Len() int { return len(valz) }
+func (valz ValidatorsByVotingPower) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (valz ValidatorsByVotingPower) Less(i, j int) bool {
-	if valz[i].VotingPower == valz[j].VotingPower {
-		return bytes.Compare(valz[i].Address, valz[j].Address) == -1
-	}
-	return valz[i].VotingPower > valz[j].VotingPower
-}
+func (valz ValidatorsByVotingPower) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
-func (valz ValidatorsByVotingPower) Swap(i, j int) {
-	valz[i], valz[j] = valz[j], valz[i]
-}
+func (valz ValidatorsByVotingPower) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
 // ValidatorsByAddress implements sort.Interface for []*Validator based on
 // the Address field.
 type ValidatorsByAddress []*Validator
 
-func (valz ValidatorsByAddress) Len() int { return len(valz) }
+func (valz ValidatorsByAddress) Len() int { _ = "STUB: not implemented"; return 0 }
 
-func (valz ValidatorsByAddress) Less(i, j int) bool {
-	return bytes.Compare(valz[i].Address, valz[j].Address) == -1
-}
+func (valz ValidatorsByAddress) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
-func (valz ValidatorsByAddress) Swap(i, j int) {
-	valz[i], valz[j] = valz[j], valz[i]
-}
+func (valz ValidatorsByAddress) Swap(i, j int) { _ = "STUB: not implemented"; return }
 
 // ToProto converts ValidatorSet to protobuf
 func (vals *ValidatorSet) ToProto() (*cmtproto.ValidatorSet, error) {
-	if vals.IsNilOrEmpty() {
-		return &cmtproto.ValidatorSet{}, nil // validator set should never be nil
-	}
-
-	vp := new(cmtproto.ValidatorSet)
-	valsProto := make([]*cmtproto.Validator, len(vals.Validators))
-	for i := 0; i < len(vals.Validators); i++ {
-		valp, err := vals.Validators[i].ToProto()
-		if err != nil {
-			return nil, err
-		}
-		valsProto[i] = valp
-	}
-	vp.Validators = valsProto
-
-	valProposer, err := vals.Proposer.ToProto()
-	if err != nil {
-		return nil, fmt.Errorf("toProto: validatorSet proposer error: %w", err)
-	}
-	vp.Proposer = valProposer
-
-	// NOTE: Sometimes we use the bytes of the proto form as a hash. This means that we need to
-	// be consistent with cached data
-	vp.TotalVotingPower = 0
-
-	return vp, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// validator set should never be nil
+
+// NOTE: Sometimes we use the bytes of the proto form as a hash. This means that we need to
+// be consistent with cached data
 
 // ValidatorSetFromProto sets a protobuf ValidatorSet to the given pointer.
 // It returns an error if any of the validators from the set or the proposer
 // is invalid
 func ValidatorSetFromProto(vp *cmtproto.ValidatorSet) (*ValidatorSet, error) {
-	if vp == nil {
-		return nil, errors.New("nil validator set") // validator set should never be nil, bigger issues are at play if empty
-	}
-	vals := new(ValidatorSet)
-
-	valsProto := make([]*Validator, len(vp.Validators))
-	for i := 0; i < len(vp.Validators); i++ {
-		v, err := ValidatorFromProto(vp.Validators[i])
-		if err != nil {
-			return nil, err
-		}
-		valsProto[i] = v
-	}
-	vals.Validators = valsProto
-	vals.checkAllKeysHaveSameType()
-
-	p, err := ValidatorFromProto(vp.GetProposer())
-	if err != nil {
-		return nil, fmt.Errorf("fromProto: validatorSet proposer error: %w", err)
-	}
-
-	vals.Proposer = p
-
-	// NOTE: We can't trust the total voting power given to us by other peers. If someone were to
-	// inject a non-zeo value that wasn't the correct voting power we could assume a wrong total
-	// power hence we need to recompute it.
-	// FIXME: We should look to remove TotalVotingPower from proto or add it in the validators hash
-	// so we don't have to do this
-	// NOTE: Use TotalVotingPowerSafe to return error on invalid input.
-	if _, err := vals.TotalVotingPowerSafe(); err != nil {
-		return nil, err
-	}
-
-	return vals, vals.ValidateBasic()
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// validator set should never be nil, bigger issues are at play if empty
+
+// NOTE: We can't trust the total voting power given to us by other peers. If someone were to
+// inject a non-zeo value that wasn't the correct voting power we could assume a wrong total
+// power hence we need to recompute it.
+// FIXME: We should look to remove TotalVotingPower from proto or add it in the validators hash
+// so we don't have to do this
+// NOTE: Use TotalVotingPowerSafe to return error on invalid input.
 
 // ValidatorSetFromExistingValidators takes an existing array of validators and
 // rebuilds the exact same validator set that corresponds to it without
 // changing the proposer priority or power if any of the validators fail
 // validate basic then an empty set is returned.
 func ValidatorSetFromExistingValidators(valz []*Validator) (*ValidatorSet, error) {
-	if len(valz) == 0 {
-		return nil, errors.New("validator set is empty")
-	}
-	for _, val := range valz {
-		err := val.ValidateBasic()
-		if err != nil {
-			return nil, fmt.Errorf("can't create validator set: %w", err)
-		}
-	}
-
-	vals := &ValidatorSet{
-		Validators: valz,
-	}
-	vals.checkAllKeysHaveSameType()
-	vals.Proposer = vals.findPreviousProposer()
-	if err := vals.updateTotalVotingPower(); err != nil {
-		return nil, err
-	}
-	sort.Sort(ValidatorsByVotingPower(vals.Validators))
-	return vals, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 //----------------------------------------
@@ -991,82 +519,18 @@ func ValidatorSetFromExistingValidators(valz []*Validator) (*ValidatorSet, error
 //
 // EXPOSED FOR TESTING.
 func RandValidatorSet(numValidators int, votingPower int64) (*ValidatorSet, []PrivValidator) {
-	var (
-		valz           = make([]*Validator, numValidators)
-		privValidators = make([]PrivValidator, numValidators)
-	)
-
-	for i := 0; i < numValidators; i++ {
-		val, privValidator := RandValidator(false, votingPower)
-		valz[i] = val
-		privValidators[i] = privValidator
-	}
-
-	sort.Sort(PrivValidatorsByAddress(privValidators))
-
-	return NewValidatorSet(valz), privValidators
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // safe addition/subtraction/multiplication
 
-func safeAdd(a, b int64) (int64, bool) {
-	if b > 0 && a > math.MaxInt64-b {
-		return -1, true
-	} else if b < 0 && a < math.MinInt64-b {
-		return -1, true
-	}
-	return a + b, false
-}
+func safeAdd(a, b int64) (int64, bool) { _ = "STUB: not implemented"; return 0, false }
 
-func safeSub(a, b int64) (int64, bool) {
-	if b > 0 && a < math.MinInt64+b {
-		return -1, true
-	} else if b < 0 && a > math.MaxInt64+b {
-		return -1, true
-	}
-	return a - b, false
-}
+func safeSub(a, b int64) (int64, bool) { _ = "STUB: not implemented"; return 0, false }
 
-func safeAddClip(a, b int64) int64 {
-	c, overflow := safeAdd(a, b)
-	if overflow {
-		if b < 0 {
-			return math.MinInt64
-		}
-		return math.MaxInt64
-	}
-	return c
-}
+func safeAddClip(a, b int64) int64 { _ = "STUB: not implemented"; return 0 }
 
-func safeSubClip(a, b int64) int64 {
-	c, overflow := safeSub(a, b)
-	if overflow {
-		if b > 0 {
-			return math.MinInt64
-		}
-		return math.MaxInt64
-	}
-	return c
-}
+func safeSubClip(a, b int64) int64 { _ = "STUB: not implemented"; return 0 }
 
-func safeMul(a, b int64) (int64, bool) {
-	if a == 0 || b == 0 {
-		return 0, false
-	}
-
-	absOfB := b
-	if b < 0 {
-		absOfB = -b
-	}
-
-	absOfA := a
-	if a < 0 {
-		absOfA = -a
-	}
-
-	if absOfA > math.MaxInt64/absOfB {
-		return 0, true
-	}
-
-	return a * b, false
-}
+func safeMul(a, b int64) (int64, bool) { _ = "STUB: not implemented"; return 0, false }

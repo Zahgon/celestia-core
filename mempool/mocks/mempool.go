@@ -18,273 +18,84 @@ type Mempool struct {
 
 // CheckTx provides a mock function with given fields: tx, callback, txInfo
 func (_m *Mempool) CheckTx(tx types.Tx, callback func(*abcitypes.ResponseCheckTx), txInfo mempool.TxInfo) error {
-	ret := _m.Called(tx, callback, txInfo)
-
-	if len(ret) == 0 {
-		panic("no return value specified for CheckTx")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(types.Tx, func(*abcitypes.ResponseCheckTx), mempool.TxInfo) error); ok {
-		r0 = rf(tx, callback, txInfo)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // EnableTxsAvailable provides a mock function with no fields
 func (_m *Mempool) EnableTxsAvailable() {
-	_m.Called()
+	_ = "STUB: not implemented"
+
+	// Flush provides a mock function with no fields
+	return
 }
 
-// Flush provides a mock function with no fields
 func (_m *Mempool) Flush() {
-	_m.Called()
+	_ = "STUB: not implemented"
+
+	// FlushAppConn provides a mock function with no fields
+	return
 }
 
-// FlushAppConn provides a mock function with no fields
-func (_m *Mempool) FlushAppConn() error {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for FlushAppConn")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func() error); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
+func (_m *Mempool) FlushAppConn() error { _ = "STUB: not implemented"; return nil }
 
 // GetTxByKey provides a mock function with given fields: key
 func (_m *Mempool) GetTxByKey(key types.TxKey) (*types.CachedTx, bool) {
-	ret := _m.Called(key)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetTxByKey")
-	}
-
-	var r0 *types.CachedTx
-	var r1 bool
-	if rf, ok := ret.Get(0).(func(types.TxKey) (*types.CachedTx, bool)); ok {
-		return rf(key)
-	}
-	if rf, ok := ret.Get(0).(func(types.TxKey) *types.CachedTx); ok {
-		r0 = rf(key)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*types.CachedTx)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(types.TxKey) bool); ok {
-		r1 = rf(key)
-	} else {
-		r1 = ret.Get(1).(bool)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return nil, false
 }
 
 // Lock provides a mock function with no fields
 func (_m *Mempool) Lock() {
-	_m.Called()
+	_ = "STUB: not implemented"
+
+	// ReapMaxBytesMaxGas provides a mock function with given fields: maxBytes, maxGas
+	return
 }
 
-// ReapMaxBytesMaxGas provides a mock function with given fields: maxBytes, maxGas
 func (_m *Mempool) ReapMaxBytesMaxGas(maxBytes int64, maxGas int64) []*types.CachedTx {
-	ret := _m.Called(maxBytes, maxGas)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ReapMaxBytesMaxGas")
-	}
-
-	var r0 []*types.CachedTx
-	if rf, ok := ret.Get(0).(func(int64, int64) []*types.CachedTx); ok {
-		r0 = rf(maxBytes, maxGas)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.CachedTx)
-		}
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // ReapMaxTxs provides a mock function with given fields: max
-func (_m *Mempool) ReapMaxTxs(max int) []*types.CachedTx {
-	ret := _m.Called(max)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ReapMaxTxs")
-	}
-
-	var r0 []*types.CachedTx
-	if rf, ok := ret.Get(0).(func(int) []*types.CachedTx); ok {
-		r0 = rf(max)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*types.CachedTx)
-		}
-	}
-
-	return r0
-}
+func (_m *Mempool) ReapMaxTxs(max int) []*types.CachedTx { _ = "STUB: not implemented"; return nil }
 
 // RemoveTxByKey provides a mock function with given fields: txKey
-func (_m *Mempool) RemoveTxByKey(txKey types.TxKey) error {
-	ret := _m.Called(txKey)
-
-	if len(ret) == 0 {
-		panic("no return value specified for RemoveTxByKey")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(types.TxKey) error); ok {
-		r0 = rf(txKey)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
+func (_m *Mempool) RemoveTxByKey(txKey types.TxKey) error { _ = "STUB: not implemented"; return nil }
 
 // Size provides a mock function with no fields
-func (_m *Mempool) Size() int {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for Size")
-	}
-
-	var r0 int
-	if rf, ok := ret.Get(0).(func() int); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int)
-	}
-
-	return r0
-}
+func (_m *Mempool) Size() int { _ = "STUB: not implemented"; return 0 }
 
 // SizeBytes provides a mock function with no fields
-func (_m *Mempool) SizeBytes() int64 {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for SizeBytes")
-	}
-
-	var r0 int64
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	return r0
-}
+func (_m *Mempool) SizeBytes() int64 { _ = "STUB: not implemented"; return 0 }
 
 // TxsAvailable provides a mock function with no fields
-func (_m *Mempool) TxsAvailable() <-chan struct{} {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for TxsAvailable")
-	}
-
-	var r0 <-chan struct{}
-	if rf, ok := ret.Get(0).(func() <-chan struct{}); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(<-chan struct{})
-		}
-	}
-
-	return r0
-}
+func (_m *Mempool) TxsAvailable() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // Unlock provides a mock function with no fields
 func (_m *Mempool) Unlock() {
-	_m.Called()
+	_ = "STUB: not implemented"
+
+	// Update provides a mock function with given fields: blockHeight, blockTxs, deliverTxResponses, newPreFn, newPostFn
+	return
 }
 
-// Update provides a mock function with given fields: blockHeight, blockTxs, deliverTxResponses, newPreFn, newPostFn
 func (_m *Mempool) Update(blockHeight int64, blockTxs []*types.CachedTx, deliverTxResponses []*abcitypes.ExecTxResult, newPreFn mempool.PreCheckFunc, newPostFn mempool.PostCheckFunc) error {
-	ret := _m.Called(blockHeight, blockTxs, deliverTxResponses, newPreFn, newPostFn)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Update")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(int64, []*types.CachedTx, []*abcitypes.ExecTxResult, mempool.PreCheckFunc, mempool.PostCheckFunc) error); ok {
-		r0 = rf(blockHeight, blockTxs, deliverTxResponses, newPreFn, newPostFn)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // WasRecentlyEvicted provides a mock function with given fields: key
 func (_m *Mempool) WasRecentlyEvicted(key types.TxKey) bool {
-	ret := _m.Called(key)
-
-	if len(ret) == 0 {
-		panic("no return value specified for WasRecentlyEvicted")
-	}
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(types.TxKey) bool); ok {
-		r0 = rf(key)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return false
 }
 
 // WasRecentlyRejected provides a mock function with given fields: key
 func (_m *Mempool) WasRecentlyRejected(key types.TxKey) (bool, uint32, string) {
-	ret := _m.Called(key)
-
-	if len(ret) == 0 {
-		panic("no return value specified for WasRecentlyRejected")
-	}
-
-	var r0 bool
-	var r1 uint32
-	var r2 string
-	if rf, ok := ret.Get(0).(func(types.TxKey) (bool, uint32, string)); ok {
-		return rf(key)
-	}
-	if rf, ok := ret.Get(0).(func(types.TxKey) bool); ok {
-		r0 = rf(key)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	if rf, ok := ret.Get(1).(func(types.TxKey) uint32); ok {
-		r1 = rf(key)
-	} else {
-		r1 = ret.Get(1).(uint32)
-	}
-
-	if rf, ok := ret.Get(2).(func(types.TxKey) string); ok {
-		r2 = rf(key)
-	} else {
-		r2 = ret.Get(2).(string)
-	}
-
-	return r0, r1, r2
+	_ = "STUB: not implemented"
+	return false, 0, ""
 }
 
 // NewMempool creates a new instance of Mempool. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -293,10 +104,6 @@ func NewMempool(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *Mempool {
-	mock := &Mempool{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
+	_ = "STUB: not implemented"
+	return nil
 }

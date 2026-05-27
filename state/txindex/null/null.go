@@ -2,7 +2,6 @@ package null
 
 import (
 	"context"
-	"errors"
 
 	"github.com/cometbft/cometbft/libs/log"
 
@@ -18,23 +17,23 @@ type TxIndex struct{}
 
 // Get on a TxIndex is disabled and panics when invoked.
 func (txi *TxIndex) Get(_ []byte) (*abci.TxResult, error) {
-	return nil, errors.New(`indexing is disabled and kv indexer was deprecated`)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // AddBatch is a noop and always returns nil.
 func (txi *TxIndex) AddBatch(_ *txindex.Batch) error {
+	_ = "STUB: not implemented"
+
+	// Index is a noop and always returns nil.
 	return nil
 }
 
-// Index is a noop and always returns nil.
-func (txi *TxIndex) Index(_ *abci.TxResult) error {
-	return nil
-}
+func (txi *TxIndex) Index(_ *abci.TxResult) error { _ = "STUB: not implemented"; return nil }
 
 func (txi *TxIndex) Search(_ context.Context, _ *query.Query) ([]*abci.TxResult, error) {
-	return []*abci.TxResult{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (txi *TxIndex) SetLogger(log.Logger) {
-
-}
+func (txi *TxIndex) SetLogger(log.Logger) { _ = "STUB: not implemented"; return }

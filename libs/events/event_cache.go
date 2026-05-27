@@ -8,11 +8,7 @@ type EventCache struct {
 }
 
 // Create a new EventCache with an EventSwitch as backend
-func NewEventCache(evsw Fireable) *EventCache {
-	return &EventCache{
-		evsw: evsw,
-	}
-}
+func NewEventCache(evsw Fireable) *EventCache { _ = "STUB: not implemented"; return nil }
 
 // a cached event
 type eventInfo struct {
@@ -22,16 +18,13 @@ type eventInfo struct {
 
 // Cache an event to be fired upon finality.
 func (evc *EventCache) FireEvent(event string, data EventData) {
+	_ = "STUB: not implemented"
 	// append to list (go will grow our backing array exponentially)
-	evc.events = append(evc.events, eventInfo{event, data})
+	return
 }
 
 // Fire events by running evsw.FireEvent on all cached events. Blocks.
 // Clears cached events
-func (evc *EventCache) Flush() {
-	for _, ei := range evc.events {
-		evc.evsw.FireEvent(ei.event, ei.data)
-	}
-	// Clear the buffer, since we only add to it with append it's safe to just set it to nil and maybe safe an allocation
-	evc.events = nil
-}
+func (evc *EventCache) Flush() { _ = "STUB: not implemented"; return }
+
+// Clear the buffer, since we only add to it with append it's safe to just set it to nil and maybe safe an allocation

@@ -1,8 +1,6 @@
 package json
 
 import (
-	"errors"
-	"fmt"
 	"reflect"
 
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
@@ -20,15 +18,7 @@ var (
 // the a value or pointer based on the registered type.
 //
 // Should only be called in init() functions, as it panics on error.
-func RegisterType(_type interface{}, name string) {
-	if _type == nil {
-		panic("cannot register nil type")
-	}
-	err := typeRegistry.register(name, reflect.ValueOf(_type).Type())
-	if err != nil {
-		panic(err)
-	}
-}
+func RegisterType(_type interface{}, name string) { _ = "STUB: not implemented"; return }
 
 // typeInfo contains type information.
 type typeInfo struct {
@@ -45,65 +35,19 @@ type types struct {
 }
 
 // newTypes creates a new type registry.
-func newTypes() types {
-	return types{
-		byType: map[reflect.Type]*typeInfo{},
-		byName: map[string]*typeInfo{},
-	}
-}
+func newTypes() types { _ = "STUB: not implemented"; return *new(types) }
 
 // registers the given type with the given name. The name and type must not be registered already.
-func (t *types) register(name string, rt reflect.Type) error {
-	if name == "" {
-		return errors.New("name cannot be empty")
-	}
-	// If this is a pointer type, we recursively resolve until we get a bare type, but register that
-	// we should return pointers.
-	returnPtr := false
-	for rt.Kind() == reflect.Ptr {
-		returnPtr = true
-		rt = rt.Elem()
-	}
-	tInfo := &typeInfo{
-		name:      name,
-		rt:        rt,
-		returnPtr: returnPtr,
-	}
+func (t *types) register(name string, rt reflect.Type) error { _ = "STUB: not implemented"; return nil }
 
-	t.Lock()
-	defer t.Unlock()
-	if _, ok := t.byName[tInfo.name]; ok {
-		return fmt.Errorf("a type with name %q is already registered", name)
-	}
-	if _, ok := t.byType[tInfo.rt]; ok {
-		return fmt.Errorf("the type %v is already registered", rt)
-	}
-	t.byName[name] = tInfo
-	t.byType[rt] = tInfo
-	return nil
-}
+// If this is a pointer type, we recursively resolve until we get a bare type, but register that
+// we should return pointers.
 
 // lookup looks up a type from a name, or nil if not registered.
 func (t *types) lookup(name string) (reflect.Type, bool) {
-	t.RLock()
-	defer t.RUnlock()
-	tInfo := t.byName[name]
-	if tInfo == nil {
-		return nil, false
-	}
-	return tInfo.rt, tInfo.returnPtr
+	_ = "STUB: not implemented"
+	return *new(reflect.Type), false
 }
 
 // name looks up the name of a type, or empty if not registered. Unwraps pointers as necessary.
-func (t *types) name(rt reflect.Type) string {
-	for rt.Kind() == reflect.Ptr {
-		rt = rt.Elem()
-	}
-	t.RLock()
-	defer t.RUnlock()
-	tInfo := t.byType[rt]
-	if tInfo == nil {
-		return ""
-	}
-	return tInfo.name
-}
+func (t *types) name(rt reflect.Type) string { _ = "STUB: not implemented"; return "" }

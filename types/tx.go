@@ -1,18 +1,9 @@
 package types
 
 import (
-	"bytes"
 	"crypto/sha256"
-	"errors"
-	"fmt"
-
-	"github.com/cosmos/gogoproto/proto"
-
-	share "github.com/celestiaorg/go-square/v3/share"
-	square "github.com/celestiaorg/go-square/v3/tx"
 
 	"github.com/cometbft/cometbft/crypto/merkle"
-	"github.com/cometbft/cometbft/crypto/tmhash"
 	cmtbytes "github.com/cometbft/cometbft/libs/bytes"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
@@ -30,9 +21,7 @@ type (
 	TxKey [TxKeySize]byte
 )
 
-func (tx TxKey) String() string {
-	return fmt.Sprintf("TxKey{%X}", tx[:])
-}
+func (tx TxKey) String() string { _ = "STUB: not implemented"; return "" }
 
 // Hash computes the TMHASH hash of the wire encoded transaction.
 type CachedTx struct {
@@ -42,96 +31,38 @@ type CachedTx struct {
 
 // Hash returns the cached hash if available, otherwise it computes the hash
 // using the normal Tx.Hash method.
-func (tx *CachedTx) Hash() []byte {
-	if tx.hash != nil {
-		return tx.hash
-	}
-	h := tx.Tx.Hash()
-	tx.hash = h
-	return h
-}
+func (tx *CachedTx) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
 // Key returns the cached key if available, otherwise it computes the key
 // using the normal Tx.Key method.
-func (tx *CachedTx) Key() TxKey {
-	if tx.hash != nil {
-		return TxKey(tx.hash)
-	}
-	k := tx.Tx.Key()
-	tx.hash = k[:]
-	return k
-}
+func (tx *CachedTx) Key() TxKey { _ = "STUB: not implemented"; return *new(TxKey) }
 
 // NewCachedTx creates a new CachedTx with the provided transaction and hash.
-func NewCachedTx(tx Tx, hash []byte) *CachedTx {
-	return &CachedTx{Tx: tx, hash: hash}
-}
+func NewCachedTx(tx Tx, hash []byte) *CachedTx { _ = "STUB: not implemented"; return nil }
 
-func TxsFromCachedTxs(cachedTxs []*CachedTx) Txs {
-	txs := make(Txs, len(cachedTxs))
-	for i, cachedTx := range cachedTxs {
-		txs[i] = cachedTx.Tx
-	}
-	return txs
-}
+func TxsFromCachedTxs(cachedTxs []*CachedTx) Txs { _ = "STUB: not implemented"; return *new(Txs) }
 
 // CachedTxFromTxs creates a slice of CachedTx from a slice of Tx.
-func CachedTxFromTxs(txs Txs) []*CachedTx {
-	cachedTxs := make([]*CachedTx, len(txs))
-	for i, tx := range txs {
-		cachedTxs[i] = NewCachedTx(tx, nil)
-	}
-	return cachedTxs
-}
+func CachedTxFromTxs(txs Txs) []*CachedTx { _ = "STUB: not implemented"; return nil }
 
-func CachedTxToSliceOfBytes(cachedTxs []*CachedTx) [][]byte {
-	txBzs := make([][]byte, len(cachedTxs))
-	for i := 0; i < len(cachedTxs); i++ {
-		txBzs[i] = cachedTxs[i].Tx
-	}
-	return txBzs
-}
+func CachedTxToSliceOfBytes(cachedTxs []*CachedTx) [][]byte { _ = "STUB: not implemented"; return nil }
 
 // Hash computes the TMHASH hash of the wire encoded transaction. It attempts to
 // unwrap the transaction if it is a IndexWrapper or a BlobTx.
-func (tx Tx) Hash() []byte {
-	if indexWrapper, isIndexWrapper := UnmarshalIndexWrapper(tx); isIndexWrapper {
-		return tmhash.Sum(indexWrapper.Tx)
-	}
-	if blobTx, isBlobTx := UnmarshalBlobTx(tx); isBlobTx {
-		return tmhash.Sum(blobTx.Tx)
-	}
-	return tmhash.Sum(tx)
-}
+func (tx Tx) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
-func (tx Tx) ToCachedTx() *CachedTx {
-	return &CachedTx{Tx: tx}
-}
+func (tx Tx) ToCachedTx() *CachedTx { _ = "STUB: not implemented"; return nil }
 
 // Key returns the sha256 hash of the wire encoded transaction. It attempts to
 // unwrap the transaction if it is a BlobTx or a IndexWrapper.
-func (tx Tx) Key() TxKey {
-	if blobTx, isBlobTx := UnmarshalBlobTx(tx); isBlobTx {
-		return sha256.Sum256(blobTx.Tx)
-	}
-	if indexWrapper, isIndexWrapper := UnmarshalIndexWrapper(tx); isIndexWrapper {
-		return sha256.Sum256(indexWrapper.Tx)
-	}
-	return sha256.Sum256(tx)
-}
+func (tx Tx) Key() TxKey { _ = "STUB: not implemented"; return *new(TxKey) }
 
 // String returns the hex-encoded transaction as a string.
-func (tx Tx) String() string {
-	return fmt.Sprintf("Tx{%X}", []byte(tx))
-}
+func (tx Tx) String() string { _ = "STUB: not implemented"; return "" }
 
 func TxKeyFromBytes(bytes []byte) (TxKey, error) {
-	if len(bytes) != TxKeySize {
-		return TxKey{}, fmt.Errorf("incorrect tx key size. Expected %d bytes, got %d", TxKeySize, len(bytes))
-	}
-	var key TxKey
-	copy(key[:], bytes)
-	return key, nil
+	_ = "STUB: not implemented"
+	return *new(TxKey), nil
 }
 
 // Txs is a slice of Tx.
@@ -139,85 +70,30 @@ type Txs []Tx
 
 // Hash returns the Merkle root hash of the transaction hashes.
 // i.e. the leaves of the tree are the hashes of the txs.
-func (txs Txs) Hash() []byte {
-	hl := txs.hashList()
-	return merkle.HashFromByteSlices(hl)
-}
+func (txs Txs) Hash() []byte { _ = "STUB: not implemented"; return nil }
 
 // Index returns the index of this transaction in the list, or -1 if not found
-func (txs Txs) Index(tx Tx) int {
-	for i := range txs {
-		if bytes.Equal(txs[i], tx) {
-			return i
-		}
-	}
-	return -1
-}
+func (txs Txs) Index(tx Tx) int { _ = "STUB: not implemented"; return 0 }
 
 // IndexByHash returns the index of this transaction hash in the list, or -1 if not found
-func (txs Txs) IndexByHash(hash []byte) int {
-	for i := range txs {
-		if bytes.Equal(txs[i].Hash(), hash) {
-			return i
-		}
-	}
-	return -1
-}
+func (txs Txs) IndexByHash(hash []byte) int { _ = "STUB: not implemented"; return 0 }
 
-func (txs Txs) Proof(i int) TxProof {
-	hl := txs.hashList()
-	root, proofs := merkle.ProofsFromByteSlices(hl)
+func (txs Txs) Proof(i int) TxProof { _ = "STUB: not implemented"; return *new(TxProof) }
 
-	return TxProof{
-		RootHash: root,
-		Data:     txs[i],
-		Proof:    *proofs[i],
-	}
-}
-
-func (txs Txs) hashList() [][]byte {
-	hl := make([][]byte, len(txs))
-	for i := 0; i < len(txs); i++ {
-		hl[i] = txs[i].Hash()
-	}
-	return hl
-}
+func (txs Txs) hashList() [][]byte { _ = "STUB: not implemented"; return nil }
 
 // Txs is a slice of transactions. Sorting a Txs value orders the transactions
 // lexicographically.
-func (txs Txs) Len() int      { return len(txs) }
-func (txs Txs) Swap(i, j int) { txs[i], txs[j] = txs[j], txs[i] }
-func (txs Txs) Less(i, j int) bool {
-	return bytes.Compare(txs[i], txs[j]) == -1
-}
+func (txs Txs) Len() int           { _ = "STUB: not implemented"; return 0 }
+func (txs Txs) Swap(i, j int)      { _ = "STUB: not implemented"; return }
+func (txs Txs) Less(i, j int) bool { _ = "STUB: not implemented"; return false }
 
-func ToTxs(txl [][]byte) Txs {
-	txs := make([]Tx, 0, len(txl))
-	for _, tx := range txl {
-		txs = append(txs, tx)
-	}
-	return txs
-}
+func ToTxs(txl [][]byte) Txs { _ = "STUB: not implemented"; return *new(Txs) }
 
-func (txs Txs) Validate(maxSizeBytes int64) error {
-	var size int64
-	for _, tx := range txs {
-		size += ComputeProtoSizeForTxs([]Tx{tx})
-		if size > maxSizeBytes {
-			return fmt.Errorf("transaction data size exceeds maximum %d", maxSizeBytes)
-		}
-	}
-	return nil
-}
+func (txs Txs) Validate(maxSizeBytes int64) error { _ = "STUB: not implemented"; return nil }
 
 // ToSliceOfBytes converts a Txs to slice of byte slices.
-func (txs Txs) ToSliceOfBytes() [][]byte {
-	txBzs := make([][]byte, len(txs))
-	for i := 0; i < len(txs); i++ {
-		txBzs[i] = txs[i]
-	}
-	return txBzs
-}
+func (txs Txs) ToSliceOfBytes() [][]byte { _ = "STUB: not implemented"; return nil }
 
 // TxProof represents a Merkle proof of the presence of a transaction in the Merkle tree.
 type TxProof struct {
@@ -227,64 +103,25 @@ type TxProof struct {
 }
 
 // Leaf returns the hash(tx), which is the leaf in the merkle tree which this proof refers to.
-func (tp TxProof) Leaf() []byte {
-	return tp.Data.Hash()
-}
+func (tp TxProof) Leaf() []byte { _ = "STUB: not implemented"; return nil }
 
 // Validate verifies the proof. It returns nil if the RootHash matches the dataHash argument,
 // and if the proof is internally consistent. Otherwise, it returns a sensible error.
-func (tp TxProof) Validate(dataHash []byte) error {
-	if !bytes.Equal(dataHash, tp.RootHash) {
-		return errors.New("proof matches different data hash")
-	}
-	if tp.Proof.Index < 0 {
-		return errors.New("proof index cannot be negative")
-	}
-	if tp.Proof.Total <= 0 {
-		return errors.New("proof total must be positive")
-	}
-	valid := tp.Proof.Verify(tp.RootHash, tp.Leaf())
-	if valid != nil {
-		return errors.New("proof is not internally consistent")
-	}
-	return nil
-}
+func (tp TxProof) Validate(dataHash []byte) error { _ = "STUB: not implemented"; return nil }
 
 func (tp TxProof) ToProto() cmtproto.TxProof {
-
-	pbProof := tp.Proof.ToProto()
-
-	pbtp := cmtproto.TxProof{
-		RootHash: tp.RootHash,
-		Data:     tp.Data,
-		Proof:    pbProof,
-	}
-
-	return pbtp
+	_ = "STUB: not implemented"
+	return *new(cmtproto.TxProof)
 }
+
 func TxProofFromProto(pb cmtproto.TxProof) (TxProof, error) {
-
-	pbProof, err := merkle.ProofFromProto(pb.Proof, false)
-	if err != nil {
-		return TxProof{}, err
-	}
-
-	pbtp := TxProof{
-		RootHash: pb.RootHash,
-		Data:     pb.Data,
-		Proof:    *pbProof,
-	}
-
-	return pbtp, nil
+	_ = "STUB: not implemented"
+	return *new(TxProof), nil
 }
 
 // ComputeProtoSizeForTxs wraps the transactions in cmtproto.Data{} and calculates the size.
 // https://developers.google.com/protocol-buffers/docs/encoding
-func ComputeProtoSizeForTxs(txs []Tx) int64 {
-	data := Data{Txs: txs}
-	pdData := data.ToProto()
-	return int64(pdData.Size())
-}
+func ComputeProtoSizeForTxs(txs []Tx) int64 { _ = "STUB: not implemented"; return 0 }
 
 // UnmarshalIndexWrapper attempts to unmarshal the provided transaction into an
 // IndexWrapper transaction. It returns true if the provided transaction is an
@@ -296,15 +133,9 @@ func ComputeProtoSizeForTxs(txs []Tx) int64 {
 // kept in the app, we cannot perform further checks without creating an import
 // cycle.
 func UnmarshalIndexWrapper(tx Tx) (indexWrapper cmtproto.IndexWrapper, isIndexWrapper bool) {
+	_ = "STUB: not implemented"
 	// attempt to unmarshal into an IndexWrapper transaction
-	err := proto.Unmarshal(tx, &indexWrapper)
-	if err != nil {
-		return indexWrapper, false
-	}
-	if indexWrapper.TypeId != square.ProtoIndexWrapperTypeID {
-		return indexWrapper, false
-	}
-	return indexWrapper, true
+	return *new(cmtproto.IndexWrapper), false
 }
 
 // MarshalIndexWrapper creates a wrapped Tx that includes the original transaction
@@ -312,35 +143,18 @@ func UnmarshalIndexWrapper(tx Tx) (indexWrapper cmtproto.IndexWrapper, isIndexWr
 //
 // NOTE: must be unwrapped to be a viable sdk.Tx.
 func MarshalIndexWrapper(tx Tx, shareIndexes ...uint32) (Tx, error) {
-	wTx := cmtproto.IndexWrapper{
-		Tx:           tx,
-		ShareIndexes: shareIndexes,
-		TypeId:       square.ProtoIndexWrapperTypeID,
-	}
-	return proto.Marshal(&wTx)
+	_ = "STUB: not implemented"
+	return *new(Tx), nil
 }
 
 // UnmarshalBlobTx attempts to unmarshal a transaction into blob transaction. If an
 // error is thrown, false is returned.
 func UnmarshalBlobTx(tx Tx) (bTx cmtproto.BlobTx, isBlob bool) {
-	err := bTx.Unmarshal(tx)
-	if err != nil {
-		return cmtproto.BlobTx{}, false
-	}
-	// perform some quick basic checks to prevent false positives
-	if bTx.TypeId != square.ProtoBlobTxTypeID {
-		return bTx, false
-	}
-	if len(bTx.Blobs) == 0 {
-		return bTx, false
-	}
-	for _, b := range bTx.Blobs {
-		if len(b.NamespaceId) != share.NamespaceIDSize {
-			return bTx, false
-		}
-	}
-	return bTx, true
+	_ = "STUB: not implemented"
+	return *new(cmtproto.BlobTx), false
 }
+
+// perform some quick basic checks to prevent false positives
 
 // MarshalBlobTx creates a BlobTx using a normal transaction and some number of
 // blobs.
@@ -348,10 +162,6 @@ func UnmarshalBlobTx(tx Tx) (bTx cmtproto.BlobTx, isBlob bool) {
 // NOTE: Any checks on the blobs or the transaction must be performed in the
 // application.
 func MarshalBlobTx(tx []byte, blobs ...*cmtproto.Blob) (Tx, error) {
-	bTx := cmtproto.BlobTx{
-		Tx:     tx,
-		Blobs:  blobs,
-		TypeId: square.ProtoBlobTxTypeID,
-	}
-	return bTx.Marshal()
+	_ = "STUB: not implemented"
+	return *new(Tx), nil
 }

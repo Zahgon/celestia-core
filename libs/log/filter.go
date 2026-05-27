@@ -1,7 +1,5 @@
 package log
 
-import "fmt"
-
 type level byte
 
 const (
@@ -28,48 +26,17 @@ type keyval struct {
 // no options are provided, all leveled log events created with Trace, Debug,
 // Info or Error helper methods are squelched.
 func NewFilter(next Logger, options ...Option) Logger {
-	l := &filter{
-		next:           next,
-		allowedKeyvals: make(map[keyval]level),
-	}
-	for _, option := range options {
-		option(l)
-	}
-	l.initiallyAllowed = l.allowed
-	return l
+	_ = "STUB: not implemented"
+	return *new(Logger)
 }
 
-func (l *filter) Trace(msg string, keyvals ...interface{}) {
-	levelAllowed := l.allowed&levelTrace != 0
-	if !levelAllowed {
-		return
-	}
-	l.next.Trace(msg, keyvals...)
-}
+func (l *filter) Trace(msg string, keyvals ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (l *filter) Info(msg string, keyvals ...interface{}) {
-	levelAllowed := l.allowed&levelInfo != 0
-	if !levelAllowed {
-		return
-	}
-	l.next.Info(msg, keyvals...)
-}
+func (l *filter) Info(msg string, keyvals ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (l *filter) Debug(msg string, keyvals ...interface{}) {
-	levelAllowed := l.allowed&levelDebug != 0
-	if !levelAllowed {
-		return
-	}
-	l.next.Debug(msg, keyvals...)
-}
+func (l *filter) Debug(msg string, keyvals ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (l *filter) Error(msg string, keyvals ...interface{}) {
-	levelAllowed := l.allowed&levelError != 0
-	if !levelAllowed {
-		return
-	}
-	l.next.Error(msg, keyvals...)
-}
+func (l *filter) Error(msg string, keyvals ...interface{}) { _ = "STUB: not implemented"; return }
 
 // With implements Logger by constructing a new filter with a keyvals appended
 // to the logger.
@@ -92,46 +59,23 @@ func (l *filter) Error(msg string, keyvals ...interface{}) {
 //					log.AllowInfoWith("module", "crypto"), log.AllowNoneWith("user", "Sam"))
 //			 logger.With("user", "Sam").With("module", "crypto").Info("Hello") # produces "I... Hello module=crypto user=Sam"
 func (l *filter) With(keyvals ...interface{}) Logger {
-	keyInAllowedKeyvals := false
-
-	for i := len(keyvals) - 2; i >= 0; i -= 2 {
-		for kv, allowed := range l.allowedKeyvals {
-			if keyvals[i] == kv.key {
-				keyInAllowedKeyvals = true
-				// Example:
-				//		logger = log.NewFilter(logger, log.AllowError(), log.AllowInfoWith("module", "crypto"))
-				//		logger.With("module", "crypto")
-				if keyvals[i+1] == kv.value {
-					return &filter{
-						next:             l.next.With(keyvals...),
-						allowed:          allowed, // set the desired level
-						allowedKeyvals:   l.allowedKeyvals,
-						initiallyAllowed: l.initiallyAllowed,
-					}
-				}
-			}
-		}
-	}
-
-	// Example:
-	//		logger = log.NewFilter(logger, log.AllowError(), log.AllowInfoWith("module", "crypto"))
-	//		logger.With("module", "main")
-	if keyInAllowedKeyvals {
-		return &filter{
-			next:             l.next.With(keyvals...),
-			allowed:          l.initiallyAllowed, // return back to initially allowed
-			allowedKeyvals:   l.allowedKeyvals,
-			initiallyAllowed: l.initiallyAllowed,
-		}
-	}
-
-	return &filter{
-		next:             l.next.With(keyvals...),
-		allowed:          l.allowed, // simply continue with the current level
-		allowedKeyvals:   l.allowedKeyvals,
-		initiallyAllowed: l.initiallyAllowed,
-	}
+	_ = "STUB: not implemented"
+	return *new(Logger)
 }
+
+// Example:
+//		logger = log.NewFilter(logger, log.AllowError(), log.AllowInfoWith("module", "crypto"))
+//		logger.With("module", "crypto")
+
+// set the desired level
+
+// Example:
+//		logger = log.NewFilter(logger, log.AllowError(), log.AllowInfoWith("module", "crypto"))
+//		logger.With("module", "main")
+
+// return back to initially allowed
+
+// simply continue with the current level
 
 //--------------------------------------------------------------------------------
 
@@ -140,80 +84,59 @@ type Option func(*filter)
 
 // AllowLevel returns an option for the given level or error if no option exist
 // for such level.
-func AllowLevel(lvl string) (Option, error) {
-	switch lvl {
-	case "trace":
-		return AllowTrace(), nil
-	case "debug":
-		return AllowDebug(), nil
-	case "info":
-		return AllowInfo(), nil
-	case "error":
-		return AllowError(), nil
-	case "none":
-		return AllowNone(), nil
-	default:
-		return nil, fmt.Errorf("expected either \"trace\", \"info\", \"debug\", \"error\" or \"none\" level, given %s", lvl)
-	}
-}
+func AllowLevel(lvl string) (Option, error) { _ = "STUB: not implemented"; return *new(Option), nil }
 
 // AllowAll is an alias for AllowTrace.
 func AllowAll() Option {
-	return AllowTrace()
+	_ = "STUB: not implemented"
+	return *
+
+	// AllowTrace allows error, info, debug and trace level log events to pass.
+	new(Option)
 }
 
-// AllowTrace allows error, info, debug and trace level log events to pass.
-func AllowTrace() Option {
-	return allowed(levelError | levelInfo | levelDebug | levelTrace)
-}
+func AllowTrace() Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // AllowDebug allows error, info and debug level log events to pass.
-func AllowDebug() Option {
-	return allowed(levelError | levelInfo | levelDebug)
-}
+func AllowDebug() Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // AllowInfo allows error and info level log events to pass.
-func AllowInfo() Option {
-	return allowed(levelError | levelInfo)
-}
+func AllowInfo() Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // AllowError allows only error level log events to pass.
-func AllowError() Option {
-	return allowed(levelError)
-}
+func AllowError() Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // AllowNone allows no leveled log events to pass.
-func AllowNone() Option {
-	return allowed(0)
-}
+func AllowNone() Option { _ = "STUB: not implemented"; return *new(Option) }
 
-func allowed(allowed level) Option {
-	return func(l *filter) { l.allowed = allowed }
-}
+func allowed(allowed level) Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // AllowTraceWith allows error, info, debug and trace level log events to pass for a specific key value pair.
 func AllowTraceWith(key interface{}, value interface{}) Option {
-	return func(l *filter) {
-		l.allowedKeyvals[keyval{key, value}] = levelError | levelInfo | levelDebug | levelTrace
-	}
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
 // AllowDebugWith allows error, info and debug level log events to pass for a specific key value pair.
 func AllowDebugWith(key interface{}, value interface{}) Option {
-	return func(l *filter) { l.allowedKeyvals[keyval{key, value}] = levelError | levelInfo | levelDebug }
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
 // AllowInfoWith allows error and info level log events to pass for a specific key value pair.
 func AllowInfoWith(key interface{}, value interface{}) Option {
-	return func(l *filter) { l.allowedKeyvals[keyval{key, value}] = levelError | levelInfo }
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
 // AllowErrorWith allows only error level log events to pass for a specific key value pair.
 func AllowErrorWith(key interface{}, value interface{}) Option {
-	return func(l *filter) { l.allowedKeyvals[keyval{key, value}] = levelError }
+	_ = "STUB: not implemented"
+	return *new(Option)
 }
 
 // AllowNoneWith allows no leveled log events to pass for a specific key value pair.
 func AllowNoneWith(key interface{}, value interface{}) Option {
-	return func(l *filter) { l.allowedKeyvals[keyval{key, value}] = 0 }
+	_ = "STUB: not implemented"
+	return *new(Option)
 }

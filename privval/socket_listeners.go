@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/cometbft/cometbft/crypto/ed25519"
-	p2pconn "github.com/cometbft/cometbft/p2p/conn"
 )
 
 const (
@@ -27,13 +26,15 @@ type TCPListenerOption func(*TCPListener)
 // TCPListenerTimeoutAccept sets the timeout for the listener.
 // A zero time value disables the timeout.
 func TCPListenerTimeoutAccept(timeout time.Duration) TCPListenerOption {
-	return func(tl *TCPListener) { tl.timeoutAccept = timeout }
+	_ = "STUB: not implemented"
+	return *new(TCPListenerOption)
 }
 
 // TCPListenerTimeoutReadWrite sets the read and write timeout for connections
 // from external signing processes.
 func TCPListenerTimeoutReadWrite(timeout time.Duration) TCPListenerOption {
-	return func(tl *TCPListener) { tl.timeoutReadWrite = timeout }
+	_ = "STUB: not implemented"
+	return *new(TCPListenerOption)
 }
 
 // tcpListener implements net.Listener.
@@ -53,36 +54,17 @@ type TCPListener struct {
 // NewTCPListener returns a listener that accepts authenticated encrypted connections
 // using the given secretConnKey and the default timeout values.
 func NewTCPListener(ln net.Listener, secretConnKey ed25519.PrivKey) *TCPListener {
-	return &TCPListener{
-		TCPListener:      ln.(*net.TCPListener),
-		secretConnKey:    secretConnKey,
-		timeoutAccept:    time.Second * defaultTimeoutAcceptSeconds,
-		timeoutReadWrite: time.Second * defaultTimeoutReadWriteSeconds,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Accept implements net.Listener.
 func (ln *TCPListener) Accept() (net.Conn, error) {
-	deadline := time.Now().Add(ln.timeoutAccept)
-	err := ln.SetDeadline(deadline)
-	if err != nil {
-		return nil, err
-	}
-
-	tc, err := ln.AcceptTCP()
-	if err != nil {
-		return nil, err
-	}
-
-	// Wrap the conn in our timeout and encryption wrappers
-	timeoutConn := newTimeoutConn(tc, ln.timeoutReadWrite)
-	secretConn, err := p2pconn.MakeSecretConnection(timeoutConn, ln.secretConnKey)
-	if err != nil {
-		return nil, err
-	}
-
-	return secretConn, nil
+	_ = "STUB: not implemented"
+	return *new(net.Conn), nil
 }
+
+// Wrap the conn in our timeout and encryption wrappers
 
 //------------------------------------------------------------------
 // Unix Listener
@@ -95,13 +77,15 @@ type UnixListenerOption func(*UnixListener)
 // UnixListenerTimeoutAccept sets the timeout for the listener.
 // A zero time value disables the timeout.
 func UnixListenerTimeoutAccept(timeout time.Duration) UnixListenerOption {
-	return func(ul *UnixListener) { ul.timeoutAccept = timeout }
+	_ = "STUB: not implemented"
+	return *new(UnixListenerOption)
 }
 
 // UnixListenerTimeoutReadWrite sets the read and write timeout for connections
 // from external signing processes.
 func UnixListenerTimeoutReadWrite(timeout time.Duration) UnixListenerOption {
-	return func(ul *UnixListener) { ul.timeoutReadWrite = timeout }
+	_ = "STUB: not implemented"
+	return *new(UnixListenerOption)
 }
 
 // UnixListener wraps a *net.UnixListener to standardize protocol timeouts
@@ -115,35 +99,18 @@ type UnixListener struct {
 
 // NewUnixListener returns a listener that accepts unencrypted connections
 // using the default timeout values.
-func NewUnixListener(ln net.Listener) *UnixListener {
-	return &UnixListener{
-		UnixListener:     ln.(*net.UnixListener),
-		timeoutAccept:    time.Second * defaultTimeoutAcceptSeconds,
-		timeoutReadWrite: time.Second * defaultTimeoutReadWriteSeconds,
-	}
-}
+func NewUnixListener(ln net.Listener) *UnixListener { _ = "STUB: not implemented"; return nil }
 
 // Accept implements net.Listener.
 func (ln *UnixListener) Accept() (net.Conn, error) {
-	deadline := time.Now().Add(ln.timeoutAccept)
-	err := ln.SetDeadline(deadline)
-	if err != nil {
-		return nil, err
-	}
-
-	tc, err := ln.AcceptUnix()
-	if err != nil {
-		return nil, err
-	}
-
-	// Wrap the conn in our timeout wrapper
-	conn := newTimeoutConn(tc, ln.timeoutReadWrite)
-
-	// TODO: wrap in something that authenticates
-	// with a MAC - https://github.com/tendermint/tendermint/issues/3099
-
-	return conn, nil
+	_ = "STUB: not implemented"
+	return *new(net.Conn), nil
 }
+
+// Wrap the conn in our timeout wrapper
+
+// TODO: wrap in something that authenticates
+// with a MAC - https://github.com/tendermint/tendermint/issues/3099
 
 //------------------------------------------------------------------
 // Connection
@@ -159,32 +126,24 @@ type timeoutConn struct {
 
 // newTimeoutConn returns an instance of timeoutConn.
 func newTimeoutConn(conn net.Conn, timeout time.Duration) *timeoutConn {
-	return &timeoutConn{
-		conn,
-		timeout,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Read implements net.Conn.
 func (c timeoutConn) Read(b []byte) (n int, err error) {
+	_ = "STUB: not implemented"
 	// Reset deadline
-	deadline := time.Now().Add(c.timeout)
-	err = c.Conn.SetReadDeadline(deadline) //nolint:staticcheck
-	if err != nil {
-		return
-	}
-
-	return c.Conn.Read(b)
+	return 0, nil
 }
+
+//nolint:staticcheck
 
 // Write implements net.Conn.
 func (c timeoutConn) Write(b []byte) (n int, err error) {
+	_ = "STUB: not implemented"
 	// Reset deadline
-	deadline := time.Now().Add(c.timeout)
-	err = c.Conn.SetWriteDeadline(deadline) //nolint:staticcheck
-	if err != nil {
-		return
-	}
-
-	return c.Conn.Write(b)
+	return 0, nil
 }
+
+//nolint:staticcheck

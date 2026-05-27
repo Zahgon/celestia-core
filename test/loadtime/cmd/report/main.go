@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	dbm "github.com/cometbft/cometbft-db"
@@ -80,24 +79,4 @@ func main() {
 	fmt.Printf("Total Invalid Tx: %d\n", rs.ErrorCount())
 }
 
-func toCSVRecords(rs []report.Report) [][]string {
-	total := 0
-	for _, v := range rs {
-		total += len(v.All)
-	}
-	res := make([][]string, total+1)
-
-	res[0] = []string{"experiment_id", "block_time", "duration_ns", "tx_hash", "connections", "rate", "size"}
-	offset := 1
-	for _, r := range rs {
-		idStr := r.ID.String()
-		connStr := strconv.FormatInt(int64(r.Connections), 10)
-		rateStr := strconv.FormatInt(int64(r.Rate), 10)
-		sizeStr := strconv.FormatInt(int64(r.Size), 10)
-		for i, v := range r.All {
-			res[offset+i] = []string{idStr, strconv.FormatInt(v.BlockTime.UnixNano(), 10), strconv.FormatInt(int64(v.Duration), 10), fmt.Sprintf("%X", v.Hash), connStr, rateStr, sizeStr}
-		}
-		offset += len(r.All)
-	}
-	return res
-}
+func toCSVRecords(rs []report.Report) [][]string { _ = "STUB: not implemented"; return nil }

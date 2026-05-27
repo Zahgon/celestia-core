@@ -31,229 +31,89 @@ type ProposalCache struct {
 	currentProposalPartsCount atomic.Int64
 }
 
-func NewProposalCache(bs *store.BlockStore) *ProposalCache {
-	mtx := sync.Mutex{}
-	pc := &ProposalCache{
-		pmtx:      &mtx,
-		proposals: make(map[int64]map[int32]*proposalData),
-		store:     bs,
-	}
+func NewProposalCache(bs *store.BlockStore) *ProposalCache { _ = "STUB: not implemented"; return nil }
 
-	// if there is a block saved in the store, set the current height and round.
-	if bs.Height() != 0 {
-		pc.height = bs.Height()
-	}
-	return pc
-}
+// if there is a block saved in the store, set the current height and round.
 
 // getCurrentProposalPartsCount returns the current proposal number of parts.
-func (p *ProposalCache) getCurrentProposalPartsCount() int64 {
-	return p.currentProposalPartsCount.Load()
-}
+func (p *ProposalCache) getCurrentProposalPartsCount() int64 { _ = "STUB: not implemented"; return 0 }
 
 // setCurrentProposalPartsCount sets the current proposal number of parts.
 func (p *ProposalCache) setCurrentProposalPartsCount(limit int64) {
-	p.currentProposalPartsCount.Store(limit)
+	_ = "STUB: not implemented"
+	return
 }
 
 func (p *ProposalCache) AddProposal(cb *proptypes.CompactBlock) (added bool) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-
-	if !p.relevant(cb.Proposal.Height, cb.Proposal.Round) {
-		return false
-	}
-
-	if p.proposals[cb.Proposal.Height] == nil {
-		p.proposals[cb.Proposal.Height] = make(map[int32]*proposalData)
-	}
-	if p.proposals[cb.Proposal.Height][cb.Proposal.Round] != nil {
-		return false
-	}
-
-	p.height = cb.Proposal.Height
-	p.round = cb.Proposal.Round
-
-	block := proptypes.NewCombinedSetFromCompactBlock(cb)
-	p.proposals[cb.Proposal.Height][cb.Proposal.Round] = &proposalData{
-		compactBlock: cb,
-		block:        block,
-		maxRequests:  bits.NewBitArray(int(block.Total())),
-	}
-
-	p.setCurrentProposalPartsCount(int64(block.Total()))
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
 // GetProposal returns the proposal and block for a given height and round if
 // this node has it stored or cached.
 func (p *ProposalCache) GetProposal(height int64, round int32) (*types.Proposal, *types.PartSet, bool) {
-	cb, parts, _, has := p.getAllState(height, round, true)
-	if !has || cb == nil {
-		return nil, nil, false
-	}
-	return &cb.Proposal, parts.Original(), has
+	_ = "STUB: not implemented"
+	return nil, nil, false
 }
 
-func (p *ProposalCache) unfinishedHeights() []*proposalData {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
+func (p *ProposalCache) unfinishedHeights() []*proposalData { _ = "STUB: not implemented"; return nil }
 
-	// We only consider heights strictly higher than the committed height as
-	// "in flight". Heights that are already committed are ignored even if they
-	// remain cached.
-	committedHeight := p.store.Height()
-	data := make([]*proposalData, 0)
-	for height, heightData := range p.proposals {
-		if height <= committedHeight {
-			continue
-		}
+// We only consider heights strictly higher than the committed height as
+// "in flight". Heights that are already committed are ignored even if they
+// remain cached.
 
-		var prop *proposalData
-		for _, pd := range heightData {
-			if prop == nil || pd.compactBlock.Proposal.Round > prop.compactBlock.Proposal.Round {
-				prop = pd
-			}
-		}
-		if prop == nil {
-			continue
-		}
-
-		// Treat catchup proposals as "unfinished" even if all parts are present.
-		// This lets the consensus layer know it should skip delayed precommit when
-		// replaying cached proposals to catch up.
-		if prop.catchup || !prop.block.IsComplete() {
-			data = append(data, prop)
-		}
-	}
-	return data
-}
+// Treat catchup proposals as "unfinished" even if all parts are present.
+// This lets the consensus layer know it should skip delayed precommit when
+// replaying cached proposals to catch up.
 
 // relevant determines if a height or round is currently actionable. For
 // example, passing the height that was already committed is not actionable.
 // Passing a round that has already been surpassed is not actionable.
 func (p *ProposalCache) relevant(height int64, round int32) bool {
-	if height < p.height {
-		return false
-	}
-
-	if round < p.round {
-		return false
-	}
-
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
 // safeRelevant determines if a have message is relevant in a thread safe way.
 func (p *ProposalCache) safeRelevant(height int64, round int32) bool {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	return p.relevant(height, round)
+	_ = "STUB: not implemented"
+	return false
 }
 
 // GetProposal returns the proposal and block for a given height and round if
 // this node has it stored or cached. It also return the max requests for that
 // block.
 func (p *ProposalCache) getAllState(height int64, round int32, catchup bool) (*proptypes.CompactBlock, *proptypes.CombinedPartSet, *bits.BitArray, bool) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-
-	if !catchup && !p.relevant(height, round) {
-		return nil, nil, nil, false
-	}
-
-	cachedProps, has := p.proposals[height]
-	cachedProp, hasRound := cachedProps[round]
-
-	// if the round is less than -1, then they're asking for the latest
-	// proposal
-	if round < -1 && len(cachedProps) > 0 {
-		// get the latest round
-		var latestRound int32
-		for r := range cachedProps {
-			if r > latestRound {
-				latestRound = r
-			}
-		}
-		cachedProp = cachedProps[latestRound]
-		hasRound = true
-	}
-
-	var hasStored *types.BlockMeta
-	if height < p.height {
-		hasStored = p.store.LoadBlockMeta(height)
-	}
-
-	switch {
-	case has && hasRound:
-		return cachedProp.compactBlock, cachedProp.block, cachedProp.maxRequests, true
-	case hasStored != nil:
-		parts, _, err := p.store.LoadPartSet(height)
-		if err != nil {
-			return nil, nil, nil, false
-		}
-		cparts := proptypes.NewCombinedPartSetFromOriginal(parts, false)
-		return nil, cparts, cparts.BitArray(), true
-	default:
-		return nil, nil, nil, false
-	}
+	_ = "STUB: not implemented"
+	return nil, nil, nil, false
 }
+
+// if the round is less than -1, then they're asking for the latest
+// proposal
+
+// get the latest round
 
 // GetCurrentProposal returns the current proposal and block for the current
 // height and round.
 func (p *ProposalCache) GetCurrentProposal() (*types.Proposal, *proptypes.CombinedPartSet, bool) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	if p.proposals[p.height] == nil {
-		return nil, nil, false
-	}
-	proposalData, has := p.proposals[p.height][p.round]
-	if !has {
-		return nil, nil, false
-	}
-	return &proposalData.compactBlock.Proposal, proposalData.block, true
+	_ = "STUB: not implemented"
+	return nil, nil, false
 }
 
 // GetCurrentCompactBlock returns the current compact block for the current
 // height and round.
 func (p *ProposalCache) GetCurrentCompactBlock() (*proptypes.CompactBlock, *proptypes.CombinedPartSet, bool) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	if p.proposals[p.height] == nil {
-		return nil, nil, false
-	}
-	proposalData, has := p.proposals[p.height][p.round]
-	if !has {
-		return nil, nil, false
-	}
-	return proposalData.compactBlock, proposalData.block, true
+	_ = "STUB: not implemented"
+	return nil, nil, false
 }
 
-func (p *ProposalCache) DeleteHeight(height int64) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	delete(p.proposals, height)
-}
+func (p *ProposalCache) DeleteHeight(height int64) { _ = "STUB: not implemented"; return }
 
-func (p *ProposalCache) DeleteRound(height int64, round int32) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	if p.proposals[height] != nil {
-		delete(p.proposals[height], round)
-	}
-}
+func (p *ProposalCache) DeleteRound(height int64, round int32) { _ = "STUB: not implemented"; return }
 
 // prune deletes all cached compact blocks for heights less than the provided
 // height and round.
 //
 // todo: also prune rounds. this requires prune in the consensus reactor after
 // moving rounds.
-func (p *ProposalCache) prune(pruneHeight int64) {
-	p.pmtx.Lock()
-	defer p.pmtx.Unlock()
-	for height := range p.proposals {
-		if height < pruneHeight {
-			delete(p.proposals, height)
-		}
-	}
-}
+func (p *ProposalCache) prune(pruneHeight int64) { _ = "STUB: not implemented"; return }

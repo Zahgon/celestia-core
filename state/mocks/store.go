@@ -17,351 +17,78 @@ type Store struct {
 }
 
 // Bootstrap provides a mock function with given fields: _a0
-func (_m *Store) Bootstrap(_a0 state.State) error {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Bootstrap")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(state.State) error); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
+func (_m *Store) Bootstrap(_a0 state.State) error { _ = "STUB: not implemented"; return nil }
 
 // Close provides a mock function with no fields
-func (_m *Store) Close() error {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for Close")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func() error); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
+func (_m *Store) Close() error { _ = "STUB: not implemented"; return nil }
 
 // GetOfflineStateSyncHeight provides a mock function with no fields
 func (_m *Store) GetOfflineStateSyncHeight() (int64, error) {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetOfflineStateSyncHeight")
-	}
-
-	var r0 int64
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (int64, error)); ok {
-		return rf()
-	}
-	if rf, ok := ret.Get(0).(func() int64); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // Load provides a mock function with no fields
 func (_m *Store) Load() (state.State, error) {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for Load")
-	}
-
-	var r0 state.State
-	var r1 error
-	if rf, ok := ret.Get(0).(func() (state.State, error)); ok {
-		return rf()
-	}
-	if rf, ok := ret.Get(0).(func() state.State); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(state.State)
-	}
-
-	if rf, ok := ret.Get(1).(func() error); ok {
-		r1 = rf()
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return *new(state.State), nil
 }
 
 // LoadConsensusParams provides a mock function with given fields: _a0
 func (_m *Store) LoadConsensusParams(_a0 int64) (types.ConsensusParams, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadConsensusParams")
-	}
-
-	var r0 types.ConsensusParams
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (types.ConsensusParams, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(int64) types.ConsensusParams); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(types.ConsensusParams)
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return *new(types.ConsensusParams), nil
 }
 
 // LoadFinalizeBlockResponse provides a mock function with given fields: _a0
 func (_m *Store) LoadFinalizeBlockResponse(_a0 int64) (*abcitypes.ResponseFinalizeBlock, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadFinalizeBlockResponse")
-	}
-
-	var r0 *abcitypes.ResponseFinalizeBlock
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (*abcitypes.ResponseFinalizeBlock, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(int64) *abcitypes.ResponseFinalizeBlock); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*abcitypes.ResponseFinalizeBlock)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // LoadFromDBOrGenesisDoc provides a mock function with given fields: _a0
 func (_m *Store) LoadFromDBOrGenesisDoc(_a0 *types.GenesisDoc) (state.State, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadFromDBOrGenesisDoc")
-	}
-
-	var r0 state.State
-	var r1 error
-	if rf, ok := ret.Get(0).(func(*types.GenesisDoc) (state.State, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(*types.GenesisDoc) state.State); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(state.State)
-	}
-
-	if rf, ok := ret.Get(1).(func(*types.GenesisDoc) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return *new(state.State), nil
 }
 
 // LoadFromDBOrGenesisFile provides a mock function with given fields: _a0
 func (_m *Store) LoadFromDBOrGenesisFile(_a0 string) (state.State, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadFromDBOrGenesisFile")
-	}
-
-	var r0 state.State
-	var r1 error
-	if rf, ok := ret.Get(0).(func(string) (state.State, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(string) state.State); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(state.State)
-	}
-
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return *new(state.State), nil
 }
 
 // LoadLastFinalizeBlockResponse provides a mock function with given fields: _a0
 func (_m *Store) LoadLastFinalizeBlockResponse(_a0 int64) (*abcitypes.ResponseFinalizeBlock, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadLastFinalizeBlockResponse")
-	}
-
-	var r0 *abcitypes.ResponseFinalizeBlock
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (*abcitypes.ResponseFinalizeBlock, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(int64) *abcitypes.ResponseFinalizeBlock); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*abcitypes.ResponseFinalizeBlock)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // LoadValidators provides a mock function with given fields: _a0
 func (_m *Store) LoadValidators(_a0 int64) (*types.ValidatorSet, error) {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for LoadValidators")
-	}
-
-	var r0 *types.ValidatorSet
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (*types.ValidatorSet, error)); ok {
-		return rf(_a0)
-	}
-	if rf, ok := ret.Get(0).(func(int64) *types.ValidatorSet); ok {
-		r0 = rf(_a0)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*types.ValidatorSet)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(_a0)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // PruneStates provides a mock function with given fields: fromHeight, toHeight, evidenceThresholdHeight, previouslyPrunedStates
 func (_m *Store) PruneStates(fromHeight int64, toHeight int64, evidenceThresholdHeight int64, previouslyPrunedStates uint64) (uint64, error) {
-	ret := _m.Called(fromHeight, toHeight, evidenceThresholdHeight, previouslyPrunedStates)
-
-	if len(ret) == 0 {
-		panic("no return value specified for PruneStates")
-	}
-
-	var r0 uint64
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64, int64, int64, uint64) (uint64, error)); ok {
-		return rf(fromHeight, toHeight, evidenceThresholdHeight, previouslyPrunedStates)
-	}
-	if rf, ok := ret.Get(0).(func(int64, int64, int64, uint64) uint64); ok {
-		r0 = rf(fromHeight, toHeight, evidenceThresholdHeight, previouslyPrunedStates)
-	} else {
-		r0 = ret.Get(0).(uint64)
-	}
-
-	if rf, ok := ret.Get(1).(func(int64, int64, int64, uint64) error); ok {
-		r1 = rf(fromHeight, toHeight, evidenceThresholdHeight, previouslyPrunedStates)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 // Save provides a mock function with given fields: _a0
-func (_m *Store) Save(_a0 state.State) error {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Save")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(state.State) error); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
+func (_m *Store) Save(_a0 state.State) error { _ = "STUB: not implemented"; return nil }
 
 // SaveFinalizeBlockResponse provides a mock function with given fields: _a0, _a1
 func (_m *Store) SaveFinalizeBlockResponse(_a0 int64, _a1 *abcitypes.ResponseFinalizeBlock) error {
-	ret := _m.Called(_a0, _a1)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SaveFinalizeBlockResponse")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(int64, *abcitypes.ResponseFinalizeBlock) error); ok {
-		r0 = rf(_a0, _a1)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // SetOfflineStateSyncHeight provides a mock function with given fields: height
 func (_m *Store) SetOfflineStateSyncHeight(height int64) error {
-	ret := _m.Called(height)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SetOfflineStateSyncHeight")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(int64) error); ok {
-		r0 = rf(height)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NewStore creates a new instance of Store. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
@@ -370,10 +97,6 @@ func NewStore(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *Store {
-	mock := &Store{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
+	_ = "STUB: not implemented"
+	return nil
 }

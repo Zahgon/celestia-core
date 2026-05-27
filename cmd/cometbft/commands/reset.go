@@ -1,14 +1,9 @@
 package commands
 
 import (
-	"os"
-	"path/filepath"
-
 	"github.com/spf13/cobra"
 
 	"github.com/cometbft/cometbft/libs/log"
-	cmtos "github.com/cometbft/cometbft/libs/os"
-	"github.com/cometbft/cometbft/privval"
 )
 
 // ResetAllCmd removes the database of this CometBFT core
@@ -51,134 +46,29 @@ var ResetPrivValidatorCmd = &cobra.Command{
 
 // XXX: this is totally unsafe.
 // it's only suitable for testnets.
-func resetAllCmd(cmd *cobra.Command, _ []string) (err error) {
-	config, err = ParseConfig(cmd)
-	if err != nil {
-		return err
-	}
-
-	return resetAll(
-		config.DBDir(),
-		config.P2P.AddrBookFile(),
-		config.PrivValidatorKeyFile(),
-		config.PrivValidatorStateFile(),
-		logger,
-	)
-}
+func resetAllCmd(cmd *cobra.Command, _ []string) (err error) { _ = "STUB: not implemented"; return nil }
 
 // XXX: this is totally unsafe.
 // it's only suitable for testnets.
 func resetPrivValidator(cmd *cobra.Command, _ []string) (err error) {
-	config, err = ParseConfig(cmd)
-	if err != nil {
-		return err
-	}
-
-	resetFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), logger)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // resetAll removes address book files plus all data, and resets the privValdiator data.
 func resetAll(dbDir, addrBookFile, privValKeyFile, privValStateFile string, logger log.Logger) error {
-	if keepAddrBook {
-		logger.Info("The address book remains intact")
-	} else {
-		removeAddrBook(addrBookFile, logger)
-	}
-
-	if err := os.RemoveAll(dbDir); err == nil {
-		logger.Info("Removed all blockchain history", "dir", dbDir)
-	} else {
-		logger.Error("Error removing all blockchain history", "dir", dbDir, "err", err)
-	}
-
-	if err := cmtos.EnsureDir(dbDir, 0o700); err != nil {
-		logger.Error("unable to recreate dbDir", "err", err)
-	}
-
-	// recreate the dbDir since the privVal state needs to live there
-	resetFilePV(privValKeyFile, privValStateFile, logger)
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// recreate the dbDir since the privVal state needs to live there
 
 // resetState removes address book files plus all databases.
-func resetState(dbDir string, logger log.Logger) error {
-	blockdb := filepath.Join(dbDir, "blockstore.db")
-	state := filepath.Join(dbDir, "state.db")
-	wal := filepath.Join(dbDir, "cs.wal")
-	evidence := filepath.Join(dbDir, "evidence.db")
-	txIndex := filepath.Join(dbDir, "tx_index.db")
-
-	if cmtos.FileExists(blockdb) {
-		if err := os.RemoveAll(blockdb); err == nil {
-			logger.Info("Removed all blockstore.db", "dir", blockdb)
-		} else {
-			logger.Error("error removing all blockstore.db", "dir", blockdb, "err", err)
-		}
-	}
-
-	if cmtos.FileExists(state) {
-		if err := os.RemoveAll(state); err == nil {
-			logger.Info("Removed all state.db", "dir", state)
-		} else {
-			logger.Error("error removing all state.db", "dir", state, "err", err)
-		}
-	}
-
-	if cmtos.FileExists(wal) {
-		if err := os.RemoveAll(wal); err == nil {
-			logger.Info("Removed all cs.wal", "dir", wal)
-		} else {
-			logger.Error("error removing all cs.wal", "dir", wal, "err", err)
-		}
-	}
-
-	if cmtos.FileExists(evidence) {
-		if err := os.RemoveAll(evidence); err == nil {
-			logger.Info("Removed all evidence.db", "dir", evidence)
-		} else {
-			logger.Error("error removing all evidence.db", "dir", evidence, "err", err)
-		}
-	}
-
-	if cmtos.FileExists(txIndex) {
-		if err := os.RemoveAll(txIndex); err == nil {
-			logger.Info("Removed tx_index.db", "dir", txIndex)
-		} else {
-			logger.Error("error removing tx_index.db", "dir", txIndex, "err", err)
-		}
-	}
-
-	if err := cmtos.EnsureDir(dbDir, 0o700); err != nil {
-		logger.Error("unable to recreate dbDir", "err", err)
-	}
-	return nil
-}
+func resetState(dbDir string, logger log.Logger) error { _ = "STUB: not implemented"; return nil }
 
 func resetFilePV(privValKeyFile, privValStateFile string, logger log.Logger) {
-	if _, err := os.Stat(privValKeyFile); err == nil {
-		pv := privval.LoadFilePVEmptyState(privValKeyFile, privValStateFile)
-		pv.Reset()
-		logger.Info(
-			"Reset private validator file to genesis state",
-			"keyFile", privValKeyFile,
-			"stateFile", privValStateFile,
-		)
-	} else {
-		pv := privval.GenFilePV(privValKeyFile, privValStateFile)
-		pv.Save()
-		logger.Info(
-			"Generated private validator file",
-			"keyFile", privValKeyFile,
-			"stateFile", privValStateFile,
-		)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
-func removeAddrBook(addrBookFile string, logger log.Logger) {
-	if err := os.Remove(addrBookFile); err == nil {
-		logger.Info("Removed existing address book", "file", addrBookFile)
-	} else if !os.IsNotExist(err) {
-		logger.Info("Error removing address book", "file", addrBookFile, "err", err)
-	}
-}
+func removeAddrBook(addrBookFile string, logger log.Logger) { _ = "STUB: not implemented"; return }

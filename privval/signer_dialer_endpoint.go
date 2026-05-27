@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/cometbft/cometbft/libs/service"
 )
 
 const (
@@ -18,19 +17,22 @@ type SignerServiceEndpointOption func(*SignerDialerEndpoint)
 // SignerDialerEndpointTimeoutReadWrite sets the read and write timeout for
 // connections from client processes.
 func SignerDialerEndpointTimeoutReadWrite(timeout time.Duration) SignerServiceEndpointOption {
-	return func(ss *SignerDialerEndpoint) { ss.timeoutReadWrite = timeout }
+	_ = "STUB: not implemented"
+	return *new(SignerServiceEndpointOption)
 }
 
 // SignerDialerEndpointConnRetries sets the amount of attempted retries to
 // acceptNewConnection.
 func SignerDialerEndpointConnRetries(retries int) SignerServiceEndpointOption {
-	return func(ss *SignerDialerEndpoint) { ss.maxConnRetries = retries }
+	_ = "STUB: not implemented"
+	return *new(SignerServiceEndpointOption)
 }
 
 // SignerDialerEndpointRetryWaitInterval sets the retry wait interval to a
 // custom value.
 func SignerDialerEndpointRetryWaitInterval(interval time.Duration) SignerServiceEndpointOption {
-	return func(ss *SignerDialerEndpoint) { ss.retryWait = interval }
+	_ = "STUB: not implemented"
+	return *new(SignerServiceEndpointOption)
 }
 
 // SignerDialerEndpoint dials using its dialer and responds to any signature
@@ -52,45 +54,12 @@ func NewSignerDialerEndpoint(
 	dialer SocketDialer,
 	options ...SignerServiceEndpointOption,
 ) *SignerDialerEndpoint {
-
-	sd := &SignerDialerEndpoint{
-		dialer:         dialer,
-		retryWait:      defaultRetryWaitMilliseconds * time.Millisecond,
-		maxConnRetries: defaultMaxDialRetries,
-	}
-
-	sd.BaseService = *service.NewBaseService(logger, "SignerDialerEndpoint", sd)
-	sd.signerEndpoint.timeoutReadWrite = defaultTimeoutReadWriteSeconds * time.Second //nolint:staticcheck
-
-	for _, optionFunc := range options {
-		optionFunc(sd)
-	}
-
-	return sd
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func (sd *SignerDialerEndpoint) ensureConnection() error {
-	if sd.IsConnected() {
-		return nil
-	}
+//nolint:staticcheck
 
-	retries := 0
-	for retries < sd.maxConnRetries {
-		conn, err := sd.dialer()
+func (sd *SignerDialerEndpoint) ensureConnection() error { _ = "STUB: not implemented"; return nil }
 
-		if err != nil {
-			retries++
-			sd.Logger.Debug("SignerDialer: Reconnection failed", "retries", retries, "max", sd.maxConnRetries, "err", err)
-			// Wait between retries
-			time.Sleep(sd.retryWait)
-		} else {
-			sd.SetConnection(conn)
-			sd.Logger.Debug("SignerDialer: Connection Ready")
-			return nil
-		}
-	}
-
-	sd.Logger.Debug("SignerDialer: Max retries exceeded", "retries", retries, "max", sd.maxConnRetries)
-
-	return ErrNoConnection
-}
+// Wait between retries

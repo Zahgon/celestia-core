@@ -27,167 +27,111 @@ var _ Client = (*localClient)(nil)
 // difference, is that the local client has a global mutex which enforces serialization
 // of all the ABCI calls from Tendermint to the Application.
 func NewLocalClient(mtx *cmtsync.Mutex, app types.Application) Client {
-	if mtx == nil {
-		mtx = new(cmtsync.Mutex)
-	}
-	cli := &localClient{
-		mtx:         mtx,
-		Application: app,
-	}
-	cli.BaseService = *service.NewBaseService(nil, "localClient", cli)
-	return cli
+	_ = "STUB: not implemented"
+	return *new(Client)
 }
 
-func (app *localClient) SetResponseCallback(cb Callback) {
-	app.mtx.Lock()
-	app.Callback = cb
-	app.mtx.Unlock()
-}
+func (app *localClient) SetResponseCallback(cb Callback) { _ = "STUB: not implemented"; return }
 
 func (app *localClient) CheckTxAsync(ctx context.Context, req *types.RequestCheckTx) (*ReqRes, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	res, err := app.Application.CheckTx(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return app.callback(
-		types.ToRequestCheckTx(req),
-		types.ToResponseCheckTx(res),
-	), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) callback(req *types.Request, res *types.Response) *ReqRes {
-	app.Callback(req, res)
-	rr := newLocalReqRes(req, res)
-	rr.callbackInvoked = true
-	return rr
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func newLocalReqRes(req *types.Request, res *types.Response) *ReqRes {
-	reqRes := NewReqRes(req)
-	reqRes.Response = res
-	return reqRes
+	_ = "STUB: not implemented"
+	return nil
 }
 
 //-------------------------------------------------------
 
-func (app *localClient) Error() error {
-	return nil
-}
+func (app *localClient) Error() error { _ = "STUB: not implemented"; return nil }
 
-func (app *localClient) Flush(context.Context) error {
-	return nil
-}
+func (app *localClient) Flush(context.Context) error { _ = "STUB: not implemented"; return nil }
 
 func (app *localClient) Echo(_ context.Context, msg string) (*types.ResponseEcho, error) {
-	return &types.ResponseEcho{Message: msg}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) Info(ctx context.Context, req *types.RequestInfo) (*types.ResponseInfo, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.Info(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) CheckTx(ctx context.Context, req *types.RequestCheckTx) (*types.ResponseCheckTx, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.CheckTx(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) Query(ctx context.Context, req *types.RequestQuery) (*types.ResponseQuery, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.Query(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) Commit(ctx context.Context, req *types.RequestCommit) (*types.ResponseCommit, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.Commit(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) InitChain(ctx context.Context, req *types.RequestInitChain) (*types.ResponseInitChain, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.InitChain(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) ListSnapshots(ctx context.Context, req *types.RequestListSnapshots) (*types.ResponseListSnapshots, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.ListSnapshots(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) OfferSnapshot(ctx context.Context, req *types.RequestOfferSnapshot) (*types.ResponseOfferSnapshot, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.OfferSnapshot(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) LoadSnapshotChunk(ctx context.Context,
 	req *types.RequestLoadSnapshotChunk) (*types.ResponseLoadSnapshotChunk, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.LoadSnapshotChunk(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) ApplySnapshotChunk(ctx context.Context,
 	req *types.RequestApplySnapshotChunk) (*types.ResponseApplySnapshotChunk, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.ApplySnapshotChunk(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) PrepareProposal(ctx context.Context, req *types.RequestPrepareProposal) (*types.ResponsePrepareProposal, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.PrepareProposal(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) ProcessProposal(ctx context.Context, req *types.RequestProcessProposal) (*types.ResponseProcessProposal, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.ProcessProposal(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) ExtendVote(ctx context.Context, req *types.RequestExtendVote) (*types.ResponseExtendVote, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.ExtendVote(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) VerifyVoteExtension(ctx context.Context, req *types.RequestVerifyVoteExtension) (*types.ResponseVerifyVoteExtension, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.VerifyVoteExtension(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) FinalizeBlock(ctx context.Context, req *types.RequestFinalizeBlock) (*types.ResponseFinalizeBlock, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.FinalizeBlock(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (app *localClient) QuerySequence(ctx context.Context, req *types.RequestQuerySequence) (*types.ResponseQuerySequence, error) {
-	app.mtx.Lock()
-	defer app.mtx.Unlock()
-
-	return app.Application.QuerySequence(ctx, req)
+	_ = "STUB: not implemented"
+	return nil, nil
 }

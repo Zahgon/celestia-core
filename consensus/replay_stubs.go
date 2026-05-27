@@ -16,26 +16,33 @@ type emptyMempool struct{}
 
 var _ mempl.Mempool = emptyMempool{}
 
-func (emptyMempool) Lock()            {}
-func (emptyMempool) Unlock()          {}
-func (emptyMempool) Size() int        { return 0 }
-func (emptyMempool) SizeBytes() int64 { return 0 }
+func (emptyMempool) Lock()            { _ = "STUB: not implemented"; return }
+func (emptyMempool) Unlock()          { _ = "STUB: not implemented"; return }
+func (emptyMempool) Size() int        { _ = "STUB: not implemented"; return 0 }
+func (emptyMempool) SizeBytes() int64 { _ = "STUB: not implemented"; return 0 }
 func (emptyMempool) CheckTx(types.Tx, func(*abci.ResponseCheckTx), mempl.TxInfo) error {
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (emptyMempool) GetTxByKey(types.TxKey) (*types.CachedTx, bool)         { return nil, false }
-func (emptyMempool) WasRecentlyEvicted(types.TxKey) bool                    { return false }
-func (emptyMempool) WasRecentlyRejected(types.TxKey) (bool, uint32, string) { return false, 0, "" }
-
-func (txmp emptyMempool) RemoveTxByKey(types.TxKey) error {
-	return nil
+func (emptyMempool) GetTxByKey(types.TxKey) (*types.CachedTx, bool) {
+	_ = "STUB: not implemented"
+	return nil, false
 }
+func (emptyMempool) WasRecentlyEvicted(types.TxKey) bool { _ = "STUB: not implemented"; return false }
+func (emptyMempool) WasRecentlyRejected(types.TxKey) (bool, uint32, string) {
+	_ = "STUB: not implemented"
+	return false, 0, ""
+}
+
+func (txmp emptyMempool) RemoveTxByKey(types.TxKey) error { _ = "STUB: not implemented"; return nil }
 
 func (emptyMempool) ReapMaxBytesMaxGas(int64, int64) []*types.CachedTx {
-	return []*types.CachedTx{}
+	_ = "STUB: not implemented"
+	return nil
 }
-func (emptyMempool) ReapMaxTxs(int) []*types.CachedTx { return []*types.CachedTx{} }
+
+func (emptyMempool) ReapMaxTxs(int) []*types.CachedTx { _ = "STUB: not implemented"; return nil }
 func (emptyMempool) Update(
 	int64,
 	[]*types.CachedTx,
@@ -43,36 +50,34 @@ func (emptyMempool) Update(
 	mempl.PreCheckFunc,
 	mempl.PostCheckFunc,
 ) error {
+	_ = "STUB: not implemented"
 	return nil
 }
-func (emptyMempool) Flush()                        {}
-func (emptyMempool) FlushAppConn() error           { return nil }
-func (emptyMempool) TxsAvailable() <-chan struct{} { return make(chan struct{}) }
-func (emptyMempool) EnableTxsAvailable()           {}
-func (emptyMempool) TxsBytes() int64               { return 0 }
 
-func (emptyMempool) TxsFront() *clist.CElement    { return nil }
-func (emptyMempool) TxsWaitChan() <-chan struct{} { return nil }
+func (emptyMempool) Flush()                        { _ = "STUB: not implemented"; return }
+func (emptyMempool) FlushAppConn() error           { _ = "STUB: not implemented"; return nil }
+func (emptyMempool) TxsAvailable() <-chan struct{} { _ = "STUB: not implemented"; return nil }
+func (emptyMempool) EnableTxsAvailable()           { _ = "STUB: not implemented"; return }
+func (emptyMempool) TxsBytes() int64               { _ = "STUB: not implemented"; return 0 }
 
-func (emptyMempool) InitWAL() error { return nil }
-func (emptyMempool) CloseWAL()      {}
+func (emptyMempool) TxsFront() *clist.CElement    { _ = "STUB: not implemented"; return nil }
+func (emptyMempool) TxsWaitChan() <-chan struct{} { _ = "STUB: not implemented"; return nil }
 
-//-----------------------------------------------------------------------------
-// mockProxyApp uses ABCIResponses to give the right results.
-//
-// Useful because we don't want to call Commit() twice for the same block on
-// the real app.
+func (emptyMempool) InitWAL() error { _ = "STUB: not implemented"; return nil }
+func (emptyMempool) CloseWAL() {
+	_ = "STUB: not implemented"
+
+	// -----------------------------------------------------------------------------
+	// mockProxyApp uses ABCIResponses to give the right results.
+	//
+	// Useful because we don't want to call Commit() twice for the same block on
+	// the real app.
+	return
+}
 
 func newMockProxyApp(finalizeBlockResponse *abci.ResponseFinalizeBlock) proxy.AppConnConsensus {
-	clientCreator := proxy.NewLocalClientCreator(&mockProxyApp{
-		finalizeBlockResponse: finalizeBlockResponse,
-	})
-	cli, _ := clientCreator.NewABCIClient()
-	err := cli.Start()
-	if err != nil {
-		panic(err)
-	}
-	return proxy.NewAppConnConsensus(cli, proxy.NopMetrics())
+	_ = "STUB: not implemented"
+	return *new(proxy.AppConnConsensus)
 }
 
 type mockProxyApp struct {
@@ -81,5 +86,6 @@ type mockProxyApp struct {
 }
 
 func (mock *mockProxyApp) FinalizeBlock(context.Context, *abci.RequestFinalizeBlock) (*abci.ResponseFinalizeBlock, error) {
-	return mock.finalizeBlockResponse, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

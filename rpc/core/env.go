@@ -1,13 +1,10 @@
 package core
 
 import (
-	"encoding/base64"
-	"fmt"
 	"time"
 
 	cfg "github.com/cometbft/cometbft/config"
 	"github.com/cometbft/cometbft/crypto"
-	cmtjson "github.com/cometbft/cometbft/libs/json"
 	"github.com/cometbft/cometbft/libs/log"
 	mempl "github.com/cometbft/cometbft/mempool"
 	"github.com/cometbft/cometbft/p2p"
@@ -97,121 +94,34 @@ type Environment struct {
 //----------------------------------------------
 
 func validatePage(pagePtr *int, perPage, totalCount int) (int, error) {
-	if perPage < 1 {
-		panic(fmt.Sprintf("zero or negative perPage: %d", perPage))
-	}
-
-	if pagePtr == nil { // no page parameter
-		return 1, nil
-	}
-
-	pages := ((totalCount - 1) / perPage) + 1
-	if pages == 0 {
-		pages = 1 // one page (even if it's empty)
-	}
-	page := *pagePtr
-	if page <= 0 || page > pages {
-		return 1, fmt.Errorf("page should be within [1, %d] range, given %d", pages, page)
-	}
-
-	return page, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (env *Environment) validatePerPage(perPagePtr *int) int {
-	if perPagePtr == nil { // no per_page parameter
-		return defaultPerPage
-	}
+// no page parameter
 
-	perPage := *perPagePtr
-	if perPage < 1 {
-		return defaultPerPage
-	} else if perPage > maxPerPage {
-		return maxPerPage
-	}
-	return perPage
-}
+// one page (even if it's empty)
+
+func (env *Environment) validatePerPage(perPagePtr *int) int { _ = "STUB: not implemented"; return 0 }
+
+// no per_page parameter
 
 func (env *Environment) validateUnconfirmedTxsPerPage(perPagePtr *int) int {
-	if perPagePtr == nil { // no per_page parameter
-		return defaultPerPage
-	}
-
-	perPage := *perPagePtr
-	if perPage < -1 {
-		return defaultPerPage
-	}
-	if perPage == 0 {
-		return defaultPerPage
-	}
-	if perPage > maxPerPage {
-		return maxPerPage
-	}
-	return perPage
+	_ = "STUB: not implemented"
+	return 0
+	// no per_page parameter
 }
 
 // InitGenesisChunks configures the environment and should be called on service
 // startup.
-func (env *Environment) InitGenesisChunks() error {
-	if env.genChunks != nil {
-		return nil
-	}
+func (env *Environment) InitGenesisChunks() error { _ = "STUB: not implemented"; return nil }
 
-	if env.GenDoc == nil {
-		return nil
-	}
-
-	data, err := cmtjson.Marshal(env.GenDoc)
-	if err != nil {
-		return err
-	}
-
-	for i := 0; i < len(data); i += genesisChunkSize {
-		end := i + genesisChunkSize
-
-		if end > len(data) {
-			end = len(data)
-		}
-
-		env.genChunks = append(env.genChunks, base64.StdEncoding.EncodeToString(data[i:end]))
-	}
-
-	return nil
-}
-
-func validateSkipCount(page, perPage int) int {
-	skipCount := (page - 1) * perPage
-	if skipCount < 0 {
-		return 0
-	}
-
-	return skipCount
-}
+func validateSkipCount(page, perPage int) int { _ = "STUB: not implemented"; return 0 }
 
 // latestHeight can be either latest committed or uncommitted (+1) height.
 func (env *Environment) getHeight(latestHeight int64, heightPtr *int64) (int64, error) {
-	if heightPtr != nil {
-		height := *heightPtr
-		if height <= 0 {
-			return 0, fmt.Errorf("height must be greater than 0, but got %d", height)
-		}
-		if height > latestHeight {
-			return 0, fmt.Errorf("height %d must be less than or equal to the current blockchain height %d",
-				height, latestHeight)
-		}
-		base := env.BlockStore.Base()
-		if height < base {
-			return 0, fmt.Errorf("height %d is not available, lowest height is %d",
-				height, base)
-		}
-		return height, nil
-	}
-	return latestHeight, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (env *Environment) latestUncommittedHeight() int64 {
-	nodeIsSyncing := env.ConsensusReactor.WaitSync()
-	if nodeIsSyncing {
-		return env.BlockStore.Height()
-	}
-	return env.BlockStore.Height() + 1
-}
+func (env *Environment) latestUncommittedHeight() int64 { _ = "STUB: not implemented"; return 0 }

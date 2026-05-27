@@ -1,14 +1,12 @@
 package consensus
 
 import (
-	"strings"
 	"time"
 
 	"github.com/go-kit/kit/metrics"
 
 	cstypes "github.com/cometbft/cometbft/consensus/types"
 	cmtproto "github.com/cometbft/cometbft/proto/tendermint/types"
-	types "github.com/cometbft/cometbft/types"
 )
 
 const (
@@ -139,50 +137,17 @@ type Metrics struct {
 	ProposerMissedProposals metrics.Counter `metrics_labels:"proposer_address"`
 }
 
-func (m *Metrics) MarkProposalProcessed(accepted bool) {
-	status := "accepted"
-	if !accepted {
-		status = "rejected"
-	}
-	m.ProposalReceiveCount.With("status", status).Add(1)
-}
+func (m *Metrics) MarkProposalProcessed(accepted bool) { _ = "STUB: not implemented"; return }
 
-func (m *Metrics) MarkVoteExtensionReceived(accepted bool) {
-	status := "accepted"
-	if !accepted {
-		status = "rejected"
-	}
-	m.VoteExtensionReceiveCount.With("status", status).Add(1)
-}
+func (m *Metrics) MarkVoteExtensionReceived(accepted bool) { _ = "STUB: not implemented"; return }
 
 func (m *Metrics) MarkVoteReceived(vt cmtproto.SignedMsgType, power, totalPower int64) {
-	p := float64(power) / float64(totalPower)
-	n := types.SignedMsgTypeToShortString(vt)
-	m.RoundVotingPowerPercent.With("vote_type", n).Add(p)
+	_ = "STUB: not implemented"
+	return
 }
 
-func (m *Metrics) MarkRound(r int32, st time.Time) {
-	m.Rounds.Set(float64(r))
-	roundTime := time.Since(st).Seconds()
-	m.RoundDurationSeconds.Observe(roundTime)
+func (m *Metrics) MarkRound(r int32, st time.Time) { _ = "STUB: not implemented"; return }
 
-	pvn := types.SignedMsgTypeToShortString(cmtproto.PrevoteType)
-	m.RoundVotingPowerPercent.With("vote_type", pvn).Set(0)
+func (m *Metrics) MarkLateVote(vt cmtproto.SignedMsgType) { _ = "STUB: not implemented"; return }
 
-	pcn := types.SignedMsgTypeToShortString(cmtproto.PrecommitType)
-	m.RoundVotingPowerPercent.With("vote_type", pcn).Set(0)
-}
-
-func (m *Metrics) MarkLateVote(vt cmtproto.SignedMsgType) {
-	n := types.SignedMsgTypeToShortString(vt)
-	m.LateVotes.With("vote_type", n).Add(1)
-}
-
-func (m *Metrics) MarkStep(s cstypes.RoundStepType) {
-	if !m.stepStart.IsZero() {
-		stepTime := time.Since(m.stepStart).Seconds()
-		stepName := strings.TrimPrefix(s.String(), "RoundStep")
-		m.StepDurationSeconds.With("step", stepName).Observe(stepTime)
-	}
-	m.stepStart = time.Now()
-}
+func (m *Metrics) MarkStep(s cstypes.RoundStepType) { _ = "STUB: not implemented"; return }

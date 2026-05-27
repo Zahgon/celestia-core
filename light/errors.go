@@ -2,7 +2,6 @@ package light
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/cometbft/cometbft/types"
@@ -16,9 +15,7 @@ type ErrOldHeaderExpired struct {
 	Now time.Time
 }
 
-func (e ErrOldHeaderExpired) Error() string {
-	return fmt.Sprintf("old header has expired at %v (now: %v)", e.At, e.Now)
-}
+func (e ErrOldHeaderExpired) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrNewValSetCantBeTrusted means the new validator set cannot be trusted
 // because < 1/3rd (+trustLevel+) of the old validator set has signed.
@@ -26,9 +23,7 @@ type ErrNewValSetCantBeTrusted struct {
 	Reason types.ErrNotEnoughVotingPowerSigned
 }
 
-func (e ErrNewValSetCantBeTrusted) Error() string {
-	return fmt.Sprintf("cant trust new val set: %v", e.Reason)
-}
+func (e ErrNewValSetCantBeTrusted) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrInvalidHeader means the header either failed the basic validation or
 // commit is not signed by 2/3+.
@@ -36,9 +31,7 @@ type ErrInvalidHeader struct {
 	Reason error
 }
 
-func (e ErrInvalidHeader) Error() string {
-	return fmt.Sprintf("invalid header: %v", e.Reason)
-}
+func (e ErrInvalidHeader) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrFailedHeaderCrossReferencing is returned when the detector was not able to cross reference the header
 // with any of the connected witnesses.
@@ -55,13 +48,9 @@ type ErrVerificationFailed struct {
 }
 
 // Unwrap returns underlying reason.
-func (e ErrVerificationFailed) Unwrap() error {
-	return e.Reason
-}
+func (e ErrVerificationFailed) Unwrap() error { _ = "STUB: not implemented"; return nil }
 
-func (e ErrVerificationFailed) Error() string {
-	return fmt.Sprintf("verify from #%d to #%d failed: %v", e.From, e.To, e.Reason)
-}
+func (e ErrVerificationFailed) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrLightClientAttack is returned when the light client has detected an attempt
 // to verify a false header and has sent the evidence to either a witness or primary.
@@ -81,11 +70,7 @@ type ErrConflictingHeaders struct {
 	WitnessIndex int
 }
 
-func (e ErrConflictingHeaders) Error() string {
-	return fmt.Sprintf(
-		"header hash (%X) from witness (%d) does not match primary",
-		e.Block.Hash(), e.WitnessIndex)
-}
+func (e ErrConflictingHeaders) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ErrProposerPrioritiesDiverge is thrown when two conflicting headers are
 // discovered, but the error is non-attributable comparing to ErrConflictingHeaders.
@@ -97,11 +82,7 @@ type ErrProposerPrioritiesDiverge struct {
 	PrimaryHash  []byte
 }
 
-func (e ErrProposerPrioritiesDiverge) Error() string {
-	return fmt.Sprintf(
-		"validator set's proposer priority hashes do not match: witness[%d]=%X, primary=%X",
-		e.WitnessIndex, e.WitnessHash, e.PrimaryHash)
-}
+func (e ErrProposerPrioritiesDiverge) Error() string { _ = "STUB: not implemented"; return "" }
 
 // ----------------------------- INTERNAL ERRORS ---------------------------------
 
@@ -112,9 +93,7 @@ type errBadWitness struct {
 	WitnessIndex int
 }
 
-func (e errBadWitness) Error() string {
-	return fmt.Sprintf("Witness %d returned error: %s", e.WitnessIndex, e.Reason.Error())
-}
+func (e errBadWitness) Error() string { _ = "STUB: not implemented"; return "" }
 
 var errNoDivergence = errors.New(
 	"sanity check failed: no divergence between the original trace and the provider's new trace",

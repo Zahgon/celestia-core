@@ -1,10 +1,6 @@
 package p2p
 
 import (
-	"errors"
-	"fmt"
-	"math"
-	"sync"
 	"time"
 
 	"github.com/cosmos/gogoproto/proto"
@@ -14,7 +10,6 @@ import (
 	"github.com/cometbft/cometbft/libs/rand"
 	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/libs/trace"
-	"github.com/cometbft/cometbft/libs/trace/schema"
 	"github.com/cometbft/cometbft/p2p/conn"
 )
 
@@ -37,14 +32,8 @@ const (
 // MConnConfig returns an MConnConfig with fields updated
 // from the P2PConfig.
 func MConnConfig(cfg *config.P2PConfig) conn.MConnConfig {
-	mConfig := conn.DefaultMConnConfig()
-	mConfig.FlushThrottle = cfg.FlushThrottleTimeout
-	mConfig.SendRate = cfg.SendRate
-	mConfig.RecvRate = cfg.RecvRate
-	mConfig.MaxPacketMsgPayloadSize = cfg.MaxPacketMsgPayloadSize
-	mConfig.TestFuzz = cfg.TestFuzz
-	mConfig.TestFuzzConfig = cfg.TestFuzzConfig
-	return mConfig
+	_ = "STUB: not implemented"
+	return *new(conn.MConnConfig)
 }
 
 //-----------------------------------------------------------------------------
@@ -104,10 +93,7 @@ type Switch struct {
 }
 
 // NetAddress returns the address the switch is listening on.
-func (sw *Switch) NetAddress() *NetAddress {
-	addr := sw.transport.NetAddress()
-	return &addr
-}
+func (sw *Switch) NetAddress() *NetAddress { _ = "STUB: not implemented"; return nil }
 
 // SwitchOption sets an optional parameter on the Switch.
 type SwitchOption func(*Switch)
@@ -118,56 +104,34 @@ func NewSwitch(
 	transport Transport,
 	options ...SwitchOption,
 ) *Switch {
-
-	sw := &Switch{
-		config:               cfg,
-		reactors:             make(map[string]Reactor),
-		chDescs:              make([]*conn.ChannelDescriptor, 0),
-		reactorsByCh:         make(map[byte]Reactor),
-		msgTypeByChID:        make(map[byte]proto.Message),
-		peerSetByReactor:     make(map[string]*PeerSet),
-		peers:                NewPeerSet(),
-		dialing:              cmap.NewCMap(),
-		reconnecting:         cmap.NewCMap(),
-		metrics:              NopMetrics(),
-		transport:            transport,
-		filterTimeout:        defaultFilterTimeout,
-		persistentPeersAddrs: make([]*NetAddress, 0),
-		unconditionalPeerIDs: make(map[ID]struct{}),
-		mlc:                  newMetricsLabelCache(),
-		traceClient:          trace.NoOpTracer(),
-	}
-
-	// Ensure we have a completely undeterministic PRNG.
-	sw.rng = rand.NewRand()
-
-	sw.BaseService = *service.NewBaseService(nil, "P2P Switch", sw)
-
-	for _, option := range options {
-		option(sw)
-	}
-
-	return sw
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Ensure we have a completely undeterministic PRNG.
 
 // SwitchFilterTimeout sets the timeout used for peer filters.
 func SwitchFilterTimeout(timeout time.Duration) SwitchOption {
-	return func(sw *Switch) { sw.filterTimeout = timeout }
+	_ = "STUB: not implemented"
+	return *new(SwitchOption)
 }
 
 // SwitchPeerFilters sets the filters for rejection of new peers.
 func SwitchPeerFilters(filters ...PeerFilterFunc) SwitchOption {
-	return func(sw *Switch) { sw.peerFilters = filters }
+	_ = "STUB: not implemented"
+	return *new(SwitchOption)
 }
 
 // WithMetrics sets the metrics.
 func WithMetrics(metrics *Metrics) SwitchOption {
-	return func(sw *Switch) { sw.metrics = metrics }
+	_ = "STUB: not implemented"
+	return *new(SwitchOption)
 }
 
 // WithTracer sets the tracer.
 func WithTracer(tracer trace.Tracer) SwitchOption {
-	return func(sw *Switch) { sw.traceClient = tracer }
+	_ = "STUB: not implemented"
+	return *new(SwitchOption)
 }
 
 //---------------------------------------------------------------------
@@ -176,105 +140,71 @@ func WithTracer(tracer trace.Tracer) SwitchOption {
 // AddReactor adds the given reactor to the switch.
 // NOTE: Not goroutine safe.
 func (sw *Switch) AddReactor(name string, reactor Reactor) Reactor {
-	for _, chDesc := range reactor.GetChannels() {
-		chID := chDesc.ID
-		// No two reactors can share the same channel.
-		if sw.reactorsByCh[chID] != nil {
-			panic(fmt.Sprintf("Channel %X has multiple reactors %v & %v", chID, sw.reactorsByCh[chID], reactor))
-		}
-		sw.chDescs = append(sw.chDescs, chDesc)
-		sw.reactorsByCh[chID] = reactor
-		sw.msgTypeByChID[chID] = chDesc.MessageType
-	}
-	sw.reactors[name] = reactor
-	sw.peerSetByReactor[reactor.String()] = NewPeerSet()
-	reactor.SetSwitch(sw)
-	return reactor
+	_ = "STUB: not implemented"
+	return *new(Reactor)
 }
+
+// No two reactors can share the same channel.
 
 // RemoveReactor removes the given Reactor from the Switch.
 // NOTE: Not goroutine safe.
-func (sw *Switch) RemoveReactor(name string, reactor Reactor) {
-	for _, chDesc := range reactor.GetChannels() {
-		// remove channel description
-		for i := 0; i < len(sw.chDescs); i++ {
-			if chDesc.ID == sw.chDescs[i].ID {
-				sw.chDescs = append(sw.chDescs[:i], sw.chDescs[i+1:]...)
-				break
-			}
-		}
-		delete(sw.reactorsByCh, chDesc.ID)
-		delete(sw.msgTypeByChID, chDesc.ID)
-	}
-	delete(sw.reactors, name)
-	delete(sw.peerSetByReactor, reactor.String())
-	reactor.SetSwitch(nil)
-}
+func (sw *Switch) RemoveReactor(name string, reactor Reactor) { _ = "STUB: not implemented"; return }
+
+// remove channel description
 
 // Reactors returns a map of reactors registered on the switch.
 // NOTE: Not goroutine safe.
 func (sw *Switch) Reactors() map[string]Reactor {
-	return sw.reactors
+	_ = "STUB: not implemented"
+
+	// Reactor returns the reactor with the given name.
+	// NOTE: Not goroutine safe.
+	return nil
 }
 
-// Reactor returns the reactor with the given name.
-// NOTE: Not goroutine safe.
 func (sw *Switch) Reactor(name string) Reactor {
-	return sw.reactors[name]
+	_ = "STUB: not implemented"
+	return *
+
+	// SetNodeInfo sets the switch's NodeInfo for checking compatibility and handshaking with other nodes.
+	// NOTE: Not goroutine safe.
+	new(Reactor)
 }
 
-// SetNodeInfo sets the switch's NodeInfo for checking compatibility and handshaking with other nodes.
-// NOTE: Not goroutine safe.
-func (sw *Switch) SetNodeInfo(nodeInfo NodeInfo) {
-	sw.nodeInfo = nodeInfo
-}
+func (sw *Switch) SetNodeInfo(nodeInfo NodeInfo) { _ = "STUB: not implemented"; return }
 
 // NodeInfo returns the switch's NodeInfo.
 // NOTE: Not goroutine safe.
 func (sw *Switch) NodeInfo() NodeInfo {
-	return sw.nodeInfo
+	_ = "STUB: not implemented"
+
+	// SetNodeKey sets the switch's private key for authenticated encryption.
+	// NOTE: Not goroutine safe.
+	return *new(NodeInfo)
 }
 
-// SetNodeKey sets the switch's private key for authenticated encryption.
-// NOTE: Not goroutine safe.
-func (sw *Switch) SetNodeKey(nodeKey *NodeKey) {
-	sw.nodeKey = nodeKey
-}
+func (sw *Switch) SetNodeKey(nodeKey *NodeKey) { _ = "STUB: not implemented"; return }
 
 //---------------------------------------------------------------------
 // Service start/stop
 
 // OnStart implements BaseService. It starts all the reactors and peers.
 func (sw *Switch) OnStart() error {
+	_ = "STUB: not implemented"
 	// Start reactors
-	for _, reactor := range sw.reactors {
-		err := reactor.Start()
-		if err != nil {
-			return fmt.Errorf("failed to start %v: %w", reactor, err)
-		}
-	}
-
-	// Start accepting Peers.
-	go sw.acceptRoutine()
-
 	return nil
 }
 
+// Start accepting Peers.
+
 // OnStop implements BaseService. It stops all peers and reactors.
 func (sw *Switch) OnStop() {
+	_ = "STUB: not implemented"
 	// Stop peers
-	for _, p := range sw.peers.List() {
-		sw.stopAndRemovePeer(p, nil)
-	}
-
-	// Stop reactors
-	sw.Logger.Debug("Switch: Stopping reactors")
-	for _, reactor := range sw.reactors {
-		if err := reactor.Stop(); err != nil {
-			sw.Logger.Error("error while stopped reactor", "reactor", reactor, "error", err)
-		}
-	}
+	return
 }
+
+// Stop reactors
 
 //---------------------------------------------------------------------
 // Peers
@@ -285,158 +215,67 @@ func (sw *Switch) OnStop() {
 // closed once msg bytes are sent to all peers (or time out).
 //
 // NOTE: Broadcast uses goroutines, so order of broadcast may not be preserved.
-func (sw *Switch) Broadcast(e Envelope) chan bool {
-	sw.Logger.Trace("Broadcast", "channel", e.ChannelID)
+func (sw *Switch) Broadcast(e Envelope) chan bool { _ = "STUB: not implemented"; return nil }
 
-	peers := sw.peersForEnvelope(e)
-	var wg sync.WaitGroup
-	wg.Add(len(peers))
-	successChan := make(chan bool, len(peers))
-
-	for _, peer := range peers {
-		go func(p Peer) {
-			defer wg.Done()
-			success := p.Send(e)
-			successChan <- success
-		}(peer)
-	}
-
-	go func() {
-		wg.Wait()
-		close(successChan)
-	}()
-
-	return successChan
-}
-
-func (sw *Switch) peersForEnvelope(e Envelope) []Peer {
-	reactor, ok := sw.reactorsByCh[e.ChannelID]
-	if !ok || reactor == nil {
-		sw.Logger.Error("no reactor for given channel", "channel", e.ChannelID)
-		return nil
-	}
-	set, ok := sw.peerSetByReactor[reactor.String()]
-	if !ok {
-		sw.Logger.Error("peer set not defined for given reactor", "channel", e.ChannelID, "reactor", reactor.String())
-		return nil
-	}
-	return set.List()
-}
+func (sw *Switch) peersForEnvelope(e Envelope) []Peer { _ = "STUB: not implemented"; return nil }
 
 // NumPeers returns the count of outbound/inbound and outbound-dialing peers.
 // unconditional peers are not counted here.
 func (sw *Switch) NumPeers() (outbound, inbound, dialing int) {
-	peers := sw.peers.List()
-	for _, peer := range peers {
-		if peer.IsOutbound() {
-			if !sw.IsPeerUnconditional(peer.ID()) {
-				outbound++
-			}
-		} else {
-			if !sw.IsPeerUnconditional(peer.ID()) {
-				inbound++
-			}
-		}
-	}
-	dialing = sw.dialing.Size()
-	return
+	_ = "STUB: not implemented"
+	return 0, 0, 0
 }
 
-func (sw *Switch) IsPeerUnconditional(id ID) bool {
-	_, ok := sw.unconditionalPeerIDs[id]
-	return ok
-}
+func (sw *Switch) IsPeerUnconditional(id ID) bool { _ = "STUB: not implemented"; return false }
 
 // MaxNumOutboundPeers returns a maximum number of outbound peers.
-func (sw *Switch) MaxNumOutboundPeers() int {
-	return sw.config.MaxNumOutboundPeers
-}
+func (sw *Switch) MaxNumOutboundPeers() int { _ = "STUB: not implemented"; return 0 }
 
 // Peers returns the set of peers that are connected to the switch.
 func (sw *Switch) Peers() IPeerSet {
-	return sw.peers
+	_ = "STUB: not implemented"
+
+	// StopPeerForError disconnects from a peer due to external error.
+	// If the peer is persistent, it will attempt to reconnect.
+	// TODO: make record depending on reason.
+	return *new(IPeerSet)
 }
 
-// StopPeerForError disconnects from a peer due to external error.
-// If the peer is persistent, it will attempt to reconnect.
-// TODO: make record depending on reason.
 func (sw *Switch) StopPeerForError(peer Peer, reason interface{}, reactorName string) {
-	if !peer.IsRunning() {
-		return
-	}
-
-	sw.Logger.Error("Stopping peer for error", "peer", peer, "err", reason, "reactor", reactorName)
-	sw.stopAndRemovePeer(peer, reason)
-
-	if peer.IsPersistent() {
-		addr, err := sw.getPeerAddress(peer)
-		if err != nil {
-			sw.Logger.Error("Failed to get address for persistent peer", "peer", peer, "err", err)
-			return
-		}
-		go sw.reconnectToPeer(addr)
-	}
-
-	if peer.HasIPChanged() {
-		addr, err := sw.getPeerAddress(peer)
-		if err != nil {
-			sw.Logger.Error("Failed to get address for peer with changed IP", "peer", peer, "err", err)
-		}
-		go sw.reconnectToPeer(addr)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // getPeerAddress returns the appropriate NetAddress for a given peer,
 // handling both outbound and inbound peers.
 func (sw *Switch) getPeerAddress(peer Peer) (*NetAddress, error) {
-	if peer.IsOutbound() {
-		return peer.SocketAddr(), nil
-	}
-	// For inbound peers, get the self-reported address
-	addr, err := peer.NodeInfo().NetAddress()
-	if err != nil {
-		sw.Logger.Error("Failed to get address for inbound peer",
-			"peer", peer, "err", err)
-		return nil, err
-	}
-	return addr, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// For inbound peers, get the self-reported address
 
 // StopPeerGracefully disconnects from a peer gracefully.
 // TODO: handle graceful disconnects.
 func (sw *Switch) StopPeerGracefully(peer Peer, reactorName string) {
-	sw.Logger.Debug("Stopping peer gracefully")
-
-	sw.removePeerFromReactor(peer, reactorName)
-
-	if sw.countActivePeerConnections(peer) == 0 {
-		sw.stopAndRemovePeer(peer, nil)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 func (sw *Switch) stopAndRemovePeer(peer Peer, reason interface{}) {
-	sw.transport.Cleanup(peer)
-	if err := peer.Stop(); err != nil {
-		sw.Logger.Error("error while stopping peer", "error", err) // TODO: should return error to be handled accordingly
-	}
-	if reason == nil {
-		reason = "stopping"
-	}
-	schema.WritePeerUpdate(sw.traceClient, string(peer.ID()), schema.PeerDisconnect, fmt.Sprintf("%v", reason))
-	sw.removePeerFromAllReactors(peer, reason)
-
-	// Removing a peer should go last to avoid a situation where a peer
-	// reconnect to our node and the switch calls InitPeer before
-	// RemovePeer is finished.
-	// https://github.com/tendermint/tendermint/issues/3338
-	if sw.peers.Remove(peer) {
-		sw.metrics.Peers.Add(float64(-1))
-	} else {
-		// Removal of the peer has failed. The function above sets a flag within the peer to mark this.
-		// We keep this message here as information to the developer.
-		sw.Logger.Debug("error on peer removal", "peer", peer.ID())
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// TODO: should return error to be handled accordingly
+
+// Removing a peer should go last to avoid a situation where a peer
+// reconnect to our node and the switch calls InitPeer before
+// RemovePeer is finished.
+// https://github.com/tendermint/tendermint/issues/3338
+
+// Removal of the peer has failed. The function above sets a flag within the peer to mark this.
+// We keep this message here as information to the developer.
 
 // reconnectToPeer tries to reconnect to the addr, first repeatedly
 // with a fixed interval (approximately 2 minutes), then with
@@ -447,68 +286,22 @@ func (sw *Switch) stopAndRemovePeer(peer Peer, reason interface{}) {
 // TODO: be more explicit with error types so we only retry on certain failures
 //   - ie. if we're getting ErrDuplicatePeer we can stop
 //     because the addrbook got us the peer back already
-func (sw *Switch) reconnectToPeer(addr *NetAddress) {
-	if sw.reconnecting.Has(string(addr.ID)) {
-		return
-	}
-	sw.reconnecting.Set(string(addr.ID), addr)
-	defer sw.reconnecting.Delete(string(addr.ID))
+func (sw *Switch) reconnectToPeer(addr *NetAddress) { _ = "STUB: not implemented"; return }
 
-	start := time.Now()
-	sw.Logger.Debug("Reconnecting to peer", "addr", addr)
+// success
 
-	for i := 0; i < reconnectAttempts; i++ {
-		if !sw.IsRunning() {
-			return
-		}
+// sleep a set amount
 
-		err := sw.DialPeerWithAddress(addr)
-		if err == nil {
-			return // success
-		} else if _, ok := err.(ErrCurrentlyDialingOrExistingAddress); ok {
-			return
-		}
+// sleep an exponentially increasing amount
 
-		sw.Logger.Debug("Error reconnecting to peer. Trying again", "tries", i, "err", err, "addr", addr)
-		// sleep a set amount
-		sw.randomSleep(reconnectInterval)
-		continue
-	}
-
-	sw.Logger.Debug("Failed to reconnect to peer. Beginning exponential backoff",
-		"addr", addr, "elapsed", time.Since(start))
-	for i := 1; i <= reconnectBackOffAttempts; i++ {
-		if !sw.IsRunning() {
-			return
-		}
-
-		// sleep an exponentially increasing amount
-		sleepIntervalSeconds := math.Pow(reconnectBackOffBaseSeconds, float64(i))
-		sw.randomSleep(time.Duration(sleepIntervalSeconds) * time.Second)
-
-		err := sw.DialPeerWithAddress(addr)
-		if err == nil {
-			return // success
-		} else if _, ok := err.(ErrCurrentlyDialingOrExistingAddress); ok {
-			return
-		}
-		sw.Logger.Debug("Error reconnecting to peer. Trying again", "tries", i, "err", err, "addr", addr)
-	}
-	sw.Logger.Debug("Failed to reconnect to peer. Giving up", "addr", addr, "elapsed", time.Since(start))
-}
+// success
 
 // SetAddrBook allows to set address book on Switch.
-func (sw *Switch) SetAddrBook(addrBook AddrBook) {
-	sw.addrBook = addrBook
-}
+func (sw *Switch) SetAddrBook(addrBook AddrBook) { _ = "STUB: not implemented"; return }
 
 // MarkPeerAsGood marks the given peer as good when it did something useful
 // like contributed to consensus.
-func (sw *Switch) MarkPeerAsGood(peer Peer) {
-	if sw.addrBook != nil {
-		sw.addrBook.MarkGood(peer.ID())
-	}
-}
+func (sw *Switch) MarkPeerAsGood(peer Peer) { _ = "STUB: not implemented"; return }
 
 //---------------------------------------------------------------------
 // Dialing
@@ -517,261 +310,84 @@ type privateAddr interface {
 	PrivateAddr() bool
 }
 
-func isPrivateAddr(err error) bool {
-	te, ok := err.(privateAddr)
-	return ok && te.PrivateAddr()
-}
+func isPrivateAddr(err error) bool { _ = "STUB: not implemented"; return false }
 
 // DialPeersAsync dials a list of peers asynchronously in random order.
 // Used to dial peers from config on startup or from unsafe-RPC (trusted sources).
 // It ignores ErrNetAddressLookup. However, if there are other errors, first
 // encounter is returned.
 // Nop if there are no peers.
-func (sw *Switch) DialPeersAsync(peers []string) error {
-	netAddrs, errs := NewNetAddressStrings(peers)
-	// report all the errors
-	for _, err := range errs {
-		sw.Logger.Error("Error in peer's address", "err", err)
-	}
-	// return first non-ErrNetAddressLookup error
-	for _, err := range errs {
-		if _, ok := err.(ErrNetAddressLookup); ok {
-			continue
-		}
-		return err
-	}
-	sw.dialPeersAsync(netAddrs)
-	return nil
-}
+func (sw *Switch) DialPeersAsync(peers []string) error { _ = "STUB: not implemented"; return nil }
 
-func (sw *Switch) dialPeersAsync(netAddrs []*NetAddress) {
-	ourAddr := sw.NetAddress()
+// report all the errors
 
-	// TODO: this code feels like it's in the wrong place.
-	// The integration tests depend on the addrBook being saved
-	// right away but maybe we can change that. Recall that
-	// the addrBook is only written to disk every 2min
-	if sw.addrBook != nil {
-		// add peers to `addrBook`
-		for _, netAddr := range netAddrs {
-			// do not add our address or ID
-			if !netAddr.Same(ourAddr) {
-				if err := sw.addrBook.AddAddress(netAddr, ourAddr); err != nil {
-					if isPrivateAddr(err) {
-						sw.Logger.Trace("Won't add peer's address to addrbook", "err", err)
-					} else {
-						sw.Logger.Error("Can't add peer's address to addrbook", "err", err)
-					}
-				}
-			}
-		}
-		// Persist some peers to disk right away.
-		// NOTE: integration tests depend on this
-		sw.addrBook.Save()
-	}
+// return first non-ErrNetAddressLookup error
 
-	// permute the list, dial them in random order.
-	perm := sw.rng.Perm(len(netAddrs))
-	for i := 0; i < len(perm); i++ {
-		go func(i int) {
-			j := perm[i]
-			addr := netAddrs[j]
+func (sw *Switch) dialPeersAsync(netAddrs []*NetAddress) { _ = "STUB: not implemented"; return }
 
-			if addr.Same(ourAddr) {
-				sw.Logger.Trace("Ignore attempt to connect to ourselves", "addr", addr, "ourAddr", ourAddr)
-				return
-			}
+// TODO: this code feels like it's in the wrong place.
+// The integration tests depend on the addrBook being saved
+// right away but maybe we can change that. Recall that
+// the addrBook is only written to disk every 2min
 
-			sw.randomSleep(0)
+// add peers to `addrBook`
 
-			err := sw.DialPeerWithAddress(addr)
-			if err != nil {
-				switch err.(type) {
-				case ErrSwitchConnectToSelf, ErrSwitchDuplicatePeerID, ErrCurrentlyDialingOrExistingAddress:
-					sw.Logger.Debug("Error dialing peer", "err", err)
-				default:
-					sw.Logger.Error("Error dialing peer", "err", err)
-				}
-			}
-		}(i)
-	}
-}
+// do not add our address or ID
+
+// Persist some peers to disk right away.
+// NOTE: integration tests depend on this
+
+// permute the list, dial them in random order.
 
 // DialPeerWithAddress dials the given peer and runs sw.addPeer if it connects
 // and authenticates successfully.
 // If we're currently dialing this address or it belongs to an existing peer,
 // ErrCurrentlyDialingOrExistingAddress is returned.
 func (sw *Switch) DialPeerWithAddress(addr *NetAddress) error {
-	if sw.IsDialingOrExistingAddress(addr) {
-		return ErrCurrentlyDialingOrExistingAddress{addr.String()}
-	}
-
-	sw.dialing.Set(string(addr.ID), addr)
-	defer sw.dialing.Delete(string(addr.ID))
-
-	return sw.addOutboundPeerWithConfig(addr, sw.config)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // sleep for interval plus some random amount of ms on [0, dialRandomizerIntervalMilliseconds]
-func (sw *Switch) randomSleep(interval time.Duration) {
-	r := time.Duration(sw.rng.Int63n(dialRandomizerIntervalMilliseconds)) * time.Millisecond
-	time.Sleep(r + interval)
-}
+func (sw *Switch) randomSleep(interval time.Duration) { _ = "STUB: not implemented"; return }
 
 // IsDialingOrExistingAddress returns true if switch has a peer with the given
 // address or dialing it at the moment.
 func (sw *Switch) IsDialingOrExistingAddress(addr *NetAddress) bool {
-	return sw.dialing.Has(string(addr.ID)) ||
-		sw.peers.Has(addr.ID) ||
-		(!sw.config.AllowDuplicateIP && sw.peers.HasIP(addr.IP))
+	_ = "STUB: not implemented"
+	return false
 }
 
 // AddPersistentPeers allows you to set persistent peers. It ignores
 // ErrNetAddressLookup. However, if there are other errors, first encounter is
 // returned.
-func (sw *Switch) AddPersistentPeers(addrs []string) error {
-	sw.Logger.Info("Adding persistent peers", "addrs", addrs)
-	netAddrs, errs := NewNetAddressStrings(addrs)
-	// report all the errors
-	for _, err := range errs {
-		sw.Logger.Error("Error in peer's address", "err", err)
-	}
-	// return first non-ErrNetAddressLookup error
-	for _, err := range errs {
-		if _, ok := err.(ErrNetAddressLookup); ok {
-			continue
-		}
-		return err
-	}
-	sw.persistentPeersAddrs = netAddrs
-	return nil
-}
+func (sw *Switch) AddPersistentPeers(addrs []string) error { _ = "STUB: not implemented"; return nil }
+
+// report all the errors
+
+// return first non-ErrNetAddressLookup error
 
 func (sw *Switch) AddUnconditionalPeerIDs(ids []string) error {
-	sw.Logger.Info("Adding unconditional peer ids", "ids", ids)
-	for i, id := range ids {
-		err := validateID(ID(id))
-		if err != nil {
-			return fmt.Errorf("wrong ID #%d: %w", i, err)
-		}
-		sw.unconditionalPeerIDs[ID(id)] = struct{}{}
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (sw *Switch) AddPrivatePeerIDs(ids []string) error {
-	validIDs := make([]string, 0, len(ids))
-	for i, id := range ids {
-		err := validateID(ID(id))
-		if err != nil {
-			return fmt.Errorf("wrong ID #%d: %w", i, err)
-		}
-		validIDs = append(validIDs, id)
-	}
+func (sw *Switch) AddPrivatePeerIDs(ids []string) error { _ = "STUB: not implemented"; return nil }
 
-	sw.addrBook.AddPrivateIDs(validIDs)
+func (sw *Switch) IsPeerPersistent(na *NetAddress) bool { _ = "STUB: not implemented"; return false }
 
-	return nil
-}
+func (sw *Switch) acceptRoutine() { _ = "STUB: not implemented"; return }
 
-func (sw *Switch) IsPeerPersistent(na *NetAddress) bool {
-	for _, pa := range sw.persistentPeersAddrs {
-		if pa.Equals(na) {
-			return true
-		}
-	}
-	return false
-}
+// Remove the given address from the address book and add to our addresses
+// to avoid dialing in the future.
 
-func (sw *Switch) acceptRoutine() {
-	for {
-		p, err := sw.transport.Accept(peerConfig{
-			chDescs:       sw.chDescs,
-			onPeerError:   sw.StopPeerForError,
-			reactorsByCh:  sw.reactorsByCh,
-			msgTypeByChID: sw.msgTypeByChID,
-			metrics:       sw.metrics,
-			mlc:           sw.mlc,
-			isPersistent:  sw.IsPeerPersistent,
-		})
-		if err != nil {
-			switch err := err.(type) {
-			case ErrRejected:
-				if err.IsSelf() {
-					// Remove the given address from the address book and add to our addresses
-					// to avoid dialing in the future.
-					addr := err.Addr()
-					sw.addrBook.RemoveAddress(&addr)
-					sw.addrBook.AddOurAddress(&addr)
-				}
+// We could instead have a retry loop around the acceptRoutine,
+// but that would need to stop and let the node shutdown eventually.
+// So might as well panic and let process managers restart the node.
+// There's no point in letting the node run without the acceptRoutine,
+// since it won't be able to accept new connections.
 
-				sw.Logger.Debug(
-					"Inbound Peer rejected",
-					"err", err,
-					"numPeers", sw.peers.Size(),
-				)
-
-				continue
-			case ErrFilterTimeout:
-				sw.Logger.Error(
-					"Peer filter timed out",
-					"err", err,
-				)
-
-				continue
-			case ErrTransportClosed:
-				sw.Logger.Error(
-					"Stopped accept routine, as transport is closed",
-					"numPeers", sw.peers.Size(),
-				)
-			default:
-				sw.Logger.Error(
-					"Accept on transport errored",
-					"err", err,
-					"numPeers", sw.peers.Size(),
-				)
-				// We could instead have a retry loop around the acceptRoutine,
-				// but that would need to stop and let the node shutdown eventually.
-				// So might as well panic and let process managers restart the node.
-				// There's no point in letting the node run without the acceptRoutine,
-				// since it won't be able to accept new connections.
-				panic(fmt.Errorf("accept routine exited: %v", err))
-			}
-
-			break
-		}
-
-		if !sw.IsPeerUnconditional(p.NodeInfo().ID()) {
-			// Ignore connection if we already have enough peers.
-			_, in, _ := sw.NumPeers()
-			if in >= sw.config.MaxNumInboundPeers {
-				sw.Logger.Trace(
-					"Ignoring inbound connection: already have enough inbound peers",
-					"address", p.SocketAddr(),
-					"have", in,
-					"max", sw.config.MaxNumInboundPeers,
-				)
-
-				sw.transport.Cleanup(p)
-
-				continue
-			}
-
-		}
-
-		if err := sw.addPeer(p); err != nil {
-			sw.transport.Cleanup(p)
-			if p.IsRunning() {
-				_ = p.Stop()
-			}
-			sw.Logger.Debug(
-				"Ignoring inbound connection: error while adding peer",
-				"err", err,
-				"id", p.ID(),
-			)
-		}
-	}
-}
+// Ignore connection if we already have enough peers.
 
 // dial the peer; make secret connection; authenticate against the dialed ID;
 // add the peer.
@@ -782,202 +398,70 @@ func (sw *Switch) addOutboundPeerWithConfig(
 	addr *NetAddress,
 	cfg *config.P2PConfig,
 ) error {
-	sw.Logger.Trace("Dialing peer", "address", addr)
-
-	// XXX(xla): Remove the leakage of test concerns in implementation.
-	if cfg.TestDialFail {
-		go sw.reconnectToPeer(addr)
-		return fmt.Errorf("dial err (peerConfig.DialFail == true)")
-	}
-
-	p, err := sw.transport.Dial(*addr, peerConfig{
-		chDescs:       sw.chDescs,
-		onPeerError:   sw.StopPeerForError,
-		isPersistent:  sw.IsPeerPersistent,
-		reactorsByCh:  sw.reactorsByCh,
-		msgTypeByChID: sw.msgTypeByChID,
-		metrics:       sw.metrics,
-		mlc:           sw.mlc,
-	})
-	if err != nil {
-		if e, ok := err.(ErrRejected); ok {
-			if e.IsSelf() {
-				// Remove the given address from the address book and add to our addresses
-				// to avoid dialing in the future.
-				sw.addrBook.RemoveAddress(addr)
-				sw.addrBook.AddOurAddress(addr)
-
-				return err
-			}
-		}
-
-		// retry persistent peers after
-		// any dial error besides IsSelf()
-		if sw.IsPeerPersistent(addr) {
-			go sw.reconnectToPeer(addr)
-		}
-
-		return err
-	}
-
-	if err := sw.addPeer(p); err != nil {
-		sw.transport.Cleanup(p)
-		if p.IsRunning() {
-			_ = p.Stop()
-		}
-		return err
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
+// XXX(xla): Remove the leakage of test concerns in implementation.
+
+// Remove the given address from the address book and add to our addresses
+// to avoid dialing in the future.
+
+// retry persistent peers after
+// any dial error besides IsSelf()
+
 func (sw *Switch) filterPeer(p Peer) error {
+	_ = "STUB: not implemented"
 	// Avoid duplicate
-	if sw.peers.Has(p.ID()) {
-		return ErrRejected{id: p.ID(), isDuplicate: true}
-	}
-
-	errc := make(chan error, len(sw.peerFilters))
-
-	for _, f := range sw.peerFilters {
-		go func(f PeerFilterFunc, p Peer, errc chan<- error) {
-			errc <- f(sw.peers, p)
-		}(f, p, errc)
-	}
-
-	for i := 0; i < cap(errc); i++ {
-		select {
-		case err := <-errc:
-			if err != nil {
-				return ErrRejected{id: p.ID(), err: err, isFiltered: true}
-			}
-		case <-time.After(sw.filterTimeout):
-			return ErrFilterTimeout{}
-		}
-	}
-
 	return nil
 }
 
 // addPeer starts up the Peer and adds it to the Switch. Error is returned if
 // the peer is filtered out or failed to start or can't be added.
-func (sw *Switch) addPeer(p Peer) error {
-	if err := sw.filterPeer(p); err != nil {
-		return err
-	}
+func (sw *Switch) addPeer(p Peer) error { _ = "STUB: not implemented"; return nil }
 
-	p.SetLogger(sw.Logger.With("peer", p.SocketAddr()))
+// Handle the shut down case where the switch has stopped but we're
+// concurrently trying to add a peer.
 
-	// Handle the shut down case where the switch has stopped but we're
-	// concurrently trying to add a peer.
-	if !sw.IsRunning() {
-		// XXX should this return an error or just log and terminate?
-		sw.Logger.Error("Won't start a peer - switch is not running", "peer", p)
-		return nil
-	}
+// XXX should this return an error or just log and terminate?
 
-	// Add some data to the peer, which is required by reactors.
-	peerReactors := make([]Reactor, 0, len(sw.reactors))
-	for _, reactor := range sw.reactors {
-		if updatedPeer, err := reactor.InitPeer(p); err == nil {
-			peerReactors = append(peerReactors, reactor)
-			p = updatedPeer // only update peer if the reactor accepted it
-		} else {
-			sw.Logger.Debug("Reactor rejected peer in InitPeer", "peer", p, "err", err, "reactor", reactor.String())
-		}
-	}
-	if len(peerReactors) == 0 {
-		sw.Logger.Debug("Peer not wanted by any reactor", "peer", p)
-		sw.StopPeerGracefully(p, "")
-		return errors.New("peer not wanted by any reactor")
-	}
+// Add some data to the peer, which is required by reactors.
 
-	// Start the peer's send/recv routines.
-	// Must start it before adding it to the peer set
-	// to prevent Start and Stop from being called concurrently.
-	err := p.Start()
-	if err != nil {
-		// Should never happen
-		sw.Logger.Error("Error starting peer", "err", err, "peer", p)
-		return err
-	}
+// only update peer if the reactor accepted it
 
-	// Add the peer to PeerSet. Do this before starting the reactors
-	// so that if Receive errors, we will find the peer and remove it.
-	// Add should not err since we already checked peers.Has().
-	if err := sw.peers.Add(p); err != nil {
-		switch err.(type) {
-		case ErrPeerRemoval:
-			sw.Logger.Error("Error starting peer ",
-				" err ", "Peer has already errored and removal was attempted.",
-				"peer", p.ID())
-		}
-		return err
-	}
-	sw.metrics.Peers.Add(float64(1))
-	schema.WritePeerUpdate(sw.traceClient, string(p.ID()), schema.PeerJoin, "")
+// Start the peer's send/recv routines.
+// Must start it before adding it to the peer set
+// to prevent Start and Stop from being called concurrently.
 
-	// Start all the reactor protocols on the peer.
-	for _, reactor := range peerReactors {
-		reactor.AddPeer(p)
-		peerSet := sw.peerSetForReactor(reactor)
-		if peerSet != nil {
-			if err := peerSet.Add(p); err != nil {
-				if errors.Is(err, ErrPeerRemoval{}) {
-					sw.Logger.Error("Error starting peer",
-						"err", "Peer has already errored and removal was attempted",
-						"peer", p.ID())
-				}
-				return err
-			}
-		}
-	}
+// Should never happen
 
-	sw.Logger.Trace("Added peer", "peer", p)
+// Add the peer to PeerSet. Do this before starting the reactors
+// so that if Receive errors, we will find the peer and remove it.
+// Add should not err since we already checked peers.Has().
 
-	return nil
-}
+// Start all the reactor protocols on the peer.
 
 // peerSetForReactor retrieves the PeerSet associated with the given Reactor.
 // Returns nil if the reactor is not registered.
-func (sw *Switch) peerSetForReactor(r Reactor) *PeerSet {
-	return sw.peerSetByReactor[r.String()]
-}
+func (sw *Switch) peerSetForReactor(r Reactor) *PeerSet { _ = "STUB: not implemented"; return nil }
 
 // removePeerFromAllReactors removes the given peer from all reactors
 func (sw *Switch) removePeerFromAllReactors(peer Peer, reason interface{}) {
-	for _, reactor := range sw.reactors {
-		sw.doRemovePeer(peer, reactor, reason)
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // removePeerFromReactor removes the peer from the specified reactor
 func (sw *Switch) removePeerFromReactor(peer Peer, reactorName string) {
-	for _, reactor := range sw.reactors {
-		if reactor.String() == reactorName {
-			sw.doRemovePeer(peer, reactor, nil)
-			break
-		}
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // doRemovePeer removes the specified peer from the given reactor and its corresponding peer set, logging any issues.
 func (sw *Switch) doRemovePeer(peer Peer, reactor Reactor, reason interface{}) {
-	reactor.RemovePeer(peer, reason)
-	peerSet := sw.peerSetForReactor(reactor)
-	if peerSet != nil && !peerSet.Remove(peer) {
-		sw.Logger.Debug("error on peer removal for reactor", "peer", peer.ID(), "reactor", reactor.String())
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 // countActivePeerConnections returns the number of reactors that have this peer
-func (sw *Switch) countActivePeerConnections(peer Peer) int {
-	cnt := 0
-	for _, reactor := range sw.reactors {
-		peerSet := sw.peerSetForReactor(reactor)
-		if peerSet != nil && peerSet.Has(peer.ID()) {
-			cnt++
-		}
-	}
-	return cnt
-}
+func (sw *Switch) countActivePeerConnections(peer Peer) int { _ = "STUB: not implemented"; return 0 }

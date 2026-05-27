@@ -20,13 +20,11 @@ type pipe struct {
 	net.Conn
 }
 
-func (p *pipe) SetDeadline(t time.Time) error {
-	return nil
-}
+func (p *pipe) SetDeadline(t time.Time) error { _ = "STUB: not implemented"; return nil }
 
 func NetPipe() (net.Conn, net.Conn) {
-	p1, p2 := net.Pipe()
-	return &pipe{p1}, &pipe{p2}
+	_ = "STUB: not implemented"
+	return *new(net.Conn), *new(net.Conn)
 }
 
 var _ net.Conn = (*pipe)(nil)

@@ -1,28 +1,13 @@
 package commands
 
 import (
-	"bufio"
-	"context"
-	"errors"
-	"fmt"
-	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 
 	dbm "github.com/cometbft/cometbft-db"
-
-	"github.com/cometbft/cometbft/libs/log"
-	cmtmath "github.com/cometbft/cometbft/libs/math"
-	cmtos "github.com/cometbft/cometbft/libs/os"
-	"github.com/cometbft/cometbft/light"
-	lproxy "github.com/cometbft/cometbft/light/proxy"
-	lrpc "github.com/cometbft/cometbft/light/rpc"
-	dbs "github.com/cometbft/cometbft/light/store/db"
-	rpcserver "github.com/cometbft/cometbft/rpc/jsonrpc/server"
 )
 
 // LightCmd represents the base command when called without any subcommands
@@ -101,157 +86,31 @@ func init() {
 }
 
 func runProxy(_ *cobra.Command, args []string) error {
+	_ = "STUB: not implemented"
 	// Initialize logger.
-	logger := log.NewTMLogger(log.NewSyncWriter(os.Stdout))
-	var option log.Option
-	if verbose {
-		option, _ = log.AllowLevel("debug")
-	} else {
-		option, _ = log.AllowLevel("info")
-	}
-	logger = log.NewFilter(logger, option)
-
-	chainID = args[0]
-	logger.Info("Creating client...", "chainID", chainID)
-
-	witnessesAddrs := []string{}
-	if witnessAddrsJoined != "" {
-		witnessesAddrs = strings.Split(witnessAddrsJoined, ",")
-	}
-
-	db, err := dbm.NewDB("light-client-db", dbm.PebbleDBBackend, home)
-	if err != nil {
-		return fmt.Errorf("can't create a db: %w", err)
-	}
-
-	if primaryAddr == "" { // check to see if we can start from an existing state
-		var err error
-		primaryAddr, witnessesAddrs, err = checkForExistingProviders(db)
-		if err != nil {
-			return fmt.Errorf("failed to retrieve primary or witness from db: %w", err)
-		}
-		if primaryAddr == "" {
-			return errors.New("no primary address was provided nor found. Please provide a primary (using -p)." +
-				" Run the command: cometbft light --help for more information")
-		}
-	} else {
-		err := saveProviders(db, primaryAddr, witnessAddrsJoined)
-		if err != nil {
-			logger.Error("Unable to save primary and or witness addresses", "err", err)
-		}
-	}
-
-	trustLevel, err := cmtmath.ParseFraction(trustLevelStr)
-	if err != nil {
-		return fmt.Errorf("can't parse trust level: %w", err)
-	}
-
-	options := []light.Option{
-		light.Logger(logger),
-		light.ConfirmationFunction(func(action string) bool {
-			fmt.Println(action)
-			scanner := bufio.NewScanner(os.Stdin)
-			for {
-				scanner.Scan()
-				response := scanner.Text()
-				switch response {
-				case "y", "Y":
-					return true
-				case "n", "N":
-					return false
-				default:
-					fmt.Println("please input 'Y' or 'n' and press ENTER")
-				}
-			}
-		}),
-	}
-
-	if sequential {
-		options = append(options, light.SequentialVerification())
-	} else {
-		options = append(options, light.SkippingVerification(trustLevel))
-	}
-
-	var c *light.Client
-	if trustedHeight > 0 && len(trustedHash) > 0 { // fresh installation
-		c, err = light.NewHTTPClient(
-			context.Background(),
-			chainID,
-			light.TrustOptions{
-				Period: trustingPeriod,
-				Height: trustedHeight,
-				Hash:   trustedHash,
-			},
-			primaryAddr,
-			witnessesAddrs,
-			dbs.New(db, chainID),
-			options...,
-		)
-	} else { // continue from latest state
-		c, err = light.NewHTTPClientFromTrustedStore(
-			chainID,
-			trustingPeriod,
-			primaryAddr,
-			witnessesAddrs,
-			dbs.New(db, chainID),
-			options...,
-		)
-	}
-	if err != nil {
-		return err
-	}
-
-	cfg := rpcserver.DefaultConfig()
-	cfg.MaxBodyBytes = config.RPC.MaxBodyBytes
-	cfg.MaxHeaderBytes = config.RPC.MaxHeaderBytes
-	cfg.MaxOpenConnections = maxOpenConnections
-	// If necessary adjust global WriteTimeout to ensure it's greater than
-	// TimeoutBroadcastTxCommit.
-	// See https://github.com/tendermint/tendermint/issues/3435
-	if cfg.WriteTimeout <= config.RPC.TimeoutBroadcastTxCommit {
-		cfg.WriteTimeout = config.RPC.TimeoutBroadcastTxCommit + 1*time.Second
-	}
-
-	p, err := lproxy.NewProxy(c, listenAddr, primaryAddr, cfg, logger, lrpc.KeyPathFn(lrpc.DefaultMerkleKeyPathFn()))
-	if err != nil {
-		return err
-	}
-
-	// Stop upon receiving SIGTERM or CTRL-C.
-	cmtos.TrapSignal(logger, func() {
-		p.Listener.Close()
-	})
-
-	logger.Info("Starting proxy...", "laddr", listenAddr)
-	if err := p.ListenAndServe(); err != http.ErrServerClosed {
-		// Error starting or closing listener:
-		logger.Error("proxy ListenAndServe", "err", err)
-	}
-
 	return nil
 }
 
+// check to see if we can start from an existing state
+
+// fresh installation
+
+// continue from latest state
+
+// If necessary adjust global WriteTimeout to ensure it's greater than
+// TimeoutBroadcastTxCommit.
+// See https://github.com/tendermint/tendermint/issues/3435
+
+// Stop upon receiving SIGTERM or CTRL-C.
+
+// Error starting or closing listener:
+
 func checkForExistingProviders(db dbm.DB) (string, []string, error) {
-	primaryBytes, err := db.Get(primaryKey)
-	if err != nil {
-		return "", []string{""}, err
-	}
-	witnessesBytes, err := db.Get(witnessesKey)
-	if err != nil {
-		return "", []string{""}, err
-	}
-	witnessesAddrs := strings.Split(string(witnessesBytes), ",")
-	return string(primaryBytes), witnessesAddrs, nil
+	_ = "STUB: not implemented"
+	return "", nil, nil
 }
 
 func saveProviders(db dbm.DB, primaryAddr, witnessesAddrs string) error {
-	err := db.Set(primaryKey, []byte(primaryAddr))
-	if err != nil {
-		return fmt.Errorf("failed to save primary provider: %w", err)
-	}
-	err = db.Set(witnessesKey, []byte(witnessesAddrs))
-	if err != nil {
-		return fmt.Errorf("failed to save witness providers: %w", err)
-	}
+	_ = "STUB: not implemented"
 	return nil
 }

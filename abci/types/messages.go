@@ -5,8 +5,6 @@ import (
 	"math"
 
 	"github.com/cosmos/gogoproto/proto"
-
-	"github.com/cometbft/cometbft/libs/protoio"
 )
 
 const (
@@ -14,228 +12,135 @@ const (
 )
 
 // WriteMessage writes a varint length-delimited protobuf message.
-func WriteMessage(msg proto.Message, w io.Writer) error {
-	protoWriter := protoio.NewDelimitedWriter(w)
-	_, err := protoWriter.WriteMsg(msg)
-	return err
-}
+func WriteMessage(msg proto.Message, w io.Writer) error { _ = "STUB: not implemented"; return nil }
 
 // ReadMessage reads a varint length-delimited protobuf message.
-func ReadMessage(r io.Reader, msg proto.Message) error {
-	_, err := protoio.NewDelimitedReader(r, maxMsgSize).ReadMsg(msg)
-	return err
-}
+func ReadMessage(r io.Reader, msg proto.Message) error { _ = "STUB: not implemented"; return nil }
 
 //----------------------------------------
 
-func ToRequestEcho(message string) *Request {
-	return &Request{
-		Value: &Request_Echo{&RequestEcho{Message: message}},
-	}
-}
+func ToRequestEcho(message string) *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestFlush() *Request {
-	return &Request{
-		Value: &Request_Flush{&RequestFlush{}},
-	}
-}
+func ToRequestFlush() *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestInfo(req *RequestInfo) *Request {
-	return &Request{
-		Value: &Request_Info{req},
-	}
-}
+func ToRequestInfo(req *RequestInfo) *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestCheckTx(req *RequestCheckTx) *Request {
-	return &Request{
-		Value: &Request_CheckTx{req},
-	}
-}
+func ToRequestCheckTx(req *RequestCheckTx) *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestCommit() *Request {
-	return &Request{
-		Value: &Request_Commit{&RequestCommit{}},
-	}
-}
+func ToRequestCommit() *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestQuery(req *RequestQuery) *Request {
-	return &Request{
-		Value: &Request_Query{req},
-	}
-}
+func ToRequestQuery(req *RequestQuery) *Request { _ = "STUB: not implemented"; return nil }
 
-func ToRequestInitChain(req *RequestInitChain) *Request {
-	return &Request{
-		Value: &Request_InitChain{req},
-	}
-}
+func ToRequestInitChain(req *RequestInitChain) *Request { _ = "STUB: not implemented"; return nil }
 
 func ToRequestListSnapshots(req *RequestListSnapshots) *Request {
-	return &Request{
-		Value: &Request_ListSnapshots{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestOfferSnapshot(req *RequestOfferSnapshot) *Request {
-	return &Request{
-		Value: &Request_OfferSnapshot{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestLoadSnapshotChunk(req *RequestLoadSnapshotChunk) *Request {
-	return &Request{
-		Value: &Request_LoadSnapshotChunk{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestApplySnapshotChunk(req *RequestApplySnapshotChunk) *Request {
-	return &Request{
-		Value: &Request_ApplySnapshotChunk{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestPrepareProposal(req *RequestPrepareProposal) *Request {
-	return &Request{
-		Value: &Request_PrepareProposal{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestProcessProposal(req *RequestProcessProposal) *Request {
-	return &Request{
-		Value: &Request_ProcessProposal{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func ToRequestExtendVote(req *RequestExtendVote) *Request {
-	return &Request{
-		Value: &Request_ExtendVote{req},
-	}
-}
+func ToRequestExtendVote(req *RequestExtendVote) *Request { _ = "STUB: not implemented"; return nil }
 
 func ToRequestVerifyVoteExtension(req *RequestVerifyVoteExtension) *Request {
-	return &Request{
-		Value: &Request_VerifyVoteExtension{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestFinalizeBlock(req *RequestFinalizeBlock) *Request {
-	return &Request{
-		Value: &Request_FinalizeBlock{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToRequestQuerySequence(req *RequestQuerySequence) *Request {
-	return &Request{
-		Value: &Request_QuerySequence{req},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 //----------------------------------------
 
-func ToResponseException(errStr string) *Response {
-	return &Response{
-		Value: &Response_Exception{&ResponseException{Error: errStr}},
-	}
-}
+func ToResponseException(errStr string) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseEcho(message string) *Response {
-	return &Response{
-		Value: &Response_Echo{&ResponseEcho{Message: message}},
-	}
-}
+func ToResponseEcho(message string) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseFlush() *Response {
-	return &Response{
-		Value: &Response_Flush{&ResponseFlush{}},
-	}
-}
+func ToResponseFlush() *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseInfo(res *ResponseInfo) *Response {
-	return &Response{
-		Value: &Response_Info{res},
-	}
-}
+func ToResponseInfo(res *ResponseInfo) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseCheckTx(res *ResponseCheckTx) *Response {
-	return &Response{
-		Value: &Response_CheckTx{res},
-	}
-}
+func ToResponseCheckTx(res *ResponseCheckTx) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseCommit(res *ResponseCommit) *Response {
-	return &Response{
-		Value: &Response_Commit{res},
-	}
-}
+func ToResponseCommit(res *ResponseCommit) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseQuery(res *ResponseQuery) *Response {
-	return &Response{
-		Value: &Response_Query{res},
-	}
-}
+func ToResponseQuery(res *ResponseQuery) *Response { _ = "STUB: not implemented"; return nil }
 
-func ToResponseInitChain(res *ResponseInitChain) *Response {
-	return &Response{
-		Value: &Response_InitChain{res},
-	}
-}
+func ToResponseInitChain(res *ResponseInitChain) *Response { _ = "STUB: not implemented"; return nil }
 
 func ToResponseListSnapshots(res *ResponseListSnapshots) *Response {
-	return &Response{
-		Value: &Response_ListSnapshots{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseOfferSnapshot(res *ResponseOfferSnapshot) *Response {
-	return &Response{
-		Value: &Response_OfferSnapshot{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseLoadSnapshotChunk(res *ResponseLoadSnapshotChunk) *Response {
-	return &Response{
-		Value: &Response_LoadSnapshotChunk{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseApplySnapshotChunk(res *ResponseApplySnapshotChunk) *Response {
-	return &Response{
-		Value: &Response_ApplySnapshotChunk{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponsePrepareProposal(res *ResponsePrepareProposal) *Response {
-	return &Response{
-		Value: &Response_PrepareProposal{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseProcessProposal(res *ResponseProcessProposal) *Response {
-	return &Response{
-		Value: &Response_ProcessProposal{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
-func ToResponseExtendVote(res *ResponseExtendVote) *Response {
-	return &Response{
-		Value: &Response_ExtendVote{res},
-	}
-}
+func ToResponseExtendVote(res *ResponseExtendVote) *Response { _ = "STUB: not implemented"; return nil }
 
 func ToResponseVerifyVoteExtension(res *ResponseVerifyVoteExtension) *Response {
-	return &Response{
-		Value: &Response_VerifyVoteExtension{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseFinalizeBlock(res *ResponseFinalizeBlock) *Response {
-	return &Response{
-		Value: &Response_FinalizeBlock{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 func ToResponseQuerySequence(res *ResponseQuerySequence) *Response {
-	return &Response{
-		Value: &Response_QuerySequence{res},
-	}
+	_ = "STUB: not implemented"
+	return nil
 }

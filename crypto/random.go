@@ -1,35 +1,20 @@
 package crypto
 
 import (
-	crand "crypto/rand"
-	"encoding/hex"
 	"io"
 )
 
 // This only uses the OS's randomness
-func randBytes(numBytes int) []byte {
-	b := make([]byte, numBytes)
-	_, err := crand.Read(b)
-	if err != nil {
-		panic(err)
-	}
-	return b
-}
+func randBytes(numBytes int) []byte { _ = "STUB: not implemented"; return nil }
 
 // This only uses the OS's randomness
-func CRandBytes(numBytes int) []byte {
-	return randBytes(numBytes)
-}
+func CRandBytes(numBytes int) []byte { _ = "STUB: not implemented"; return nil }
 
 // CRandHex returns a hex encoded string that's floor(numDigits/2) * 2 long.
 //
 // Note: CRandHex(24) gives 96 bits of randomness that
 // are usually strong enough for most purposes.
-func CRandHex(numDigits int) string {
-	return hex.EncodeToString(CRandBytes(numDigits / 2))
-}
+func CRandHex(numDigits int) string { _ = "STUB: not implemented"; return "" }
 
 // Returns a crand.Reader.
-func CReader() io.Reader {
-	return crand.Reader
-}
+func CReader() io.Reader { _ = "STUB: not implemented"; return *new(io.Reader) }

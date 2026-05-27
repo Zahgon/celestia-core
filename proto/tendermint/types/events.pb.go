@@ -5,10 +5,9 @@ package types
 
 import (
 	fmt "fmt"
-	proto "github.com/cosmos/gogoproto/proto"
-	io "io"
 	math "math"
-	math_bits "math/bits"
+
+	proto "github.com/cosmos/gogoproto/proto"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -28,59 +27,34 @@ type EventDataRoundState struct {
 	Step   string `protobuf:"bytes,3,opt,name=step,proto3" json:"step,omitempty"`
 }
 
-func (m *EventDataRoundState) Reset()         { *m = EventDataRoundState{} }
-func (m *EventDataRoundState) String() string { return proto.CompactTextString(m) }
-func (*EventDataRoundState) ProtoMessage()    {}
+func (m *EventDataRoundState) Reset()         { _ = "STUB: not implemented"; return }
+func (m *EventDataRoundState) String() string { _ = "STUB: not implemented"; return "" }
+func (*EventDataRoundState) ProtoMessage()    { _ = "STUB: not implemented"; return }
 func (*EventDataRoundState) Descriptor() ([]byte, []int) {
-	return fileDescriptor_72cfafd446dedf7c, []int{0}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *EventDataRoundState) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+
+func (m *EventDataRoundState) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *EventDataRoundState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_EventDataRoundState.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *EventDataRoundState) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventDataRoundState.Merge(m, src)
-}
-func (m *EventDataRoundState) XXX_Size() int {
-	return m.Size()
-}
-func (m *EventDataRoundState) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventDataRoundState.DiscardUnknown(m)
-}
+
+func (m *EventDataRoundState) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *EventDataRoundState) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *EventDataRoundState) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_EventDataRoundState proto.InternalMessageInfo
 
-func (m *EventDataRoundState) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
-}
+func (m *EventDataRoundState) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *EventDataRoundState) GetRound() int32 {
-	if m != nil {
-		return m.Round
-	}
-	return 0
-}
+func (m *EventDataRoundState) GetRound() int32 { _ = "STUB: not implemented"; return 0 }
 
-func (m *EventDataRoundState) GetStep() string {
-	if m != nil {
-		return m.Step
-	}
-	return ""
-}
+func (m *EventDataRoundState) GetStep() string { _ = "STUB: not implemented"; return "" }
 
 func init() {
 	proto.RegisterType((*EventDataRoundState)(nil), "tendermint.types.EventDataRoundState")
@@ -106,279 +80,31 @@ var fileDescriptor_72cfafd446dedf7c = []byte{
 }
 
 func (m *EventDataRoundState) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *EventDataRoundState) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *EventDataRoundState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Step) > 0 {
-		i -= len(m.Step)
-		copy(dAtA[i:], m.Step)
-		i = encodeVarintEvents(dAtA, i, uint64(len(m.Step)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if m.Round != 0 {
-		i = encodeVarintEvents(dAtA, i, uint64(m.Round))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.Height != 0 {
-		i = encodeVarintEvents(dAtA, i, uint64(m.Height))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func encodeVarintEvents(dAtA []byte, offset int, v uint64) int {
-	offset -= sovEvents(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *EventDataRoundState) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Height != 0 {
-		n += 1 + sovEvents(uint64(m.Height))
-	}
-	if m.Round != 0 {
-		n += 1 + sovEvents(uint64(m.Round))
-	}
-	l = len(m.Step)
-	if l > 0 {
-		n += 1 + l + sovEvents(uint64(l))
-	}
-	return n
-}
+func encodeVarintEvents(dAtA []byte, offset int, v uint64) int { _ = "STUB: not implemented"; return 0 }
 
-func sovEvents(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozEvents(x uint64) (n int) {
-	return sovEvents(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *EventDataRoundState) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowEvents
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: EventDataRoundState: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventDataRoundState: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Height |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Round", wireType)
-			}
-			m.Round = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Round |= int32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Step", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvents
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvents
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Step = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipEvents(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthEvents
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *EventDataRoundState) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipEvents(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowEvents
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowEvents
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthEvents
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupEvents
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthEvents
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
+func sovEvents(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func sozEvents(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func (m *EventDataRoundState) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func skipEvents(dAtA []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 var (
 	ErrInvalidLengthEvents        = fmt.Errorf("proto: negative length found during unmarshaling")

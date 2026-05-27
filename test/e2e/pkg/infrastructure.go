@@ -1,9 +1,7 @@
 package e2e
 
 import (
-	"fmt"
 	"net"
-	"sort"
 )
 
 const (
@@ -56,40 +54,14 @@ type InstanceData struct {
 }
 
 func sortNodeNames(m Manifest) []string {
+	_ = "STUB: not implemented"
 	// Set up nodes, in alphabetical order (IPs and ports get same order).
-	nodeNames := []string{} //nolint:prealloc
-	for name := range m.Nodes {
-		nodeNames = append(nodeNames, name)
-	}
-	sort.Strings(nodeNames)
-	return nodeNames
+	return nil
 }
 
+//nolint:prealloc
+
 func NewDockerInfrastructureData(m Manifest) (InfrastructureData, error) {
-	netAddress := dockerIPv4CIDR
-	if m.IPv6 {
-		netAddress = dockerIPv6CIDR
-	}
-	_, ipNet, err := net.ParseCIDR(netAddress)
-	if err != nil {
-		return InfrastructureData{}, fmt.Errorf("invalid IP network address %q: %w", netAddress, err)
-	}
-
-	portGen := newPortGenerator(proxyPortFirst)
-	ipGen := newIPGenerator(ipNet)
-	ifd := InfrastructureData{
-		Provider:  "docker",
-		Instances: make(map[string]InstanceData),
-		Network:   netAddress,
-	}
-	localHostIP := net.ParseIP("127.0.0.1")
-	for _, name := range sortNodeNames(m) {
-		ifd.Instances[name] = InstanceData{
-			IPAddress:    ipGen.Next(),
-			ExtIPAddress: localHostIP,
-			Port:         portGen.Next(),
-		}
-
-	}
-	return ifd, nil
+	_ = "STUB: not implemented"
+	return *new(InfrastructureData), nil
 }

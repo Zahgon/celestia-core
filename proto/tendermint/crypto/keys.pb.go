@@ -4,13 +4,11 @@
 package crypto
 
 import (
-	bytes "bytes"
 	fmt "fmt"
+	math "math"
+
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -33,36 +31,23 @@ type PublicKey struct {
 	Sum isPublicKey_Sum `protobuf_oneof:"sum"`
 }
 
-func (m *PublicKey) Reset()         { *m = PublicKey{} }
-func (m *PublicKey) String() string { return proto.CompactTextString(m) }
-func (*PublicKey) ProtoMessage()    {}
-func (*PublicKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_cb048658b234868c, []int{0}
-}
-func (m *PublicKey) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *PublicKey) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *PublicKey) String() string            { _ = "STUB: not implemented"; return "" }
+func (*PublicKey) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*PublicKey) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *PublicKey) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *PublicKey) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_PublicKey.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *PublicKey) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PublicKey.Merge(m, src)
-}
-func (m *PublicKey) XXX_Size() int {
-	return m.Size()
-}
-func (m *PublicKey) XXX_DiscardUnknown() {
-	xxx_messageInfo_PublicKey.DiscardUnknown(m)
-}
+
+func (m *PublicKey) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *PublicKey) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *PublicKey) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_PublicKey proto.InternalMessageInfo
 
@@ -81,37 +66,20 @@ type PublicKey_Secp256K1 struct {
 	Secp256K1 []byte `protobuf:"bytes,2,opt,name=secp256k1,proto3,oneof" json:"secp256k1,omitempty"`
 }
 
-func (*PublicKey_Ed25519) isPublicKey_Sum()   {}
-func (*PublicKey_Secp256K1) isPublicKey_Sum() {}
+func (*PublicKey_Ed25519) isPublicKey_Sum()   { _ = "STUB: not implemented"; return }
+func (*PublicKey_Secp256K1) isPublicKey_Sum() { _ = "STUB: not implemented"; return }
 
 func (m *PublicKey) GetSum() isPublicKey_Sum {
-	if m != nil {
-		return m.Sum
-	}
-	return nil
+	_ = "STUB: not implemented"
+	return *new(isPublicKey_Sum)
 }
 
-func (m *PublicKey) GetEd25519() []byte {
-	if x, ok := m.GetSum().(*PublicKey_Ed25519); ok {
-		return x.Ed25519
-	}
-	return nil
-}
+func (m *PublicKey) GetEd25519() []byte { _ = "STUB: not implemented"; return nil }
 
-func (m *PublicKey) GetSecp256K1() []byte {
-	if x, ok := m.GetSum().(*PublicKey_Secp256K1); ok {
-		return x.Secp256K1
-	}
-	return nil
-}
+func (m *PublicKey) GetSecp256K1() []byte { _ = "STUB: not implemented"; return nil }
 
 // XXX_OneofWrappers is for the internal use of the proto package.
-func (*PublicKey) XXX_OneofWrappers() []interface{} {
-	return []interface{}{
-		(*PublicKey_Ed25519)(nil),
-		(*PublicKey_Secp256K1)(nil),
-	}
-}
+func (*PublicKey) XXX_OneofWrappers() []interface{} { _ = "STUB: not implemented"; return nil }
 
 func init() {
 	proto.RegisterType((*PublicKey)(nil), "tendermint.crypto.PublicKey")
@@ -136,518 +104,68 @@ var fileDescriptor_cb048658b234868c = []byte{
 	0x00, 0x00, 0xff, 0xff, 0xa3, 0xfb, 0xf7, 0x98, 0xf9, 0x00, 0x00, 0x00,
 }
 
-func (this *PublicKey) Compare(that interface{}) int {
-	if that == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	}
+func (this *PublicKey) Compare(that interface{}) int { _ = "STUB: not implemented"; return 0 }
 
-	that1, ok := that.(*PublicKey)
-	if !ok {
-		that2, ok := that.(PublicKey)
-		if ok {
-			that1 = &that2
-		} else {
-			return 1
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	} else if this == nil {
-		return -1
-	}
-	if that1.Sum == nil {
-		if this.Sum != nil {
-			return 1
-		}
-	} else if this.Sum == nil {
-		return -1
-	} else {
-		thisType := -1
-		switch this.Sum.(type) {
-		case *PublicKey_Ed25519:
-			thisType = 0
-		case *PublicKey_Secp256K1:
-			thisType = 1
-		default:
-			panic(fmt.Sprintf("compare: unexpected type %T in oneof", this.Sum))
-		}
-		that1Type := -1
-		switch that1.Sum.(type) {
-		case *PublicKey_Ed25519:
-			that1Type = 0
-		case *PublicKey_Secp256K1:
-			that1Type = 1
-		default:
-			panic(fmt.Sprintf("compare: unexpected type %T in oneof", that1.Sum))
-		}
-		if thisType == that1Type {
-			if c := this.Sum.Compare(that1.Sum); c != 0 {
-				return c
-			}
-		} else if thisType < that1Type {
-			return -1
-		} else if thisType > that1Type {
-			return 1
-		}
-	}
-	return 0
-}
-func (this *PublicKey_Ed25519) Compare(that interface{}) int {
-	if that == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	}
+func (this *PublicKey_Ed25519) Compare(that interface{}) int { _ = "STUB: not implemented"; return 0 }
 
-	that1, ok := that.(*PublicKey_Ed25519)
-	if !ok {
-		that2, ok := that.(PublicKey_Ed25519)
-		if ok {
-			that1 = &that2
-		} else {
-			return 1
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	} else if this == nil {
-		return -1
-	}
-	if c := bytes.Compare(this.Ed25519, that1.Ed25519); c != 0 {
-		return c
-	}
-	return 0
-}
-func (this *PublicKey_Secp256K1) Compare(that interface{}) int {
-	if that == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	}
+func (this *PublicKey_Secp256K1) Compare(that interface{}) int { _ = "STUB: not implemented"; return 0 }
 
-	that1, ok := that.(*PublicKey_Secp256K1)
-	if !ok {
-		that2, ok := that.(PublicKey_Secp256K1)
-		if ok {
-			that1 = &that2
-		} else {
-			return 1
-		}
-	}
-	if that1 == nil {
-		if this == nil {
-			return 0
-		}
-		return 1
-	} else if this == nil {
-		return -1
-	}
-	if c := bytes.Compare(this.Secp256K1, that1.Secp256K1); c != 0 {
-		return c
-	}
-	return 0
-}
-func (this *PublicKey) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
+func (this *PublicKey) Equal(that interface{}) bool { _ = "STUB: not implemented"; return false }
 
-	that1, ok := that.(*PublicKey)
-	if !ok {
-		that2, ok := that.(PublicKey)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if that1.Sum == nil {
-		if this.Sum != nil {
-			return false
-		}
-	} else if this.Sum == nil {
-		return false
-	} else if !this.Sum.Equal(that1.Sum) {
-		return false
-	}
-	return true
-}
 func (this *PublicKey_Ed25519) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PublicKey_Ed25519)
-	if !ok {
-		that2, ok := that.(PublicKey_Ed25519)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !bytes.Equal(this.Ed25519, that1.Ed25519) {
-		return false
-	}
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
+
 func (this *PublicKey_Secp256K1) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PublicKey_Secp256K1)
-	if !ok {
-		that2, ok := that.(PublicKey_Secp256K1)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !bytes.Equal(this.Secp256K1, that1.Secp256K1) {
-		return false
-	}
-	return true
-}
-func (m *PublicKey) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return false
 }
 
-func (m *PublicKey) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *PublicKey) Marshal() (dAtA []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *PublicKey) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *PublicKey) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Sum != nil {
-		{
-			size := m.Sum.Size()
-			i -= size
-			if _, err := m.Sum.MarshalTo(dAtA[i:]); err != nil {
-				return 0, err
-			}
-		}
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *PublicKey_Ed25519) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *PublicKey_Ed25519) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Ed25519 != nil {
-		i -= len(m.Ed25519)
-		copy(dAtA[i:], m.Ed25519)
-		i = encodeVarintKeys(dAtA, i, uint64(len(m.Ed25519)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
+
 func (m *PublicKey_Secp256K1) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *PublicKey_Secp256K1) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	if m.Secp256K1 != nil {
-		i -= len(m.Secp256K1)
-		copy(dAtA[i:], m.Secp256K1)
-		i = encodeVarintKeys(dAtA, i, uint64(len(m.Secp256K1)))
-		i--
-		dAtA[i] = 0x12
-	}
-	return len(dAtA) - i, nil
-}
-func encodeVarintKeys(dAtA []byte, offset int, v uint64) int {
-	offset -= sovKeys(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *PublicKey) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Sum != nil {
-		n += m.Sum.Size()
-	}
-	return n
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func (m *PublicKey_Ed25519) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Ed25519 != nil {
-		l = len(m.Ed25519)
-		n += 1 + l + sovKeys(uint64(l))
-	}
-	return n
-}
-func (m *PublicKey_Secp256K1) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Secp256K1 != nil {
-		l = len(m.Secp256K1)
-		n += 1 + l + sovKeys(uint64(l))
-	}
-	return n
-}
+func encodeVarintKeys(dAtA []byte, offset int, v uint64) int { _ = "STUB: not implemented"; return 0 }
 
-func sovKeys(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozKeys(x uint64) (n int) {
-	return sovKeys(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *PublicKey) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowKeys
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PublicKey: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PublicKey: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ed25519", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowKeys
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthKeys
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthKeys
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := make([]byte, postIndex-iNdEx)
-			copy(v, dAtA[iNdEx:postIndex])
-			m.Sum = &PublicKey_Ed25519{v}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Secp256K1", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowKeys
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthKeys
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthKeys
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			v := make([]byte, postIndex-iNdEx)
-			copy(v, dAtA[iNdEx:postIndex])
-			m.Sum = &PublicKey_Secp256K1{v}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipKeys(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthKeys
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *PublicKey) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipKeys(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowKeys
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowKeys
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowKeys
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthKeys
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupKeys
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthKeys
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
+func (m *PublicKey_Ed25519) Size() (n int) { _ = "STUB: not implemented"; return 0 }
+
+func (m *PublicKey_Secp256K1) Size() (n int) { _ = "STUB: not implemented"; return 0 }
+
+func sovKeys(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func sozKeys(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func (m *PublicKey) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func skipKeys(dAtA []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 var (
 	ErrInvalidLengthKeys        = fmt.Errorf("proto: negative length found during unmarshaling")

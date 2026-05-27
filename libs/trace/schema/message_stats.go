@@ -6,11 +6,7 @@ import (
 
 // MessageStatsTables returns the list of tables that are used for the message stats
 // tracing.
-func MessageStatsTables() []string {
-	return []string{
-		MessageStatsTable,
-	}
-}
+func MessageStatsTables() []string { _ = "STUB: not implemented"; return nil }
 
 const (
 	// MessageStatsTable tracks all the messages received by any reactor and traces their processing time.
@@ -26,15 +22,9 @@ type MessageStat struct {
 }
 
 // Table returns the table name for the MessageStat struct.
-func (MessageStat) Table() string {
-	return MessageStatsTable
-}
+func (MessageStat) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteMessageStats(client trace.Tracer, reactor string, messageType string, processingTime int64, details string) {
-	client.Write(MessageStat{
-		Reactor:        reactor,
-		MessageType:    messageType,
-		ProcessingTime: processingTime,
-		Details:        details,
-	})
+	_ = "STUB: not implemented"
+	return
 }

@@ -16,14 +16,12 @@ want to directly call a CometBFT node in process, you can use the
 
 import (
 	"context"
-	"reflect"
 
 	"github.com/cometbft/cometbft/libs/bytes"
 	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/rpc/client"
 	"github.com/cometbft/cometbft/rpc/core"
 	ctypes "github.com/cometbft/cometbft/rpc/core/types"
-	rpctypes "github.com/cometbft/cometbft/rpc/jsonrpc/types"
 	"github.com/cometbft/cometbft/types"
 )
 
@@ -41,11 +39,7 @@ type Client struct {
 	env *core.Environment
 }
 
-func New() Client {
-	return Client{
-		env: &core.Environment{},
-	}
-}
+func New() Client { _ = "STUB: not implemented"; return *new(Client) }
 
 var _ client.Client = Client{}
 
@@ -65,34 +59,28 @@ type Call struct {
 // set then that will always be returned. If both are set, then
 // we return Response if the Args match the set args, Error otherwise.
 func (c Call) GetResponse(args interface{}) (interface{}, error) {
+	_ = "STUB: not implemented"
 	// handle the case with no response
-	if c.Response == nil {
-		if c.Error == nil {
-			panic("Misconfigured call, you must set either Response or Error")
-		}
-		return nil, c.Error
-	}
-	// response without error
-	if c.Error == nil {
-		return c.Response, nil
-	}
-	// have both, we must check args....
-	if reflect.DeepEqual(args, c.Args) {
-		return c.Response, nil
-	}
-	return nil, c.Error
+	return nil, nil
 }
 
+// response without error
+
+// have both, we must check args....
+
 func (c Client) Status(context.Context) (*ctypes.ResultStatus, error) {
-	return c.env.Status(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) ABCIInfo(context.Context) (*ctypes.ResultABCIInfo, error) {
-	return c.env.ABCIInfo(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) ABCIQuery(ctx context.Context, path string, data bytes.HexBytes) (*ctypes.ResultABCIQuery, error) {
-	return c.ABCIQueryWithOptions(ctx, path, data, client.DefaultABCIQueryOptions)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) ABCIQueryWithOptions(
@@ -101,47 +89,58 @@ func (c Client) ABCIQueryWithOptions(
 	data bytes.HexBytes,
 	opts client.ABCIQueryOptions,
 ) (*ctypes.ResultABCIQuery, error) {
-	return c.env.ABCIQuery(&rpctypes.Context{}, path, data, opts.Height, opts.Prove)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BroadcastTxCommit(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTxCommit, error) {
-	return c.env.BroadcastTxCommit(&rpctypes.Context{}, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BroadcastTxAsync(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	return c.env.BroadcastTxAsync(&rpctypes.Context{}, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BroadcastTxSync(_ context.Context, tx types.Tx) (*ctypes.ResultBroadcastTx, error) {
-	return c.env.BroadcastTxSync(&rpctypes.Context{}, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) CheckTx(_ context.Context, tx types.Tx) (*ctypes.ResultCheckTx, error) {
-	return c.env.CheckTx(&rpctypes.Context{}, tx)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) NetInfo(_ context.Context) (*ctypes.ResultNetInfo, error) {
-	return c.env.NetInfo(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) ConsensusState(_ context.Context) (*ctypes.ResultConsensusState, error) {
-	return c.env.GetConsensusState(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) DumpConsensusState(_ context.Context) (*ctypes.ResultDumpConsensusState, error) {
-	return c.env.DumpConsensusState(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) ConsensusParams(_ context.Context, height *int64) (*ctypes.ResultConsensusParams, error) {
-	return c.env.ConsensusParams(&rpctypes.Context{}, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) Health(_ context.Context) (*ctypes.ResultHealth, error) {
-	return c.env.Health(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) DialSeeds(_ context.Context, seeds []string) (*ctypes.ResultDialSeeds, error) {
-	return c.env.UnsafeDialSeeds(&rpctypes.Context{}, seeds)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) DialPeers(
@@ -151,35 +150,43 @@ func (c Client) DialPeers(
 	unconditional,
 	private bool,
 ) (*ctypes.ResultDialPeers, error) {
-	return c.env.UnsafeDialPeers(&rpctypes.Context{}, peers, persistent, unconditional, private)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BlockchainInfo(_ context.Context, minHeight, maxHeight int64) (*ctypes.ResultBlockchainInfo, error) {
-	return c.env.BlockchainInfo(&rpctypes.Context{}, minHeight, maxHeight)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) Genesis(context.Context) (*ctypes.ResultGenesis, error) {
-	return c.env.Genesis(&rpctypes.Context{})
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) Block(_ context.Context, height *int64) (*ctypes.ResultBlock, error) {
-	return c.env.Block(&rpctypes.Context{}, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BlockByHash(_ context.Context, hash []byte) (*ctypes.ResultBlock, error) {
-	return c.env.BlockByHash(&rpctypes.Context{}, hash)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) Commit(_ context.Context, height *int64) (*ctypes.ResultCommit, error) {
-	return c.env.Commit(&rpctypes.Context{}, height)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) Validators(_ context.Context, height *int64, page, perPage *int) (*ctypes.ResultValidators, error) {
-	return c.env.Validators(&rpctypes.Context{}, height, page, perPage)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) BroadcastEvidence(_ context.Context, ev types.Evidence) (*ctypes.ResultBroadcastEvidence, error) {
-	return c.env.BroadcastEvidence(&rpctypes.Context{}, ev)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) DataCommitment(
@@ -187,7 +194,8 @@ func (c Client) DataCommitment(
 	start uint64,
 	end uint64,
 ) (*ctypes.ResultDataCommitment, error) {
-	return c.env.DataCommitment(&rpctypes.Context{}, start, end)
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (c Client) DataRootInclusionProof(
@@ -196,6 +204,7 @@ func (c Client) DataRootInclusionProof(
 	start uint64,
 	end uint64,
 ) (*ctypes.ResultDataRootInclusionProof, error) {
+	_ = "STUB: not implemented"
 	//nolint:gosec
-	return c.env.DataRootInclusionProof(&rpctypes.Context{}, int64(height), start, end)
+	return nil, nil
 }

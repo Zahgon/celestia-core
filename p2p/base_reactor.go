@@ -2,12 +2,10 @@ package p2p
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cometbft/cometbft/libs/trace"
 
 	"github.com/cometbft/cometbft/libs/service"
-	"github.com/cometbft/cometbft/libs/trace/schema"
 	"github.com/cometbft/cometbft/p2p/conn"
 	"github.com/cosmos/gogoproto/proto"
 )
@@ -92,88 +90,46 @@ type BaseReactor struct {
 type ReactorOptions func(*BaseReactor)
 
 func NewBaseReactor(name string, impl Reactor, opts ...ReactorOptions) *BaseReactor {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	implChannels := impl.GetChannels()
-
-	chIDs := make(map[byte]proto.Message, len(implChannels))
-	for _, chDesc := range implChannels {
-		chIDs[chDesc.ID] = chDesc.MessageType
-	}
-	base := &BaseReactor{
-		ctx:         ctx,
-		cancel:      cancel,
-		BaseService: *service.NewBaseService(nil, name, impl),
-		Switch:      nil, // set by the switch later
-		incoming:    make(chan UnmarshalResult, 100),
-		chIDs:       chIDs,
-		processor:   nil, // Will be set after base is created
-		name:        name,
-		traceClient: trace.NoOpTracer(),
-	}
-	base.queueingFunc = base.QueueUnprocessedEnvelope
-	for _, opt := range opts {
-		opt(base)
-	}
-
-	// Set the processor after base is created, only if it hasn't been set by options
-	if base.processor == nil {
-		base.processor = ProcessorWithReactor(impl, base)
-	}
-
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				base.Logger.Error("processor panicked", "err", r)
-				// Try to stop the reactor gracefully only if it's running
-				if base.IsRunning() {
-					if err := base.Stop(); err != nil {
-						base.Logger.Error("failed to stop reactor after panic", "err", err)
-					}
-				}
-			}
-		}()
-
-		base.processor(ctx, base.incoming)
-	}()
-
-	return base
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// set by the switch later
+
+// Will be set after base is created
+
+// Set the processor after base is created, only if it hasn't been set by options
+
+// Try to stop the reactor gracefully only if it's running
 
 // WithProcessor sets the processor function for the reactor. The processor
 // function is called with the incoming channel and is responsible for
 // calling Receive on the reactor.
 func WithProcessor(processor ProcessorFunc) ReactorOptions {
-	return func(br *BaseReactor) {
-		br.processor = processor
-	}
+	_ = "STUB: not implemented"
+	return *new(ReactorOptions)
 }
 
 // WithTraceClient sets the tracing client using options
 func WithTraceClient(traceClient trace.Tracer) ReactorOptions {
-	return func(br *BaseReactor) {
-		br.traceClient = traceClient
-	}
+	_ = "STUB: not implemented"
+	return *new(ReactorOptions)
 }
 
 // SetTraceClient sets the tracing client.
-func (br *BaseReactor) SetTraceClient(traceClient trace.Tracer) {
-	br.traceClient = traceClient
-}
+func (br *BaseReactor) SetTraceClient(traceClient trace.Tracer) { _ = "STUB: not implemented"; return }
 
 // WithQueueingFunc sets the queuing function to use when receiving a message.
 func WithQueueingFunc(queuingFunc func(UnprocessedEnvelope)) ReactorOptions {
-	return func(br *BaseReactor) {
-		br.queueingFunc = queuingFunc
-	}
+	_ = "STUB: not implemented"
+	return *new(ReactorOptions)
 }
 
 // WithIncomingQueueSize sets the size of the incoming message queue for a
 // reactor.
 func WithIncomingQueueSize(size int) ReactorOptions {
-	return func(br *BaseReactor) {
-		br.incoming = make(chan UnmarshalResult, size)
-	}
+	_ = "STUB: not implemented"
+	return *new(ReactorOptions)
 }
 
 // QueueUnprocessedEnvelope is called by the switch when an unprocessed
@@ -181,132 +137,62 @@ func WithIncomingQueueSize(size int) ReactorOptions {
 // queue to avoid blocking. The size of the queue can be changed by passing
 // options to the base reactor.
 func (br *BaseReactor) QueueUnprocessedEnvelope(e UnprocessedEnvelope) {
-	if len(br.incoming) == cap(br.incoming) {
-		schema.WriteQueueLimit(br.traceClient, e.ChannelID, br.name, true)
-	}
-	select {
-	// if the context is done, do nothing.
-	case <-br.ctx.Done():
-	// if not, add the item to the channel.
-	case br.incoming <- br.unmarshalEnvelope(e):
-	}
+	_ = "STUB: not implemented"
+	return
 }
+
+// if the context is done, do nothing.
+
+// if not, add the item to the channel.
 
 // TryQueueUnprocessedEnvelope an alternative to QueueUnprocessedEnvelope that attempts to queue an unprocessed envelope.
 // If the queue is full, it drops the envelope.
 func (br *BaseReactor) TryQueueUnprocessedEnvelope(e UnprocessedEnvelope) {
-	if len(br.incoming) == cap(br.incoming) {
-		schema.WriteQueueLimit(br.traceClient, e.ChannelID, br.name, true)
-	}
-	select {
-	case <-br.ctx.Done():
-	case br.incoming <- br.unmarshalEnvelope(e):
-	default:
-	}
+	_ = "STUB: not implemented"
+	return
 }
 
 func (br *BaseReactor) unmarshalEnvelope(e UnprocessedEnvelope) UnmarshalResult {
-	var (
-		mt  = br.chIDs[e.ChannelID]
-		res = UnmarshalResult{
-			Src:           e.Src,
-			BytesReceived: len(e.Message),
-			ChannelID:     e.ChannelID,
-		}
-	)
-	if mt == nil {
-		res.Err = fmt.Errorf("no message type registered for channel %d", e.ChannelID)
-		return res
-	}
-
-	res.Msg = proto.Clone(mt)
-	res.Err = proto.Unmarshal(e.Message, res.Msg)
-	return res
+	_ = "STUB: not implemented"
+	return *new(UnmarshalResult)
 }
 
 func (br *BaseReactor) OnStop() {
-	br.cancel()
+	_ = "STUB: not implemented"
+
+	// ProcessorWithReactor unmarshalls the message and calls Receive on the reactor.
+	// This preserves the sender's original order for all messages and supports panic recovery with peer disconnection.
+	return
 }
 
-// ProcessorWithReactor unmarshalls the message and calls Receive on the reactor.
-// This preserves the sender's original order for all messages and supports panic recovery with peer disconnection.
 func ProcessorWithReactor(impl Reactor, baseReactor *BaseReactor) ProcessorFunc {
-	return func(ctx context.Context, incoming <-chan UnmarshalResult) {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case res, ok := <-incoming:
-				if !ok {
-					// this means the channel was closed.
-					return
-				}
-				// Process message with panic recovery for individual peer
-				process := func(res UnmarshalResult) error {
-					defer baseReactor.ProtectPanic(res.Src)
-					if res.Err != nil {
-						return res.Err
-					}
-					var (
-						err              error
-						msg              = res.Msg
-						logBytesReceived = float64(res.BytesReceived)
-					)
-					if w, ok := msg.(Unwrapper); ok {
-						msg, err = w.Unwrap()
-						if err != nil {
-							return err
-						}
-					}
-
-					labels := []string{
-						"peer_id", string(res.Src.ID()),
-						"chID", fmt.Sprintf("%#x", res.ChannelID),
-					}
-
-					res.Src.Metrics().PeerReceiveBytesTotal.With(labels...).Add(logBytesReceived)
-					res.Src.Metrics().MessageReceiveBytesTotal.With(append(labels, "message_type", res.Src.ValueToMetricLabel(msg))...).Add(logBytesReceived)
-					schema.WriteReceivedBytes(res.Src.TraceClient(), string(res.Src.ID()), res.ChannelID, res.BytesReceived)
-					impl.Receive(Envelope{
-						ChannelID: res.ChannelID,
-						Src:       res.Src,
-						Message:   msg,
-					})
-
-					return nil
-				}
-
-				err := process(res)
-				if err != nil {
-					disconnectPeer(baseReactor, res.Src, fmt.Sprintf("error in reactor processing: %v", err), impl.String())
-				}
-			}
-		}
-	}
+	_ = "STUB: not implemented"
+	return *new(ProcessorFunc)
 }
+
+// this means the channel was closed.
+
+// Process message with panic recovery for individual peer
 
 // ProtectPanic provides panic recovery for reactor operations involving a specific peer.
 // If a panic occurs, it will disconnect the peer with an appropriate error message.
 // Usage: defer baseReactor.ProtectPanic(peer)
-func (br *BaseReactor) ProtectPanic(peer Peer) {
-	if r := recover(); r != nil {
-		disconnectPeer(br, peer, fmt.Sprintf("panic in reactor: %v", r), br.String())
-	}
-}
+func (br *BaseReactor) ProtectPanic(peer Peer) { _ = "STUB: not implemented"; return }
 
 func disconnectPeer(baseReactor *BaseReactor, peer Peer, reason, reactor string) {
+	_ = "STUB: not implemented"
 	// the switch is added for all reactors so should be here. the worst case if not is
 	// that the peer doesn't get disconnected.
-	if baseReactor != nil && baseReactor.Switch != nil {
-		baseReactor.Switch.StopPeerForError(peer, reason, reactor)
-	}
+	return
 }
 
-func (br *BaseReactor) SetSwitch(sw *Switch) {
-	br.Switch = sw
+func (br *BaseReactor) SetSwitch(sw *Switch) { _ = "STUB: not implemented"; return }
+
+func (*BaseReactor) GetChannels() []*conn.ChannelDescriptor { _ = "STUB: not implemented"; return nil }
+func (*BaseReactor) AddPeer(Peer)                           { _ = "STUB: not implemented"; return }
+func (*BaseReactor) RemovePeer(Peer, interface{})           { _ = "STUB: not implemented"; return }
+func (*BaseReactor) Receive(Envelope)                       { _ = "STUB: not implemented"; return }
+func (*BaseReactor) InitPeer(peer Peer) (Peer, error) {
+	_ = "STUB: not implemented"
+	return *new(Peer), nil
 }
-func (*BaseReactor) GetChannels() []*conn.ChannelDescriptor { return nil }
-func (*BaseReactor) AddPeer(Peer)                           {}
-func (*BaseReactor) RemovePeer(Peer, interface{})           {}
-func (*BaseReactor) Receive(Envelope)                       {}
-func (*BaseReactor) InitPeer(peer Peer) (Peer, error)       { return peer, nil }

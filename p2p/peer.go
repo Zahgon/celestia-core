@@ -1,7 +1,6 @@
 package p2p
 
 import (
-	"fmt"
 	"net"
 	"sync/atomic"
 	"time"
@@ -12,7 +11,6 @@ import (
 	"github.com/cometbft/cometbft/libs/log"
 	"github.com/cometbft/cometbft/libs/service"
 	"github.com/cometbft/cometbft/libs/trace"
-	"github.com/cometbft/cometbft/libs/trace/schema"
 
 	cmtconn "github.com/cometbft/cometbft/p2p/conn"
 )
@@ -74,35 +72,16 @@ func newPeerConn(
 	conn net.Conn,
 	socketAddr *NetAddress,
 ) peerConn {
-
-	return peerConn{
-		outbound:   outbound,
-		persistent: persistent,
-		conn:       conn,
-		socketAddr: socketAddr,
-	}
+	_ = "STUB: not implemented"
+	return *new(peerConn)
 }
 
 // ID only exists for SecretConnection.
 // NOTE: Will panic if conn is not *SecretConnection.
-func (pc peerConn) ID() ID {
-	return PubKeyToID(pc.conn.(*cmtconn.SecretConnection).RemotePubKey())
-}
+func (pc peerConn) ID() ID { _ = "STUB: not implemented"; return *new(ID) }
 
 // Return the IP from the connection RemoteAddr
-func (pc peerConn) RemoteIP() net.IP {
-	host, _, err := net.SplitHostPort(pc.conn.RemoteAddr().String())
-	if err != nil {
-		panic(err)
-	}
-
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		panic(err)
-	}
-
-	return ips[0]
-}
+func (pc peerConn) RemoteIP() net.IP { _ = "STUB: not implemented"; return *new(net.IP) }
 
 // peer implements Peer.
 //
@@ -139,11 +118,7 @@ type peer struct {
 
 type PeerOption func(*peer)
 
-func WithPeerTracer(t trace.Tracer) PeerOption {
-	return func(p *peer) {
-		p.traceClient = t
-	}
-}
+func WithPeerTracer(t trace.Tracer) PeerOption { _ = "STUB: not implemented"; return *new(PeerOption) }
 
 func newPeer(
 	pc peerConn,
@@ -156,254 +131,155 @@ func newPeer(
 	mlc *metricsLabelCache,
 	options ...PeerOption,
 ) *peer {
-	p := &peer{
-		peerConn:      pc,
-		nodeInfo:      nodeInfo,
-		channels:      nodeInfo.(DefaultNodeInfo).Channels,
-		Data:          cmap.NewCMap(),
-		metricsTicker: time.NewTicker(metricsTickerDuration),
-		metrics:       NopMetrics(),
-		mlc:           mlc,
-		traceClient:   trace.NoOpTracer(),
-	}
-
-	p.mconn = createMConnection(
-		pc.conn,
-		p,
-		reactorsByCh,
-		chDescs,
-		onPeerError,
-		mConfig,
-	)
-	p.BaseService = *service.NewBaseService(nil, "Peer", p)
-	for _, option := range options {
-		option(p)
-	}
-
-	return p
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // String representation.
-func (p *peer) String() string {
-	if p.outbound {
-		return fmt.Sprintf("Peer{%v %v out}", p.mconn, p.ID())
-	}
-
-	return fmt.Sprintf("Peer{%v %v in}", p.mconn, p.ID())
-}
+func (p *peer) String() string { _ = "STUB: not implemented"; return "" }
 
 //---------------------------------------------------
 // Implements service.Service
 
 // SetLogger implements BaseService.
-func (p *peer) SetLogger(l log.Logger) {
-	p.Logger = l
-	p.mconn.SetLogger(l)
-}
+func (p *peer) SetLogger(l log.Logger) { _ = "STUB: not implemented"; return }
 
 // OnStart implements BaseService.
-func (p *peer) OnStart() error {
-	if err := p.BaseService.OnStart(); err != nil {
-		return err
-	}
-
-	if err := p.mconn.Start(); err != nil {
-		return err
-	}
-
-	go p.metricsReporter()
-	return nil
-}
+func (p *peer) OnStart() error { _ = "STUB: not implemented"; return nil }
 
 // FlushStop mimics OnStop but additionally ensures that all successful
 // .Send() calls will get flushed before closing the connection.
 // Thread-safe and idempotent - can be called multiple times safely.
-func (p *peer) FlushStop() {
-	if !p.stopped.CompareAndSwap(false, true) {
-		return // Already stopped
-	}
+func (p *peer) FlushStop() { _ = "STUB: not implemented"; return }
 
-	p.metricsTicker.Stop()
-	p.BaseService.OnStop()
-	p.mconn.FlushStop() // stop everything and close the conn
-}
+// Already stopped
 
-func (p *peer) Metrics() *Metrics {
-	return p.metrics
-}
+// stop everything and close the conn
 
-func (p *peer) ValueToMetricLabel(i any) string {
-	return p.mlc.ValueToMetricLabel(i)
-}
+func (p *peer) Metrics() *Metrics { _ = "STUB: not implemented"; return nil }
+
+func (p *peer) ValueToMetricLabel(i any) string { _ = "STUB: not implemented"; return "" }
 
 func (p *peer) TraceClient() trace.Tracer {
-	return p.traceClient
+	_ = "STUB: not implemented"
+	return *
+
+	// OnStop implements BaseService.
+	// Thread-safe and idempotent - can be called multiple times safely.
+	new(trace.Tracer)
 }
 
-// OnStop implements BaseService.
-// Thread-safe and idempotent - can be called multiple times safely.
-func (p *peer) OnStop() {
-	if !p.stopped.CompareAndSwap(false, true) {
-		return // Already stopped
-	}
+func (p *peer) OnStop() { _ = "STUB: not implemented"; return }
 
-	p.metricsTicker.Stop()
-	p.BaseService.OnStop()
-	if err := p.mconn.Stop(); err != nil { // stop everything and close the conn
-		p.Logger.Debug("Error while stopping peer", "err", err)
-	}
-}
+// Already stopped
+
+// stop everything and close the conn
 
 //---------------------------------------------------
 // Implements Peer
 
 // ID returns the peer's ID - the hex encoded hash of its pubkey.
 func (p *peer) ID() ID {
-	return p.nodeInfo.ID()
+	_ = "STUB: not implemented"
+	return *
+
+	// IsOutbound returns true if the connection is outbound, false otherwise.
+	new(ID)
 }
 
-// IsOutbound returns true if the connection is outbound, false otherwise.
-func (p *peer) IsOutbound() bool {
-	return p.peerConn.outbound //nolint:staticcheck
-}
+func (p *peer) IsOutbound() bool { _ = "STUB: not implemented"; return false }
+
+//nolint:staticcheck
 
 // IsPersistent returns true if the peer is persitent, false otherwise.
-func (p *peer) IsPersistent() bool {
-	return p.peerConn.persistent //nolint:staticcheck
-}
+func (p *peer) IsPersistent() bool { _ = "STUB: not implemented"; return false }
+
+//nolint:staticcheck
 
 // NodeInfo returns a copy of the peer's NodeInfo.
 func (p *peer) NodeInfo() NodeInfo {
-	return p.nodeInfo
+	_ = "STUB: not implemented"
+
+	// RemoteIP returns the IP from the connection RemoteAddr with atomic caching
+	return *new(NodeInfo)
 }
 
-// RemoteIP returns the IP from the connection RemoteAddr with atomic caching
 func (p *peer) RemoteIP() net.IP {
+	_ = "STUB: not implemented"
 	// Fast path: return cached IP if available
-	if cached := p.cachedIP.Load(); cached != nil {
-		return *cached
-	}
-
-	// Slow path: perform DNS lookup and cache result
-	result := p.peerConn.RemoteIP()
-	p.cachedIP.Store(&result)
-	return result
+	return *new(net.IP)
 }
+
+// Slow path: perform DNS lookup and cache result
 
 // HasIPChanged returns true if the peer's IP has changed.
 // This method clears the cached IP and compares with a fresh lookup.
 func (p *peer) HasIPChanged() bool {
+	_ = "STUB: not implemented"
 	// Get the currently cached IP
-	oldIP := p.cachedIP.Load()
-	if oldIP == nil {
-		return false // No cached IP, so no change detected
-	}
-
-	// Clear the cached IP to force a fresh lookup
-	p.cachedIP.Store(nil)
-
-	// Get the current IP (will perform fresh DNS lookup)
-	newIP := p.RemoteIP()
-
-	// Compare the IPs
-	return !(*oldIP).Equal(newIP)
+	return false
 }
+
+// No cached IP, so no change detected
+
+// Clear the cached IP to force a fresh lookup
+
+// Get the current IP (will perform fresh DNS lookup)
+
+// Compare the IPs
 
 // SocketAddr returns the address of the socket.
 // For outbound peers, it's the address dialed (after DNS resolution).
 // For inbound peers, it's the address returned by the underlying connection
 // (not what's reported in the peer's NodeInfo).
-func (p *peer) SocketAddr() *NetAddress {
-	return p.peerConn.socketAddr //nolint:staticcheck
-}
+func (p *peer) SocketAddr() *NetAddress { _ = "STUB: not implemented"; return nil }
+
+//nolint:staticcheck
 
 // Status returns the peer's ConnectionStatus.
 func (p *peer) Status() cmtconn.ConnectionStatus {
-	return p.mconn.Status()
+	_ = "STUB: not implemented"
+	return *
+
+	// Send msg bytes to the channel identified by chID byte. Returns false if the
+	// send queue is full after timeout, specified by MConnection.
+	new(cmtconn.ConnectionStatus)
 }
 
-// Send msg bytes to the channel identified by chID byte. Returns false if the
-// send queue is full after timeout, specified by MConnection.
-func (p *peer) Send(e Envelope) bool {
-	return p.send(e.ChannelID, e.Message, p.mconn.Send)
-}
+func (p *peer) Send(e Envelope) bool { _ = "STUB: not implemented"; return false }
 
 // TrySend msg bytes to the channel identified by chID byte. Immediately returns
 // false if the send queue is full.
-func (p *peer) TrySend(e Envelope) bool {
-	return p.send(e.ChannelID, e.Message, p.mconn.TrySend)
-}
+func (p *peer) TrySend(e Envelope) bool { _ = "STUB: not implemented"; return false }
 
 func (p *peer) send(chID byte, msg proto.Message, sendFunc func(byte, []byte) bool) bool {
-	if !p.IsRunning() {
-		return false
-	} else if !p.hasChannel(chID) {
-		return false
-	}
-	metricLabelValue := p.mlc.ValueToMetricLabel(msg)
-	if w, ok := msg.(Wrapper); ok {
-		msg = w.Wrap()
-	}
-	msgBytes, err := proto.Marshal(msg)
-	if err != nil {
-		p.Logger.Error("marshaling message to send", "error", err)
-		return false
-	}
-	res := sendFunc(chID, msgBytes)
-	if res {
-		labels := []string{ //nolint:prealloc
-			"peer_id", string(p.ID()),
-			"chID", fmt.Sprintf("%#x", chID),
-		}
-		p.metrics.PeerSendBytesTotal.With(labels...).Add(float64(len(msgBytes)))
-		labels = append(labels, "message_type", metricLabelValue)
-		p.metrics.MessageSendBytesTotal.With(labels...).Add(float64(len(msgBytes)))
-	}
-	return res
-}
-
-// Get the data for a given key.
-func (p *peer) Get(key string) interface{} {
-	return p.Data.Get(key)
-}
-
-// Set sets the data for the given key.
-func (p *peer) Set(key string, data interface{}) {
-	p.Data.Set(key, data)
-}
-
-// hasChannel returns true if the peer reported
-// knowing about the given chID.
-func (p *peer) hasChannel(chID byte) bool {
-	for _, ch := range p.channels {
-		if ch == chID {
-			return true
-		}
-	}
-	// NOTE: probably will want to remove this
-	// but could be helpful while the feature is new
-	p.Logger.Trace(
-		"Unknown channel for peer",
-		"channel",
-		chID,
-		"channels",
-		p.channels,
-	)
+	_ = "STUB: not implemented"
 	return false
 }
 
+//nolint:prealloc
+
+// Get the data for a given key.
+func (p *peer) Get(key string) interface{} { _ = "STUB: not implemented"; return nil }
+
+// Set sets the data for the given key.
+func (p *peer) Set(key string, data interface{}) { _ = "STUB: not implemented"; return }
+
+// hasChannel returns true if the peer reported
+// knowing about the given chID.
+func (p *peer) hasChannel(chID byte) bool { _ = "STUB: not implemented"; return false }
+
+// NOTE: probably will want to remove this
+// but could be helpful while the feature is new
+
 // CloseConn closes original connection. Used for cleaning up in cases where the peer had not been started at all.
-func (p *peer) CloseConn() error {
-	return p.peerConn.conn.Close() //nolint:staticcheck
-}
+func (p *peer) CloseConn() error { _ = "STUB: not implemented"; return nil }
 
-func (p *peer) SetRemovalFailed() {
-	p.removalAttemptFailed.Store(true)
-}
+//nolint:staticcheck
 
-func (p *peer) GetRemovalFailed() bool {
-	return p.removalAttemptFailed.Load()
-}
+func (p *peer) SetRemovalFailed() { _ = "STUB: not implemented"; return }
+
+func (p *peer) GetRemovalFailed() bool { _ = "STUB: not implemented"; return false }
 
 //---------------------------------------------------
 // methods only used for testing
@@ -411,49 +287,24 @@ func (p *peer) GetRemovalFailed() bool {
 
 // CloseConn closes the underlying connection
 func (pc *peerConn) CloseConn() {
-	pc.conn.Close()
+	_ = "STUB: not implemented"
+
+	// RemoteAddr returns peer's remote network address.
+	return
 }
 
-// RemoteAddr returns peer's remote network address.
-func (p *peer) RemoteAddr() net.Addr {
-	return p.peerConn.conn.RemoteAddr() //nolint:staticcheck
-}
+func (p *peer) RemoteAddr() net.Addr { _ = "STUB: not implemented"; return *new(net.Addr) }
+
+//nolint:staticcheck
 
 // CanSend returns true if the send queue is not full, false otherwise.
-func (p *peer) CanSend(chID byte) bool {
-	if !p.IsRunning() {
-		return false
-	}
-	return p.mconn.CanSend(chID)
-}
+func (p *peer) CanSend(chID byte) bool { _ = "STUB: not implemented"; return false }
 
 //---------------------------------------------------
 
-func PeerMetrics(metrics *Metrics) PeerOption {
-	return func(p *peer) {
-		p.metrics = metrics
-	}
-}
+func PeerMetrics(metrics *Metrics) PeerOption { _ = "STUB: not implemented"; return *new(PeerOption) }
 
-func (p *peer) metricsReporter() {
-	for {
-		select {
-		case <-p.metricsTicker.C:
-			queues := make(map[byte]int, len(p.mconn.Status().Channels))
-			status := p.mconn.Status()
-			var sendQueueSize float64
-			for _, chStatus := range status.Channels {
-				sendQueueSize += float64(chStatus.SendQueueSize)
-				queues[chStatus.ID] = chStatus.SendQueueSize
-			}
-
-			p.metrics.PeerPendingSendBytes.With("peer_id", string(p.ID())).Set(sendQueueSize)
-			schema.WritePendingBytes(p.traceClient, string(p.ID()), queues)
-		case <-p.Quit():
-			return
-		}
-	}
-}
+func (p *peer) metricsReporter() { _ = "STUB: not implemented"; return }
 
 //------------------------------------------------------------------
 // helper funcs
@@ -466,31 +317,9 @@ func createMConnection(
 	onPeerError func(Peer, interface{}, string),
 	config cmtconn.MConnConfig,
 ) *cmtconn.MConnection {
-
-	onReceive := func(chID byte, msgBytes []byte) {
-		reactor := reactorsByCh[chID]
-		if reactor == nil {
-			// Note that its ok to panic here as it's caught in the conn._recover,
-			// which does onPeerError.
-			panic(fmt.Sprintf("Unknown channel %X", chID))
-		}
-
-		reactor.QueueUnprocessedEnvelope(UnprocessedEnvelope{
-			ChannelID: chID,
-			Src:       p,
-			Message:   msgBytes,
-		})
-	}
-
-	onError := func(r interface{}) {
-		onPeerError(p, r, "p2p")
-	}
-
-	return cmtconn.NewMConnectionWithConfig(
-		conn,
-		chDescs,
-		onReceive,
-		onError,
-		config,
-	)
+	_ = "STUB: not implemented"
+	return nil
 }
+
+// Note that its ok to panic here as it's caught in the conn._recover,
+// which does onPeerError.

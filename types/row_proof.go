@@ -1,9 +1,6 @@
 package types
 
 import (
-	"errors"
-	"fmt"
-
 	"github.com/cometbft/cometbft/crypto/merkle"
 	tmbytes "github.com/cometbft/cometbft/libs/bytes"
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -32,61 +29,16 @@ type RowProof struct {
 // Validate performs checks on the fields of this RowProof. Returns an error if
 // the proof fails validation. If the proof passes validation, this function
 // attempts to verify the proof. It returns nil if the proof is valid.
-func (rp RowProof) Validate(root []byte) error {
-	if len(rp.RowRoots) == 0 {
-		return errors.New("row proof must contain at least one row root")
-	}
-	if rp.EndRow < rp.StartRow {
-		return fmt.Errorf("end row %d cannot be less than start row %d", rp.EndRow, rp.StartRow)
-	}
-	// Use uint64 arithmetic to prevent uint32 overflow when computing the
-	// expected number of rows (e.g. StartRow=0, EndRow=MaxUint32).
-	expectedRows := uint64(rp.EndRow) - uint64(rp.StartRow) + 1
-	if expectedRows != uint64(len(rp.RowRoots)) {
-		return fmt.Errorf("the number of rows %d must equal the number of row roots %d", expectedRows, len(rp.RowRoots))
-	}
-	if len(rp.Proofs) != len(rp.RowRoots) {
-		return fmt.Errorf("the number of proofs %d must equal the number of row roots %d", len(rp.Proofs), len(rp.RowRoots))
-	}
-	if !rp.VerifyProof(root) {
-		return errors.New("row proof failed to verify")
-	}
+func (rp RowProof) Validate(root []byte) error { _ = "STUB: not implemented"; return nil }
 
-	return nil
-}
+// Use uint64 arithmetic to prevent uint32 overflow when computing the
+// expected number of rows (e.g. StartRow=0, EndRow=MaxUint32).
 
 // VerifyProof verifies that all the row roots in this RowProof exist in a
 // Merkle tree with the given root. Returns true if all proofs are valid.
-func (rp RowProof) VerifyProof(root []byte) bool {
-	for i, proof := range rp.Proofs {
-		err := proof.Verify(root, rp.RowRoots[i])
-		if err != nil {
-			return false
-		}
-	}
-	return true
-}
+func (rp RowProof) VerifyProof(root []byte) bool { _ = "STUB: not implemented"; return false }
 
 func RowProofFromProto(p *tmproto.RowProof) RowProof {
-	if p == nil {
-		return RowProof{}
-	}
-	rowRoots := make([]tmbytes.HexBytes, len(p.RowRoots))
-	rowProofs := make([]*merkle.Proof, len(p.Proofs))
-	for i := range p.Proofs {
-		rowRoots[i] = p.RowRoots[i]
-		rowProofs[i] = &merkle.Proof{
-			Total:    p.Proofs[i].Total,
-			Index:    p.Proofs[i].Index,
-			LeafHash: p.Proofs[i].LeafHash,
-			Aunts:    p.Proofs[i].Aunts,
-		}
-	}
-
-	return RowProof{
-		RowRoots: rowRoots,
-		Proofs:   rowProofs,
-		StartRow: p.StartRow,
-		EndRow:   p.EndRow,
-	}
+	_ = "STUB: not implemented"
+	return *new(RowProof)
 }

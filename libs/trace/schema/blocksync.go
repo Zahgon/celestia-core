@@ -6,13 +6,7 @@ import (
 
 // BlocksyncTables returns the list of tables that are used for blocksync
 // tracing.
-func BlocksyncTables() []string {
-	return []string{
-		BlocksyncBlockReceivedTable,
-		BlocksyncBlockSavedTable,
-		BlocksyncBlockRequestedTable,
-	}
-}
+func BlocksyncTables() []string { _ = "STUB: not implemented"; return nil }
 
 // Schema constants for blocksync tracing tables.
 const (
@@ -29,20 +23,12 @@ type BlocksyncBlockReceived struct {
 }
 
 // Table returns the table name for the BlocksyncBlockReceived struct.
-func (BlocksyncBlockReceived) Table() string {
-	return BlocksyncBlockReceivedTable
-}
+func (BlocksyncBlockReceived) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteBlocksyncBlockReceived writes a tracing point for a block received from a peer.
 func WriteBlocksyncBlockReceived(client trace.Tracer, height int64, peerID string, blockSize int) {
-	if !client.IsCollecting(BlocksyncBlockReceivedTable) {
-		return
-	}
-	client.Write(BlocksyncBlockReceived{
-		Height:    height,
-		PeerID:    peerID,
-		BlockSize: blockSize,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 // Schema constants for blocksync block saved table.
@@ -62,22 +48,12 @@ type BlocksyncBlockSaved struct {
 }
 
 // Table returns the table name for the BlocksyncBlockSaved struct.
-func (BlocksyncBlockSaved) Table() string {
-	return BlocksyncBlockSavedTable
-}
+func (BlocksyncBlockSaved) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteBlocksyncBlockSaved writes a tracing point for a successfully validated and saved block.
 func WriteBlocksyncBlockSaved(client trace.Tracer, height int64, blockSize int, validationDuration, saveDuration, totalDuration int64) {
-	if !client.IsCollecting(BlocksyncBlockSavedTable) {
-		return
-	}
-	client.Write(BlocksyncBlockSaved{
-		Height:             height,
-		BlockSize:          blockSize,
-		ValidationDuration: validationDuration,
-		SaveDuration:       saveDuration,
-		TotalDuration:      totalDuration,
-	})
+	_ = "STUB: not implemented"
+	return
 }
 
 // Schema constants for blocksync block requested table.
@@ -94,17 +70,10 @@ type BlocksyncBlockRequested struct {
 }
 
 // Table returns the table name for the BlocksyncBlockRequested struct.
-func (BlocksyncBlockRequested) Table() string {
-	return BlocksyncBlockRequestedTable
-}
+func (BlocksyncBlockRequested) Table() string { _ = "STUB: not implemented"; return "" }
 
 // WriteBlocksyncBlockRequested writes a tracing point for a block request sent to a peer.
 func WriteBlocksyncBlockRequested(client trace.Tracer, height int64, peerID string) {
-	if !client.IsCollecting(BlocksyncBlockRequestedTable) {
-		return
-	}
-	client.Write(BlocksyncBlockRequested{
-		Height: height,
-		PeerID: peerID,
-	})
+	_ = "STUB: not implemented"
+	return
 }

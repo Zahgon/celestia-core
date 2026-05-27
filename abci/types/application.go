@@ -42,83 +42,79 @@ var _ Application = (*BaseApplication)(nil)
 
 type BaseApplication struct{}
 
-func NewBaseApplication() *BaseApplication {
-	return &BaseApplication{}
-}
+func NewBaseApplication() *BaseApplication { _ = "STUB: not implemented"; return nil }
 
 func (BaseApplication) Info(context.Context, *RequestInfo) (*ResponseInfo, error) {
-	return &ResponseInfo{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) CheckTx(context.Context, *RequestCheckTx) (*ResponseCheckTx, error) {
-	return &ResponseCheckTx{Code: CodeTypeOK}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) Commit(context.Context, *RequestCommit) (*ResponseCommit, error) {
-	return &ResponseCommit{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) Query(context.Context, *RequestQuery) (*ResponseQuery, error) {
-	return &ResponseQuery{Code: CodeTypeOK}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) QuerySequence(context.Context, *RequestQuerySequence) (*ResponseQuerySequence, error) {
-	return &ResponseQuerySequence{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) InitChain(context.Context, *RequestInitChain) (*ResponseInitChain, error) {
-	return &ResponseInitChain{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) ListSnapshots(context.Context, *RequestListSnapshots) (*ResponseListSnapshots, error) {
-	return &ResponseListSnapshots{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) OfferSnapshot(context.Context, *RequestOfferSnapshot) (*ResponseOfferSnapshot, error) {
-	return &ResponseOfferSnapshot{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) LoadSnapshotChunk(context.Context, *RequestLoadSnapshotChunk) (*ResponseLoadSnapshotChunk, error) {
-	return &ResponseLoadSnapshotChunk{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) ApplySnapshotChunk(context.Context, *RequestApplySnapshotChunk) (*ResponseApplySnapshotChunk, error) {
-	return &ResponseApplySnapshotChunk{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) PrepareProposal(_ context.Context, req *RequestPrepareProposal) (*ResponsePrepareProposal, error) {
-	txs := make([][]byte, 0, len(req.Txs))
-	var totalBytes int64
-	for _, tx := range req.Txs {
-		totalBytes += int64(len(tx))
-		if totalBytes > req.MaxTxBytes {
-			break
-		}
-		txs = append(txs, tx)
-	}
-	return &ResponsePrepareProposal{Txs: txs}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) ProcessProposal(context.Context, *RequestProcessProposal) (*ResponseProcessProposal, error) {
-	return &ResponseProcessProposal{Status: ResponseProcessProposal_ACCEPT}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) ExtendVote(context.Context, *RequestExtendVote) (*ResponseExtendVote, error) {
-	return &ResponseExtendVote{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) VerifyVoteExtension(context.Context, *RequestVerifyVoteExtension) (*ResponseVerifyVoteExtension, error) {
-	return &ResponseVerifyVoteExtension{
-		Status: ResponseVerifyVoteExtension_ACCEPT,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (BaseApplication) FinalizeBlock(_ context.Context, req *RequestFinalizeBlock) (*ResponseFinalizeBlock, error) {
-	txs := make([]*ExecTxResult, len(req.Txs))
-	for i := range req.Txs {
-		txs[i] = &ExecTxResult{Code: CodeTypeOK}
-	}
-	return &ResponseFinalizeBlock{
-		TxResults: txs,
-	}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

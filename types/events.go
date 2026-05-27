@@ -1,12 +1,9 @@
 package types
 
 import (
-	"fmt"
-
 	abci "github.com/cometbft/cometbft/abci/types"
 	cmtjson "github.com/cometbft/cometbft/libs/json"
 	cmtpubsub "github.com/cometbft/cometbft/libs/pubsub"
-	cmtquery "github.com/cometbft/cometbft/libs/pubsub/query"
 )
 
 // Reserved event types (alphabetically sorted).
@@ -178,11 +175,13 @@ var (
 )
 
 func EventQueryTxFor(tx Tx) cmtpubsub.Query {
-	return cmtquery.MustCompile(fmt.Sprintf("%s='%s' AND %s='%X'", EventTypeKey, EventTx, TxHashKey, tx.Hash()))
+	_ = "STUB: not implemented"
+	return *new(cmtpubsub.Query)
 }
 
 func QueryForEvent(eventType string) cmtpubsub.Query {
-	return cmtquery.MustCompile(fmt.Sprintf("%s='%s'", EventTypeKey, eventType))
+	_ = "STUB: not implemented"
+	return *new(cmtpubsub.Query)
 }
 
 // BlockEventPublisher publishes all block related events

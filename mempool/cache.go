@@ -42,93 +42,38 @@ type LRUTxCache struct {
 	list     *list.List
 }
 
-func NewLRUTxCache(cacheSize int) *LRUTxCache {
-	return &LRUTxCache{
-		size:     cacheSize,
-		cacheMap: make(map[types.TxKey]*list.Element, cacheSize),
-		list:     list.New(),
-	}
-}
+func NewLRUTxCache(cacheSize int) *LRUTxCache { _ = "STUB: not implemented"; return nil }
 
 // GetList returns the underlying linked-list that backs the LRU cache. Note,
 // this should be used for testing purposes only!
-func (c *LRUTxCache) GetList() *list.List {
-	return c.list
-}
+func (c *LRUTxCache) GetList() *list.List { _ = "STUB: not implemented"; return nil }
 
-func (c *LRUTxCache) Reset() {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
+func (c *LRUTxCache) Reset() { _ = "STUB: not implemented"; return }
 
-	c.cacheMap = make(map[types.TxKey]*list.Element, c.size)
-	c.list.Init()
-}
+func (c *LRUTxCache) Push(key types.TxKey) bool { _ = "STUB: not implemented"; return false }
 
-func (c *LRUTxCache) Push(key types.TxKey) bool {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
+func (c *LRUTxCache) Remove(key types.TxKey) { _ = "STUB: not implemented"; return }
 
-	moved, ok := c.cacheMap[key]
-	if ok {
-		c.list.MoveToBack(moved)
-		return false
-	}
+func (c *LRUTxCache) Has(key types.TxKey) bool { _ = "STUB: not implemented"; return false }
 
-	if c.list.Len() >= c.size {
-		front := c.list.Front()
-		if front != nil {
-			frontKey := front.Value.(types.TxKey)
-			delete(c.cacheMap, frontKey)
-			c.list.Remove(front)
-		}
-	}
-
-	e := c.list.PushBack(key)
-	c.cacheMap[key] = e
-
-	return true
-}
-
-func (c *LRUTxCache) Remove(key types.TxKey) {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-
-	e := c.cacheMap[key]
-	delete(c.cacheMap, key)
-
-	if e != nil {
-		c.list.Remove(e)
-	}
-}
-
-func (c *LRUTxCache) Has(key types.TxKey) bool {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-
-	_, ok := c.cacheMap[key]
-	return ok
-}
-
-func (c *LRUTxCache) HasKey(key types.TxKey) bool {
-	c.mtx.Lock()
-	defer c.mtx.Unlock()
-
-	_, ok := c.cacheMap[key]
-	return ok
-}
+func (c *LRUTxCache) HasKey(key types.TxKey) bool { _ = "STUB: not implemented"; return false }
 
 // NopTxCache defines a no-op raw transaction cache.
 type NopTxCache struct{}
 
 var _ TxCache = (*NopTxCache)(nil)
 
-func (NopTxCache) Reset()                  {}
-func (NopTxCache) Push(types.TxKey) bool   { return true }
-func (NopTxCache) Remove(types.TxKey)      {}
-func (NopTxCache) Has(types.TxKey) bool    { return false }
-func (NopTxCache) HasKey(types.TxKey) bool { return false }
+func (NopTxCache) Reset()                { _ = "STUB: not implemented"; return }
+func (NopTxCache) Push(types.TxKey) bool { _ = "STUB: not implemented"; return false }
+func (NopTxCache) Remove(types.TxKey)    { _ = "STUB: not implemented"; return }
+func (NopTxCache) Has(types.TxKey) bool  { _ = "STUB: not implemented"; return false }
+func (NopTxCache) HasKey(types.TxKey) bool {
+	_ = "STUB: not implemented"
 
-// cacheEntry stores both the transaction key and error code
+	// cacheEntry stores both the transaction key and error code
+	return false
+}
+
 type cacheEntry struct {
 	key  types.TxKey
 	code uint32
@@ -142,64 +87,29 @@ type RejectedTxCache struct {
 }
 
 // NewRejectedTxCache creates a new rejected tx cache.
-func NewRejectedTxCache(cacheSize int) *RejectedTxCache {
-	return &RejectedTxCache{
-		cache: NewLRUTxCache(cacheSize),
-	}
-}
+func NewRejectedTxCache(cacheSize int) *RejectedTxCache { _ = "STUB: not implemented"; return nil }
 
 // Reset resets the cache to an empty state.
 func (c *RejectedTxCache) Reset() {
-	c.cache.Reset()
+	_ = "STUB: not implemented"
+
+	// Push adds a tx key and error code to the cache.
+	return
 }
 
-// Push adds a tx key and error code to the cache.
 func (c *RejectedTxCache) Push(key types.TxKey, code uint32, log string) bool {
-	c.cache.mtx.Lock()
-	defer c.cache.mtx.Unlock()
-
-	moved, ok := c.cache.cacheMap[key]
-	if ok {
-		c.cache.list.MoveToBack(moved)
-		return false
-	}
-
-	if c.cache.list.Len() >= c.cache.size {
-		front := c.cache.list.Front()
-		if front != nil {
-			frontKey := front.Value.(cacheEntry).key
-			delete(c.cache.cacheMap, frontKey)
-			c.cache.list.Remove(front)
-		}
-	}
-
-	e := c.cache.list.PushBack(cacheEntry{key: key, code: code, log: log})
-	c.cache.cacheMap[key] = e
-
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
 // Get returns the error code for a tx key if it exists in the cache.
 func (c *RejectedTxCache) Get(key types.TxKey) (uint32, string, bool) {
-	c.cache.mtx.Lock()
-	defer c.cache.mtx.Unlock()
-
-	entry, ok := c.cache.cacheMap[key]
-	if !ok {
-		return 0, "", false
-	}
-	if cacheEntry, ok := entry.Value.(cacheEntry); ok {
-		return cacheEntry.code, cacheEntry.log, true
-	}
+	_ = "STUB: not implemented"
 	return 0, "", false
 }
 
 // HasKey returns true if the tx key is present in the cache.
-func (c *RejectedTxCache) HasKey(key types.TxKey) bool {
-	return c.cache.HasKey(key)
-}
+func (c *RejectedTxCache) HasKey(key types.TxKey) bool { _ = "STUB: not implemented"; return false }
 
 // Remove removes a tx from the cache.
-func (c *RejectedTxCache) Remove(key types.TxKey) {
-	c.cache.Remove(key)
-}
+func (c *RejectedTxCache) Remove(key types.TxKey) { _ = "STUB: not implemented"; return }

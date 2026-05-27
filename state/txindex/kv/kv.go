@@ -1,29 +1,17 @@
 package kv
 
 import (
-	"bytes"
 	"context"
-	"encoding/hex"
-	"errors"
-	"fmt"
-	"math/big"
-	"sort"
-	"strconv"
-	"strings"
 
 	"github.com/cometbft/cometbft/libs/log"
-
-	"github.com/cosmos/gogoproto/proto"
 
 	dbm "github.com/cometbft/cometbft-db"
 
 	abci "github.com/cometbft/cometbft/abci/types"
-	idxutil "github.com/cometbft/cometbft/internal/indexer"
 	"github.com/cometbft/cometbft/libs/pubsub/query"
 	"github.com/cometbft/cometbft/libs/pubsub/query/syntax"
 	"github.com/cometbft/cometbft/state/indexer"
 	"github.com/cometbft/cometbft/state/txindex"
-	"github.com/cometbft/cometbft/types"
 )
 
 const (
@@ -51,57 +39,26 @@ type TxIndex struct {
 }
 
 // NewTxIndex creates new KV indexer.
-func NewTxIndex(store dbm.DB) *TxIndex {
-	return &TxIndex{
-		store: store,
-	}
-}
+func NewTxIndex(store dbm.DB) *TxIndex { _ = "STUB: not implemented"; return nil }
 
 func (txi *TxIndex) SetLogger(l log.Logger) {
-	txi.log = l
+	_ = "STUB: not implemented"
+
+	// Get gets transaction from the TxIndex storage and returns it or nil if the
+	// transaction is not found.
+	return
 }
 
-// Get gets transaction from the TxIndex storage and returns it or nil if the
-// transaction is not found.
 func (txi *TxIndex) Get(hash []byte) (*abci.TxResult, error) {
-	if len(hash) == 0 {
-		return nil, txindex.ErrorEmptyHash
-	}
-
-	rawBytes, err := txi.store.Get(hash)
-	if err != nil {
-		panic(err)
-	}
-	if rawBytes == nil {
-		return nil, nil
-	}
-
-	txResult := new(abci.TxResult)
-	err = proto.Unmarshal(rawBytes, txResult)
-	if err != nil {
-		return nil, fmt.Errorf("error reading TxResult: %v", err)
-	}
-
-	return txResult, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // AddBatch indexes a batch of transactions using the given list of events. Each
 // key that indexed from the tx's events is a composite of the event type and
 // the respective attribute's key delimited by a "." (eg. "account.number").
 // Any event with an empty type is not indexed.
-func (txi *TxIndex) AddBatch(b *txindex.Batch) error {
-	storeBatch := txi.store.NewBatch()
-	defer storeBatch.Close()
-
-	for _, result := range b.Ops {
-		err := txi.indexResult(storeBatch, result)
-		if err != nil {
-			return err
-		}
-	}
-
-	return storeBatch.WriteSync()
-}
+func (txi *TxIndex) AddBatch(b *txindex.Batch) error { _ = "STUB: not implemented"; return nil }
 
 // Index indexes a single transaction using the given list of events. Each key
 // that indexed from the tx's events is a composite of the event type and the
@@ -112,80 +69,27 @@ func (txi *TxIndex) AddBatch(b *txindex.Batch) error {
 // be overwritten unless the tx result was NOT OK and the prior result was OK i.e.
 // more transactions that successfully executed overwrite transactions that failed
 // or successful yet older transactions.
-func (txi *TxIndex) Index(result *abci.TxResult) error {
-	b := txi.store.NewBatch()
-	defer b.Close()
+func (txi *TxIndex) Index(result *abci.TxResult) error { _ = "STUB: not implemented"; return nil }
 
-	hash := types.Tx(result.Tx).Hash()
+// if the new transaction failed and it's already indexed in an older block and was successful
+// we skip it as we want users to get the older successful transaction when they query.
 
-	if !result.Result.IsOK() {
-		oldResult, err := txi.Get(hash)
-		if err != nil {
-			return err
-		}
+// index tx by events
 
-		// if the new transaction failed and it's already indexed in an older block and was successful
-		// we skip it as we want users to get the older successful transaction when they query.
-		if oldResult != nil && oldResult.Result.Code == abci.CodeTypeOK {
-			return nil
-		}
-	}
+// index by height (always)
 
-	// index tx by events
-	err := txi.indexEvents(result, hash, b)
-	if err != nil {
-		return err
-	}
-
-	// index by height (always)
-	err = b.Set(keyForHeight(result), hash)
-	if err != nil {
-		return err
-	}
-
-	rawBytes, err := proto.Marshal(result)
-	if err != nil {
-		return err
-	}
-	// index by hash (always)
-	err = b.Set(hash, rawBytes)
-	if err != nil {
-		return err
-	}
-
-	return b.WriteSync()
-}
+// index by hash (always)
 
 func (txi *TxIndex) indexEvents(result *abci.TxResult, hash []byte, store dbm.Batch) error {
-	for _, event := range result.Result.Events {
-		txi.eventSeq = txi.eventSeq + 1
-		// only index events with a non-empty type
-		if len(event.Type) == 0 {
-			continue
-		}
-
-		for _, attr := range event.Attributes {
-			if len(attr.Key) == 0 {
-				continue
-			}
-
-			// index if `index: true` is set
-			compositeTag := fmt.Sprintf("%s.%s", event.Type, attr.Key)
-			// ensure event does not conflict with a reserved prefix key
-			if compositeTag == types.TxHashKey || compositeTag == types.TxHeightKey {
-				return fmt.Errorf("event type and attribute key \"%s\" is reserved; please use a different key", compositeTag)
-			}
-			if attr.GetIndex() {
-				err := store.Set(keyForEvent(compositeTag, attr.Value, result, txi.eventSeq), hash)
-				if err != nil {
-					return err
-				}
-			}
-		}
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
+
+// only index events with a non-empty type
+
+// index if `index: true` is set
+
+// ensure event does not conflict with a reserved prefix key
 
 // Search performs a search using the given query.
 //
@@ -199,12 +103,8 @@ func (txi *TxIndex) indexEvents(result *abci.TxResult, hash []byte, store dbm.Ba
 // Search will exit early and return any result fetched so far,
 // when a message is received on the context chan.
 func (txi *TxIndex) Search(ctx context.Context, q *query.Query) ([]*abci.TxResult, error) {
-	filteredHashes, err := txi.searchRefs(ctx, q)
-	if err != nil {
-		return nil, err
-	}
-
-	return txi.loadResults(ctx, uniqueRefs(filteredHashes))
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // SearchPaged performs the same match as Search, but applies ordering and
@@ -215,205 +115,59 @@ func (txi *TxIndex) SearchPaged(
 	orderBy string,
 	skipCount, pageSize int,
 ) ([]*abci.TxResult, int, error) {
-	if pageSize < 0 {
-		pageSize = 0
-	}
-	if skipCount < 0 {
-		skipCount = 0
-	}
-
-	filteredHashes, err := txi.searchRefs(ctx, q)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	refs := uniqueRefs(filteredHashes)
-	if err := sortRefs(refs, orderBy); err != nil {
-		return nil, 0, err
-	}
-
-	totalCount := len(refs)
-	if skipCount >= totalCount || pageSize == 0 {
-		return []*abci.TxResult{}, totalCount, nil
-	}
-
-	end := skipCount + pageSize
-	if end < skipCount || end > totalCount {
-		end = totalCount
-	}
-
-	results, err := txi.loadResults(ctx, refs[skipCount:end])
-	if err != nil {
-		return nil, 0, err
-	}
-
-	return results, totalCount, nil
+	_ = "STUB: not implemented"
+	return nil, 0, nil
 }
 
 func (txi *TxIndex) loadResults(ctx context.Context, refs []txRef) ([]*abci.TxResult, error) {
-	results := make([]*abci.TxResult, 0, len(refs))
-	for _, ref := range refs {
-		res, err := txi.Get(ref.hash)
-		if err != nil {
-			return nil, fmt.Errorf("failed to get Tx{%X}: %w", ref.hash, err)
-		}
-		if res == nil {
-			continue
-		}
-		results = append(results, res)
-
-		select {
-		case <-ctx.Done():
-			return results, nil
-		default:
-		}
-	}
-
-	return results, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (txi *TxIndex) searchRefs(ctx context.Context, q *query.Query) (map[string]txRef, error) {
-	select {
-	case <-ctx.Done():
-		return make(map[string]txRef), nil
-
-	default:
-	}
-
-	var hashesInitialized bool
-	filteredHashes := make(map[string]txRef)
-
-	// get a list of conditions (like "tx.height > 5")
-	conditions := q.Syntax()
-
-	// if there is a hash condition, return the result immediately
-	hash, ok, err := lookForHash(conditions)
-	if err != nil {
-		return nil, fmt.Errorf("error during searching for a hash in the query: %w", err)
-	} else if ok {
-		res, err := txi.Get(hash)
-		switch {
-		case err != nil:
-			return map[string]txRef{}, fmt.Errorf("error while retrieving the result: %w", err)
-		case res == nil:
-			return map[string]txRef{}, nil
-		default:
-			return map[string]txRef{
-				string(hash): {
-					hash:   hash,
-					height: res.Height,
-					index:  res.Index,
-				},
-			}, nil
-		}
-	}
-
-	// conditions to skip because they're handled before "everything else"
-	skipIndexes := make([]int, 0)
-	var heightInfo HeightInfo
-
-	// If we are not matching events and tx.height = 3 occurs more than once, the later value will
-	// overwrite the first one.
-	conditions, heightInfo = dedupHeight(conditions)
-
-	if !heightInfo.onlyHeightEq {
-		skipIndexes = append(skipIndexes, heightInfo.heightEqIdx)
-	}
-
-	// extract ranges
-	// if both upper and lower bounds exist, it's better to get them in order not
-	// no iterate over kvs that are not within range.
-	ranges, rangeIndexes, heightRange := indexer.LookForRangesWithHeight(conditions)
-	heightInfo.heightRange = heightRange
-	if len(ranges) > 0 {
-		skipIndexes = append(skipIndexes, rangeIndexes...)
-
-		for _, qr := range ranges {
-
-			// If we have a query range over height and want to still look for
-			// specific event values we do not want to simply return all
-			// transactios in this height range. We remember the height range info
-			// and pass it on to match() to take into account when processing events.
-			if qr.Key == types.TxHeightKey && !heightInfo.onlyHeightRange {
-				continue
-			}
-			if !hashesInitialized {
-				filteredHashes = txi.matchRange(ctx, qr, startKey(qr.Key), filteredHashes, true, heightInfo)
-				hashesInitialized = true
-
-				// Ignore any remaining conditions if the first condition resulted
-				// in no matches (assuming implicit AND operand).
-				if len(filteredHashes) == 0 {
-					break
-				}
-			} else {
-				filteredHashes = txi.matchRange(ctx, qr, startKey(qr.Key), filteredHashes, false, heightInfo)
-			}
-		}
-	}
-
-	// if there is a height condition ("tx.height=3"), extract it
-
-	// for all other conditions
-	for i, c := range conditions {
-		if intInSlice(i, skipIndexes) {
-			continue
-		}
-
-		if !hashesInitialized {
-			filteredHashes = txi.match(ctx, c, startKeyForCondition(c, heightInfo.height), filteredHashes, true, heightInfo)
-			hashesInitialized = true
-
-			// Ignore any remaining conditions if the first condition resulted
-			// in no matches (assuming implicit AND operand).
-			if len(filteredHashes) == 0 {
-				break
-			}
-		} else {
-			filteredHashes = txi.match(ctx, c, startKeyForCondition(c, heightInfo.height), filteredHashes, false, heightInfo)
-		}
-	}
-
-	return filteredHashes, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
+// get a list of conditions (like "tx.height > 5")
+
+// if there is a hash condition, return the result immediately
+
+// conditions to skip because they're handled before "everything else"
+
+// If we are not matching events and tx.height = 3 occurs more than once, the later value will
+// overwrite the first one.
+
+// extract ranges
+// if both upper and lower bounds exist, it's better to get them in order not
+// no iterate over kvs that are not within range.
+
+// If we have a query range over height and want to still look for
+// specific event values we do not want to simply return all
+// transactios in this height range. We remember the height range info
+// and pass it on to match() to take into account when processing events.
+
+// Ignore any remaining conditions if the first condition resulted
+// in no matches (assuming implicit AND operand).
+
+// if there is a height condition ("tx.height=3"), extract it
+
+// for all other conditions
+
+// Ignore any remaining conditions if the first condition resulted
+// in no matches (assuming implicit AND operand).
+
 func lookForHash(conditions []syntax.Condition) (hash []byte, ok bool, err error) {
-	for _, c := range conditions {
-		if c.Tag == types.TxHashKey {
-			decoded, err := hex.DecodeString(c.Arg.Value())
-			return decoded, true, err
-		}
-	}
-	return
+	_ = "STUB: not implemented"
+	return nil, false, nil
 }
 
 func (txi *TxIndex) setTmpHashes(tmpHeights map[string]txRef, key, value []byte) {
-	eventSeq := extractEventSeqFromKey(key)
-
-	// Copy the value because the iterator will be reused.
-	valueCopy := make([]byte, len(value))
-	copy(valueCopy, value)
-
-	ref, err := txRefFromKeyValue(key, valueCopy)
-	if err != nil {
-		res, getErr := txi.Get(valueCopy)
-		if getErr != nil {
-			txi.log.Error("failure to parse tx ref from key and load tx result:", "parse_err", err, "get_err", getErr)
-			return
-		}
-		if res == nil {
-			txi.log.Error("failure to parse tx ref from key and tx result is missing:", "parse_err", err)
-			return
-		}
-		ref = txRef{
-			hash:   valueCopy,
-			height: res.Height,
-			index:  res.Index,
-		}
-	}
-
-	tmpHeights[string(valueCopy)+eventSeq] = ref
+	_ = "STUB: not implemented"
+	return
 }
+
+// Copy the value because the iterator will be reused.
 
 // match returns all matching txs by hash that meet a given condition and start
 // key. An already filtered result (filteredHashes) is provided such that any
@@ -428,169 +182,42 @@ func (txi *TxIndex) match(
 	firstRun bool,
 	heightInfo HeightInfo,
 ) map[string]txRef {
+	_ = "STUB: not implemented"
 	// A previous match was attempted but resulted in no matches, so we return
 	// no matches (assuming AND operand).
-	if !firstRun && len(filteredHashes) == 0 {
-		return filteredHashes
-	}
-
-	tmpHashes := make(map[string]txRef)
-
-	switch { //nolint:staticcheck
-	case c.Op == syntax.TEq:
-		it, err := dbm.IteratePrefix(txi.store, startKeyBz)
-		if err != nil {
-			panic(err)
-		}
-		defer it.Close()
-
-	EQ_LOOP:
-		for ; it.Valid(); it.Next() {
-
-			// If we have a height range in a query, we need only transactions
-			// for this height
-			key := it.Key()
-			keyHeight, err := extractHeightFromKey(key)
-			if err != nil {
-				txi.log.Error("failure to parse height from key:", err)
-				continue
-			}
-			withinBounds, err := checkHeightConditions(heightInfo, keyHeight)
-			if err != nil {
-				txi.log.Error("failure checking for height bounds:", err)
-				continue
-			}
-			if !withinBounds {
-				continue
-			}
-			txi.setTmpHashes(tmpHashes, key, it.Value())
-			// Potentially exit early.
-			select {
-			case <-ctx.Done():
-				break EQ_LOOP
-			default:
-			}
-		}
-		if err := it.Error(); err != nil {
-			panic(err)
-		}
-
-	case c.Op == syntax.TExists:
-		// XXX: can't use startKeyBz here because c.Operand is nil
-		// (e.g. "account.owner/<nil>/" won't match w/ a single row)
-		it, err := dbm.IteratePrefix(txi.store, startKey(c.Tag))
-		if err != nil {
-			panic(err)
-		}
-		defer it.Close()
-
-	EXISTS_LOOP:
-		for ; it.Valid(); it.Next() {
-			key := it.Key()
-			keyHeight, err := extractHeightFromKey(key)
-			if err != nil {
-				txi.log.Error("failure to parse height from key:", err)
-				continue
-			}
-			withinBounds, err := checkHeightConditions(heightInfo, keyHeight)
-			if err != nil {
-				txi.log.Error("failure checking for height bounds:", err)
-				continue
-			}
-			if !withinBounds {
-				continue
-			}
-			txi.setTmpHashes(tmpHashes, key, it.Value())
-
-			// Potentially exit early.
-			select {
-			case <-ctx.Done():
-				break EXISTS_LOOP
-			default:
-			}
-		}
-		if err := it.Error(); err != nil {
-			panic(err)
-		}
-
-	case c.Op == syntax.TContains:
-		// XXX: startKey does not apply here.
-		// For example, if startKey = "account.owner/an/" and search query = "account.owner CONTAINS an"
-		// we can't iterate with prefix "account.owner/an/" because we might miss keys like "account.owner/Ulan/"
-		it, err := dbm.IteratePrefix(txi.store, startKey(c.Tag))
-		if err != nil {
-			panic(err)
-		}
-		defer it.Close()
-
-	CONTAINS_LOOP:
-		for ; it.Valid(); it.Next() {
-			if !isTagKey(it.Key()) {
-				continue
-			}
-
-			if strings.Contains(extractValueFromKey(it.Key()), c.Arg.Value()) {
-				key := it.Key()
-				keyHeight, err := extractHeightFromKey(key)
-				if err != nil {
-					txi.log.Error("failure to parse height from key:", err)
-					continue
-				}
-				withinBounds, err := checkHeightConditions(heightInfo, keyHeight)
-				if err != nil {
-					txi.log.Error("failure checking for height bounds:", err)
-					continue
-				}
-				if !withinBounds {
-					continue
-				}
-				txi.setTmpHashes(tmpHashes, key, it.Value())
-			}
-
-			// Potentially exit early.
-			select {
-			case <-ctx.Done():
-				break CONTAINS_LOOP
-			default:
-			}
-		}
-		if err := it.Error(); err != nil {
-			panic(err)
-		}
-	default:
-		panic("other operators should be handled already")
-	}
-
-	if len(tmpHashes) == 0 || firstRun {
-		// Either:
-		//
-		// 1. Regardless if a previous match was attempted, which may have had
-		// results, but no match was found for the current condition, then we
-		// return no matches (assuming AND operand).
-		//
-		// 2. A previous match was not attempted, so we return all results.
-		return tmpHashes
-	}
-
-	// Remove/reduce matches in filteredHashes that were not found in this
-	// match (tmpHashes).
-REMOVE_LOOP:
-	for k, v := range filteredHashes {
-		tmpHash := tmpHashes[k]
-		if tmpHash.hash == nil || !bytes.Equal(tmpHash.hash, v.hash) {
-			delete(filteredHashes, k)
-
-			// Potentially exit early.
-			select {
-			case <-ctx.Done():
-				break REMOVE_LOOP
-			default:
-			}
-		}
-	}
-
-	return filteredHashes
+	return nil
 }
+
+//nolint:staticcheck
+
+// If we have a height range in a query, we need only transactions
+// for this height
+
+// Potentially exit early.
+
+// XXX: can't use startKeyBz here because c.Operand is nil
+// (e.g. "account.owner/<nil>/" won't match w/ a single row)
+
+// Potentially exit early.
+
+// XXX: startKey does not apply here.
+// For example, if startKey = "account.owner/an/" and search query = "account.owner CONTAINS an"
+// we can't iterate with prefix "account.owner/an/" because we might miss keys like "account.owner/Ulan/"
+
+// Potentially exit early.
+
+// Either:
+//
+// 1. Regardless if a previous match was attempted, which may have had
+// results, but no match was found for the current condition, then we
+// return no matches (assuming AND operand).
+//
+// 2. A previous match was not attempted, so we return all results.
+
+// Remove/reduce matches in filteredHashes that were not found in this
+// match (tmpHashes).
+
+// Potentially exit early.
 
 // matchRange returns all matching txs by hash that meet a given queryRange and
 // start key. An already filtered result (filteredHashes) is provided such that
@@ -605,348 +232,118 @@ func (txi *TxIndex) matchRange(
 	firstRun bool,
 	heightInfo HeightInfo,
 ) map[string]txRef {
+	_ = "STUB: not implemented"
 	// A previous match was attempted but resulted in no matches, so we return
 	// no matches (assuming AND operand).
-	if !firstRun && len(filteredHashes) == 0 {
-		return filteredHashes
-	}
-
-	tmpHashes := make(map[string]txRef)
-
-	it, err := dbm.IteratePrefix(txi.store, startKey)
-	if err != nil {
-		panic(err)
-	}
-	defer it.Close()
-	bigIntValue := new(big.Int)
-
-LOOP:
-	for ; it.Valid(); it.Next() {
-		// TODO: We need to make a function for getting it.Key() as a byte slice with no copies.
-		// It currently copies the source data (which can change on a subsequent .Next() call) but that
-		// is not an issue for us.
-		key := it.Key()
-		if !isTagKey(key) {
-			continue
-		}
-
-		if _, ok := qr.AnyBound().(*big.Float); ok {
-			value := extractValueFromKey(key)
-			v, ok := bigIntValue.SetString(value, 10)
-			var vF *big.Float
-			if !ok {
-				vF, _, err = big.ParseFloat(value, 10, 125, big.ToNearestEven)
-				if err != nil {
-					continue LOOP
-				}
-
-			}
-			if qr.Key != types.TxHeightKey {
-				keyHeight, err := extractHeightFromKey(key)
-				if err != nil {
-					txi.log.Error("failure to parse height from key:", err)
-					continue
-				}
-				withinBounds, err := checkHeightConditions(heightInfo, keyHeight)
-				if err != nil {
-					txi.log.Error("failure checking for height bounds:", err)
-					continue
-				}
-				if !withinBounds {
-					continue
-				}
-			}
-			var withinBounds bool
-			var err error
-			if !ok {
-				withinBounds, err = idxutil.CheckBounds(qr, vF)
-			} else {
-				withinBounds, err = idxutil.CheckBounds(qr, v)
-			}
-			if err != nil {
-				txi.log.Error("failed to parse bounds:", err)
-			} else if withinBounds {
-				txi.setTmpHashes(tmpHashes, key, it.Value())
-			}
-
-			// XXX: passing time in a ABCI Events is not yet implemented
-			// case time.Time:
-			// 	v := strconv.ParseInt(extractValueFromKey(it.Key()), 10, 64)
-			// 	if v == r.upperBound {
-			// 		break
-			// 	}
-		}
-
-		// Potentially exit early.
-		select {
-		case <-ctx.Done():
-			break LOOP
-		default:
-		}
-	}
-	if err := it.Error(); err != nil {
-		panic(err)
-	}
-
-	if len(tmpHashes) == 0 || firstRun {
-		// Either:
-		//
-		// 1. Regardless if a previous match was attempted, which may have had
-		// results, but no match was found for the current condition, then we
-		// return no matches (assuming AND operand).
-		//
-		// 2. A previous match was not attempted, so we return all results.
-		return tmpHashes
-	}
-
-	// Remove/reduce matches in filteredHashes that were not found in this
-	// match (tmpHashes).
-REMOVE_LOOP:
-	for k, v := range filteredHashes {
-		tmpHash := tmpHashes[k]
-		if tmpHash.hash == nil || !bytes.Equal(tmpHash.hash, v.hash) {
-			delete(filteredHashes, k)
-
-			// Potentially exit early.
-			select {
-			case <-ctx.Done():
-				break REMOVE_LOOP
-			default:
-			}
-		}
-	}
-
-	return filteredHashes
-}
-
-func uniqueRefs(filteredHashes map[string]txRef) []txRef {
-	refsByHash := make(map[string]txRef, len(filteredHashes))
-	for _, ref := range filteredHashes {
-		hashKey := string(ref.hash)
-		existing, ok := refsByHash[hashKey]
-		if !ok || txRefLess(existing, ref) {
-			refsByHash[hashKey] = ref
-		}
-	}
-
-	refs := make([]txRef, 0, len(refsByHash))
-	for _, ref := range refsByHash {
-		refs = append(refs, ref)
-	}
-
-	return refs
-}
-
-func sortRefs(refs []txRef, orderBy string) error {
-	switch orderBy {
-	case "desc":
-		sort.Slice(refs, func(i, j int) bool {
-			return txRefLess(refs[j], refs[i])
-		})
-	case "asc", "":
-		sort.Slice(refs, func(i, j int) bool {
-			return txRefLess(refs[i], refs[j])
-		})
-	default:
-		return errors.New("expected order_by to be either `asc` or `desc` or empty")
-	}
-
 	return nil
 }
 
-func txRefLess(a, b txRef) bool {
-	if a.height == b.height {
-		return a.index < b.index
-	}
-	return a.height < b.height
-}
+// TODO: We need to make a function for getting it.Key() as a byte slice with no copies.
+// It currently copies the source data (which can change on a subsequent .Next() call) but that
+// is not an issue for us.
+
+// XXX: passing time in a ABCI Events is not yet implemented
+// case time.Time:
+// 	v := strconv.ParseInt(extractValueFromKey(it.Key()), 10, 64)
+// 	if v == r.upperBound {
+// 		break
+// 	}
+
+// Potentially exit early.
+
+// Either:
+//
+// 1. Regardless if a previous match was attempted, which may have had
+// results, but no match was found for the current condition, then we
+// return no matches (assuming AND operand).
+//
+// 2. A previous match was not attempted, so we return all results.
+
+// Remove/reduce matches in filteredHashes that were not found in this
+// match (tmpHashes).
+
+// Potentially exit early.
+
+func uniqueRefs(filteredHashes map[string]txRef) []txRef { _ = "STUB: not implemented"; return nil }
+
+func sortRefs(refs []txRef, orderBy string) error { _ = "STUB: not implemented"; return nil }
+
+func txRefLess(a, b txRef) bool { _ = "STUB: not implemented"; return false }
 
 // Keys
 
 func isTagKey(key []byte) bool {
+	_ = "STUB: not implemented"
 	// Normally, if the event was indexed with an event sequence, the number of
 	// tags should 4. Alternatively it should be 3 if the event was not indexed
 	// with the corresponding event sequence. However, some attribute values in
 	// production can contain the tag separator. Therefore, the condition is >= 3.
-	numTags := 0
-	for i := 0; i < len(key); i++ {
-		if key[i] == tagKeySeparatorRune {
-			numTags++
-			if numTags >= 3 {
-				return true
-			}
-		}
-	}
 	return false
 }
 
 func extractHeightFromKey(key []byte) (int64, error) {
+	_ = "STUB: not implemented"
 	// the height is the second last element in the key.
 	// Find the position of the last occurrence of tagKeySeparator
-	endPos := bytes.LastIndexByte(key, tagKeySeparatorRune)
-	if endPos == -1 {
-		return 0, errors.New("separator not found")
-	}
-
-	// Find the position of the second last occurrence of tagKeySeparator
-	startPos := bytes.LastIndexByte(key[:endPos-1], tagKeySeparatorRune)
-	if startPos == -1 {
-		return 0, errors.New("second last separator not found")
-	}
-
-	// Extract the height part of the key
-	height, err := strconv.ParseInt(string(key[startPos+1:endPos]), 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	return height, nil
+	return 0, nil
 }
 
-func extractIndexFromKey(key []byte) (uint32, error) {
-	startPos := bytes.LastIndexByte(key, tagKeySeparatorRune)
-	if startPos == -1 {
-		return 0, errors.New("separator not found")
-	}
+// Find the position of the second last occurrence of tagKeySeparator
 
-	indexBz := key[startPos+1:]
-	if eventSeqPos := bytes.Index(indexBz, []byte(eventSeqSeparator)); eventSeqPos != -1 {
-		indexBz = indexBz[:eventSeqPos]
-	}
+// Extract the height part of the key
 
-	index, err := strconv.ParseUint(string(indexBz), 10, 32)
-	if err != nil {
-		return 0, err
-	}
-	return uint32(index), nil
-}
+func extractIndexFromKey(key []byte) (uint32, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func txRefFromKeyValue(key, value []byte) (txRef, error) {
-	height, err := extractHeightFromKey(key)
-	if err != nil {
-		return txRef{}, err
-	}
-
-	index, err := extractIndexFromKey(key)
-	if err != nil {
-		return txRef{}, err
-	}
-
-	return txRef{
-		hash:   value,
-		height: height,
-		index:  index,
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(txRef), nil
 }
 
 func extractValueFromKey(key []byte) string {
+	_ = "STUB: not implemented"
 	// Find the positions of tagKeySeparator in the byte slice
-	var indices []int
-	for i, b := range key {
-		if b == tagKeySeparatorRune {
-			indices = append(indices, i)
-		}
-	}
-
-	// If there are less than 2 occurrences of tagKeySeparator, return an empty string
-	if len(indices) < 2 {
-		return ""
-	}
-
-	// Extract the value between the first and second last occurrence of tagKeySeparator
-	value := key[indices[0]+1 : indices[len(indices)-2]]
-
-	// Trim any leading or trailing whitespace
-	value = bytes.TrimSpace(value)
-
-	// TODO: Do an unsafe cast to avoid an extra allocation here
-	return string(value)
+	return ""
 }
 
-func extractEventSeqFromKey(key []byte) string {
-	parts := strings.SplitN(string(key), tagKeySeparator, -1) //nolint:staticcheck
+// If there are less than 2 occurrences of tagKeySeparator, return an empty string
 
-	lastEl := parts[len(parts)-1]
+// Extract the value between the first and second last occurrence of tagKeySeparator
 
-	if strings.Contains(lastEl, eventSeqSeparator) {
-		return strings.SplitN(lastEl, eventSeqSeparator, 2)[1]
-	}
-	return "0"
-}
+// Trim any leading or trailing whitespace
+
+// TODO: Do an unsafe cast to avoid an extra allocation here
+
+func extractEventSeqFromKey(key []byte) string { _ = "STUB: not implemented"; return "" }
+
+//nolint:staticcheck
 
 func keyForEvent(key string, value string, result *abci.TxResult, eventSeq int64) []byte {
-	return []byte(fmt.Sprintf("%s/%s/%d/%d%s",
-		key,
-		value,
-		result.Height,
-		result.Index,
-		eventSeqSeparator+strconv.FormatInt(eventSeq, 10),
-	))
-}
-
-func keyForHeight(result *abci.TxResult) []byte {
-	return []byte(fmt.Sprintf("%s/%d/%d/%d%s",
-		types.TxHeightKey,
-		result.Height,
-		result.Height,
-		result.Index,
-		// Added to facilitate having the eventSeq in event keys
-		// Otherwise queries break expecting 5 entries
-		eventSeqSeparator+"0",
-	))
-}
-
-func startKeyForCondition(c syntax.Condition, height int64) []byte {
-	if height > 0 {
-		return startKey(c.Tag, c.Arg.Value(), height)
-	}
-	return startKey(c.Tag, c.Arg.Value())
-}
-
-func startKey(fields ...interface{}) []byte {
-	var b bytes.Buffer
-	for _, f := range fields {
-		b.Write([]byte(fmt.Sprintf("%v", f) + tagKeySeparator))
-	}
-	return b.Bytes()
-}
-
-func (txi *TxIndex) indexResult(batch dbm.Batch, result *abci.TxResult) error {
-	hash := types.Tx(result.Tx).Hash()
-
-	rawBytes, err := proto.Marshal(result)
-	if err != nil {
-		return err
-	}
-
-	if !result.Result.IsOK() {
-		oldResult, err := txi.Get(hash)
-		if err != nil {
-			return err
-		}
-
-		// if the new transaction failed and it's already indexed in an older block and was successful
-		// we skip it as we want users to get the older successful transaction when they query.
-		if oldResult != nil && oldResult.Result.Code == abci.CodeTypeOK {
-			return nil
-		}
-	}
-
-	// index tx by events
-	err = txi.indexEvents(result, hash, batch)
-	if err != nil {
-		return err
-	}
-
-	// index by height (always)
-	err = batch.Set(keyForHeight(result), hash)
-	if err != nil {
-		return err
-	}
-
-	// index by hash (always)
-	err = batch.Set(hash, rawBytes)
-	if err != nil {
-		return err
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
+
+func keyForHeight(result *abci.TxResult) []byte { _ = "STUB: not implemented"; return nil }
+
+// Added to facilitate having the eventSeq in event keys
+// Otherwise queries break expecting 5 entries
+
+func startKeyForCondition(c syntax.Condition, height int64) []byte {
+	_ = "STUB: not implemented"
+	return nil
+}
+
+func startKey(fields ...interface{}) []byte { _ = "STUB: not implemented"; return nil }
+
+func (txi *TxIndex) indexResult(batch dbm.Batch, result *abci.TxResult) error {
+	_ = "STUB: not implemented"
+	return nil
+}
+
+// if the new transaction failed and it's already indexed in an older block and was successful
+// we skip it as we want users to get the older successful transaction when they query.
+
+// index tx by events
+
+// index by height (always)
+
+// index by hash (always)

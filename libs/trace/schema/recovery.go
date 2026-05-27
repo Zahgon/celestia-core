@@ -6,11 +6,7 @@ import (
 
 // RecoveryTables returns the list of tables that are used for recovery
 // tracing.
-func RecoveryTables() []string {
-	return []string{
-		ReceivedPartTable,
-	}
-}
+func RecoveryTables() []string { _ = "STUB: not implemented"; return nil }
 
 const (
 	// ReceivedPartTable tracks all the parts received by propagation reactor
@@ -25,10 +21,9 @@ type ReceivedPart struct {
 }
 
 // Table returns the table name for the ReceivedPart struct.
-func (ReceivedPart) Table() string {
-	return ReceivedPartTable
-}
+func (ReceivedPart) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteReceivedPart(client trace.Tracer, height int64, round int32, index int) {
-	client.Write(ReceivedPart{Height: height, Round: round, Index: index})
+	_ = "STUB: not implemented"
+	return
 }

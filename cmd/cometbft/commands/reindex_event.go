@@ -3,22 +3,13 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 
-	dbm "github.com/cometbft/cometbft-db"
-
-	abcitypes "github.com/cometbft/cometbft/abci/types"
 	cmtcfg "github.com/cometbft/cometbft/config"
-	"github.com/cometbft/cometbft/libs/progressbar"
 	"github.com/cometbft/cometbft/state"
 	"github.com/cometbft/cometbft/state/indexer"
-	blockidxkv "github.com/cometbft/cometbft/state/indexer/block/kv"
-	"github.com/cometbft/cometbft/state/indexer/sink/psql"
 	"github.com/cometbft/cometbft/state/txindex"
-	"github.com/cometbft/cometbft/state/txindex/kv"
-	"github.com/cometbft/cometbft/types"
 )
 
 const (
@@ -103,32 +94,8 @@ func init() {
 }
 
 func loadEventSinks(cfg *cmtcfg.Config, chainID string) (indexer.BlockIndexer, txindex.TxIndexer, error) {
-	switch strings.ToLower(cfg.TxIndex.Indexer) {
-	case "null":
-		return nil, nil, errors.New("found null event sink, please check the tx-index section in the config.toml")
-	case "psql":
-		conn := cfg.TxIndex.PsqlConn
-		if conn == "" {
-			return nil, nil, errors.New("the psql connection settings cannot be empty")
-		}
-		es, err := psql.NewEventSink(conn, chainID)
-		if err != nil {
-			return nil, nil, err
-		}
-		return es.BlockIndexer(), es.TxIndexer(), nil
-	case "kv":
-		fmt.Println("WARNING: reindex-event with the 'kv' indexer is deprecated and will be removed in a future release")
-		store, err := dbm.NewDB("tx_index", dbm.BackendType(cfg.DBBackend), cfg.DBDir())
-		if err != nil {
-			return nil, nil, err
-		}
-
-		txIndexer := kv.NewTxIndex(store)
-		blockIndexer := blockidxkv.New(dbm.NewPrefixDB(store, []byte("block_events")))
-		return blockIndexer, txIndexer, nil
-	default:
-		return nil, nil, fmt.Errorf("unsupported event sink type: %s", cfg.TxIndex.Indexer)
-	}
+	_ = "STUB: not implemented"
+	return *new(indexer.BlockIndexer), *new(txindex.TxIndexer), nil
 }
 
 type eventReIndexArgs struct {
@@ -141,101 +108,8 @@ type eventReIndexArgs struct {
 }
 
 func eventReIndex(cmd *cobra.Command, args eventReIndexArgs) error {
-	var bar progressbar.Bar
-	bar.NewOption(args.startHeight-1, args.endHeight)
-
-	fmt.Println("start re-indexing events:")
-	defer bar.Finish()
-	for height := args.startHeight; height <= args.endHeight; height++ {
-		select {
-		case <-cmd.Context().Done():
-			return fmt.Errorf("event re-index terminated at height %d: %w", height, cmd.Context().Err())
-		default:
-			block := args.blockStore.LoadBlock(height)
-			if block == nil {
-				return fmt.Errorf("not able to load block at height %d from the blockstore", height)
-			}
-
-			resp, err := args.stateStore.LoadFinalizeBlockResponse(height)
-			if err != nil {
-				return fmt.Errorf("not able to load ABCI Response at height %d from the statestore", height)
-			}
-
-			e := types.EventDataNewBlockEvents{
-				Height: height,
-				Events: resp.Events,
-			}
-
-			numTxs := len(resp.TxResults)
-
-			var batch *txindex.Batch
-			if numTxs > 0 {
-				batch = txindex.NewBatch(int64(numTxs))
-
-				for idx, txResult := range resp.TxResults {
-					tr := abcitypes.TxResult{
-						Height: height,
-						Index:  uint32(idx),
-						Tx:     block.Txs[idx],
-						Result: *txResult,
-					}
-
-					if err = batch.Add(&tr); err != nil {
-						return fmt.Errorf("adding tx to batch: %w", err)
-					}
-				}
-
-				if err := args.txIndexer.AddBatch(batch); err != nil {
-					return fmt.Errorf("tx event re-index at height %d failed: %w", height, err)
-				}
-			}
-
-			if err := args.blockIndexer.Index(e); err != nil {
-				return fmt.Errorf("block event re-index at height %d failed: %w", height, err)
-			}
-		}
-
-		bar.Play(height)
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func checkValidHeight(bs state.BlockStore) error {
-	base := bs.Base()
-
-	if startHeight == 0 {
-		startHeight = base
-		fmt.Printf("set the start block height to the base height of the blockstore %d \n", base)
-	}
-
-	if startHeight < base {
-		return fmt.Errorf("%s (requested start height: %d, base height: %d)",
-			ErrHeightNotAvailable, startHeight, base)
-	}
-
-	height := bs.Height()
-
-	if startHeight > height {
-		return fmt.Errorf(
-			"%s (requested start height: %d, store height: %d)", ErrHeightNotAvailable, startHeight, height)
-	}
-
-	if endHeight == 0 || endHeight > height {
-		endHeight = height
-		fmt.Printf("set the end block height to the latest height of the blockstore %d \n", height)
-	}
-
-	if endHeight < base {
-		return fmt.Errorf(
-			"%s (requested end height: %d, base height: %d)", ErrHeightNotAvailable, endHeight, base)
-	}
-
-	if endHeight < startHeight {
-		return fmt.Errorf(
-			"%s (requested the end height: %d is less than the start height: %d)",
-			ErrInvalidRequest, startHeight, endHeight)
-	}
-
-	return nil
-}
+func checkValidHeight(bs state.BlockStore) error { _ = "STUB: not implemented"; return nil }

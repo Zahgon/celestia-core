@@ -28,9 +28,7 @@ type Metrics struct {
 	LatestBlockHeight metrics.Gauge
 }
 
-func (m *Metrics) recordBlockMetrics(block *types.Block) {
-	m.NumTxs.Set(float64(len(block.Data.Txs)))   //nolint:staticcheck
-	m.TotalTxs.Add(float64(len(block.Data.Txs))) //nolint:staticcheck
-	m.BlockSizeBytes.Set(float64(block.Size()))
-	m.LatestBlockHeight.Set(float64(block.Height))
-}
+func (m *Metrics) recordBlockMetrics(block *types.Block) { _ = "STUB: not implemented"; return }
+
+//nolint:staticcheck
+//nolint:staticcheck

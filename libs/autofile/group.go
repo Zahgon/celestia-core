@@ -2,14 +2,7 @@ package autofile
 
 import (
 	"bufio"
-	"errors"
-	"fmt"
-	"io"
 	"os"
-	"path/filepath"
-	"regexp"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -78,263 +71,87 @@ type Group struct {
 // OpenGroup creates a new Group with head at headPath. It returns an error if
 // it fails to open head file.
 func OpenGroup(headPath string, groupOptions ...func(*Group)) (*Group, error) {
-	dir, err := filepath.Abs(filepath.Dir(headPath))
-	if err != nil {
-		return nil, err
-	}
-	head, err := OpenAutoFile(headPath)
-	if err != nil {
-		return nil, err
-	}
-
-	g := &Group{
-		ID:                 "group:" + head.ID,
-		Head:               head,
-		headBuf:            bufio.NewWriterSize(head, 4096*10),
-		Dir:                dir,
-		headSizeLimit:      defaultHeadSizeLimit,
-		totalSizeLimit:     defaultTotalSizeLimit,
-		groupCheckDuration: defaultGroupCheckDuration,
-		minIndex:           0,
-		maxIndex:           0,
-		doneProcessTicks:   make(chan struct{}),
-	}
-
-	for _, option := range groupOptions {
-		option(g)
-	}
-
-	g.BaseService = *service.NewBaseService(nil, "Group", g)
-
-	gInfo := g.readGroupInfo()
-	g.minIndex = gInfo.MinIndex
-	g.maxIndex = gInfo.MaxIndex
-	return g, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GroupCheckDuration allows you to overwrite default groupCheckDuration.
-func GroupCheckDuration(duration time.Duration) func(*Group) {
-	return func(g *Group) {
-		g.groupCheckDuration = duration
-	}
-}
+func GroupCheckDuration(duration time.Duration) func(*Group) { _ = "STUB: not implemented"; return nil }
 
 // GroupHeadSizeLimit allows you to overwrite default head size limit - 10MB.
-func GroupHeadSizeLimit(limit int64) func(*Group) {
-	return func(g *Group) {
-		g.headSizeLimit = limit
-	}
-}
+func GroupHeadSizeLimit(limit int64) func(*Group) { _ = "STUB: not implemented"; return nil }
 
 // GroupTotalSizeLimit allows you to overwrite default total size limit of the group - 1GB.
-func GroupTotalSizeLimit(limit int64) func(*Group) {
-	return func(g *Group) {
-		g.totalSizeLimit = limit
-	}
-}
+func GroupTotalSizeLimit(limit int64) func(*Group) { _ = "STUB: not implemented"; return nil }
 
 // OnStart implements service.Service by starting the goroutine that checks file
 // and group limits.
-func (g *Group) OnStart() error {
-	g.ticker = time.NewTicker(g.groupCheckDuration)
-	go g.processTicks()
-	return nil
-}
+func (g *Group) OnStart() error { _ = "STUB: not implemented"; return nil }
 
 // OnStop implements service.Service by stopping the goroutine described above.
 // NOTE: g.Head must be closed separately using Close.
-func (g *Group) OnStop() {
-	g.ticker.Stop()
-	if err := g.FlushAndSync(); err != nil {
-		g.Logger.Error("Error flushin to disk", "err", err)
-	}
-}
+func (g *Group) OnStop() { _ = "STUB: not implemented"; return }
 
 // Wait blocks until all internal goroutines are finished. Supposed to be
 // called after Stop.
 func (g *Group) Wait() {
+	_ = "STUB: not implemented"
 	// wait for processTicks routine to finish
-	<-g.doneProcessTicks
+	return
 }
 
 // Close closes the head file. The group must be stopped by this moment.
-func (g *Group) Close() {
-	if err := g.FlushAndSync(); err != nil {
-		g.Logger.Error("Error flushin to disk", "err", err)
-	}
-
-	g.mtx.Lock()
-	_ = g.Head.closeFile()
-	g.mtx.Unlock()
-}
+func (g *Group) Close() { _ = "STUB: not implemented"; return }
 
 // HeadSizeLimit returns the current head size limit.
-func (g *Group) HeadSizeLimit() int64 {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.headSizeLimit
-}
+func (g *Group) HeadSizeLimit() int64 { _ = "STUB: not implemented"; return 0 }
 
 // TotalSizeLimit returns total size limit of the group.
-func (g *Group) TotalSizeLimit() int64 {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.totalSizeLimit
-}
+func (g *Group) TotalSizeLimit() int64 { _ = "STUB: not implemented"; return 0 }
 
 // MaxIndex returns index of the last file in the group.
-func (g *Group) MaxIndex() int {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.maxIndex
-}
+func (g *Group) MaxIndex() int { _ = "STUB: not implemented"; return 0 }
 
 // MinIndex returns index of the first file in the group.
-func (g *Group) MinIndex() int {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.minIndex
-}
+func (g *Group) MinIndex() int { _ = "STUB: not implemented"; return 0 }
 
 // Write writes the contents of p into the current head of the group. It
 // returns the number of bytes written. If nn < len(p), it also returns an
 // error explaining why the write is short.
 // NOTE: Writes are buffered so they don't write synchronously
 // TODO: Make it halt if space is unavailable
-func (g *Group) Write(p []byte) (nn int, err error) {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.headBuf.Write(p)
-}
+func (g *Group) Write(p []byte) (nn int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 // WriteLine writes line into the current head of the group. It also appends "\n".
 // NOTE: Writes are buffered so they don't write synchronously
 // TODO: Make it halt if space is unavailable
-func (g *Group) WriteLine(line string) error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	_, err := g.headBuf.Write([]byte(line + "\n"))
-	return err
-}
+func (g *Group) WriteLine(line string) error { _ = "STUB: not implemented"; return nil }
 
 // Buffered returns the size of the currently buffered data.
-func (g *Group) Buffered() int {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.headBuf.Buffered()
-}
+func (g *Group) Buffered() int { _ = "STUB: not implemented"; return 0 }
 
 // FlushAndSync writes any buffered data to the underlying file and commits the
 // current content of the file to stable storage (fsync).
-func (g *Group) FlushAndSync() error {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	err := g.headBuf.Flush()
-	if err == nil {
-		err = g.Head.Sync()
-	}
-	return err
-}
+func (g *Group) FlushAndSync() error { _ = "STUB: not implemented"; return nil }
 
-func (g *Group) processTicks() {
-	defer close(g.doneProcessTicks)
-	for {
-		select {
-		case <-g.ticker.C:
-			g.checkHeadSizeLimit()
-			g.checkTotalSizeLimit()
-		case <-g.Quit():
-			return
-		}
-	}
-}
+func (g *Group) processTicks() { _ = "STUB: not implemented"; return }
 
 // NOTE: this function is called manually in tests.
-func (g *Group) checkHeadSizeLimit() {
-	limit := g.HeadSizeLimit()
-	if limit == 0 {
-		return
-	}
-	size, err := g.Head.Size()
-	if err != nil {
-		g.Logger.Error("Group's head may grow without bound", "head", g.Head.Path, "err", err)
-		return
-	}
-	if size >= limit {
-		g.RotateFile()
-	}
-}
+func (g *Group) checkHeadSizeLimit() { _ = "STUB: not implemented"; return }
 
-func (g *Group) checkTotalSizeLimit() {
-	limit := g.TotalSizeLimit()
-	if limit == 0 {
-		return
-	}
+func (g *Group) checkTotalSizeLimit() { _ = "STUB: not implemented"; return }
 
-	gInfo := g.readGroupInfo()
-	totalSize := gInfo.TotalSize
-	for i := 0; i < maxFilesToRemove; i++ {
-		index := gInfo.MinIndex + i
-		if totalSize < limit {
-			return
-		}
-		if index == gInfo.MaxIndex {
-			// Special degenerate case, just do nothing.
-			g.Logger.Error("Group's head may grow without bound", "head", g.Head.Path)
-			return
-		}
-		pathToRemove := filePathForIndex(g.Head.Path, index, gInfo.MaxIndex)
-		fInfo, err := os.Stat(pathToRemove)
-		if err != nil {
-			g.Logger.Error("Failed to fetch info for file", "file", pathToRemove)
-			continue
-		}
-		err = os.Remove(pathToRemove)
-		if err != nil {
-			g.Logger.Error("Failed to remove path", "path", pathToRemove)
-			return
-		}
-		totalSize -= fInfo.Size()
-	}
-}
+// Special degenerate case, just do nothing.
 
 // RotateFile causes group to close the current head and assign it some index.
 // Note it does not create a new head.
-func (g *Group) RotateFile() {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-
-	headPath := g.Head.Path
-
-	if err := g.headBuf.Flush(); err != nil {
-		panic(err)
-	}
-
-	if err := g.Head.Sync(); err != nil {
-		panic(err)
-	}
-
-	if err := g.Head.closeFile(); err != nil {
-		panic(err)
-	}
-
-	indexPath := filePathForIndex(headPath, g.maxIndex, g.maxIndex+1)
-	if err := os.Rename(headPath, indexPath); err != nil {
-		panic(err)
-	}
-
-	g.maxIndex++
-}
+func (g *Group) RotateFile() { _ = "STUB: not implemented"; return }
 
 // NewReader returns a new group reader.
 // CONTRACT: Caller must close the returned GroupReader.
 func (g *Group) NewReader(index int) (*GroupReader, error) {
-	r := newGroupReader(g)
-	err := r.SetIndex(index)
-	if err != nil {
-		return nil, err
-	}
-	return r, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // GroupInfo holds information about the group.
@@ -346,75 +163,28 @@ type GroupInfo struct {
 }
 
 // Returns info after scanning all files in g.Head's dir.
-func (g *Group) ReadGroupInfo() GroupInfo {
-	g.mtx.Lock()
-	defer g.mtx.Unlock()
-	return g.readGroupInfo()
-}
+func (g *Group) ReadGroupInfo() GroupInfo { _ = "STUB: not implemented"; return *new(GroupInfo) }
 
 // Index includes the head.
 // CONTRACT: caller should have called g.mtx.Lock
-func (g *Group) readGroupInfo() GroupInfo {
-	groupDir := filepath.Dir(g.Head.Path)
-	headBase := filepath.Base(g.Head.Path)
-	var minIndex, maxIndex int = -1, -1 //nolint:staticcheck
-	var totalSize, headSize int64 = 0, 0
+func (g *Group) readGroupInfo() GroupInfo { _ = "STUB: not implemented"; return *new(GroupInfo) }
 
-	dir, err := os.Open(groupDir)
-	if err != nil {
-		panic(err)
-	}
-	defer dir.Close()
-	fiz, err := dir.Readdir(0)
-	if err != nil {
-		panic(err)
-	}
+//nolint:staticcheck
 
-	// For each file in the directory, filter by pattern
-	for _, fileInfo := range fiz {
-		if fileInfo.Name() == headBase {
-			fileSize := fileInfo.Size()
-			totalSize += fileSize
-			headSize = fileSize
-			continue
-		} else if strings.HasPrefix(fileInfo.Name(), headBase) {
-			fileSize := fileInfo.Size()
-			totalSize += fileSize
-			indexedFilePattern := regexp.MustCompile(`^.+\.([0-9]{3,})$`)
-			submatch := indexedFilePattern.FindSubmatch([]byte(fileInfo.Name()))
-			if len(submatch) != 0 {
-				// Matches
-				fileIndex, err := strconv.Atoi(string(submatch[1]))
-				if err != nil {
-					panic(err)
-				}
-				if maxIndex < fileIndex {
-					maxIndex = fileIndex
-				}
-				if minIndex == -1 || fileIndex < minIndex {
-					minIndex = fileIndex
-				}
-			}
-		}
-	}
+// For each file in the directory, filter by pattern
 
-	// Now account for the head.
-	if minIndex == -1 {
-		// If there were no numbered files,
-		// then the head is index 0.
-		minIndex, maxIndex = 0, 0
-	} else {
-		// Otherwise, the head file is 1 greater
-		maxIndex++
-	}
-	return GroupInfo{minIndex, maxIndex, totalSize, headSize}
-}
+// Matches
+
+// Now account for the head.
+
+// If there were no numbered files,
+// then the head is index 0.
+
+// Otherwise, the head file is 1 greater
 
 func filePathForIndex(headPath string, index int, maxIndex int) string {
-	if index == maxIndex {
-		return headPath
-	}
-	return fmt.Sprintf("%v.%03d", headPath, index)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 //--------------------------------------------------------------------------------
@@ -429,112 +199,42 @@ type GroupReader struct {
 	curLine   []byte
 }
 
-func newGroupReader(g *Group) *GroupReader {
-	return &GroupReader{
-		Group:     g,
-		curIndex:  0,
-		curFile:   nil,
-		curReader: nil,
-		curLine:   nil,
-	}
-}
+func newGroupReader(g *Group) *GroupReader { _ = "STUB: not implemented"; return nil }
 
 // Close closes the GroupReader by closing the cursor file.
-func (gr *GroupReader) Close() error {
-	gr.mtx.Lock()
-	defer gr.mtx.Unlock()
-
-	if gr.curReader != nil {
-		err := gr.curFile.Close()
-		gr.curIndex = 0
-		gr.curReader = nil
-		gr.curFile = nil
-		gr.curLine = nil
-		return err
-	}
-	return nil
-}
+func (gr *GroupReader) Close() error { _ = "STUB: not implemented"; return nil }
 
 // Read implements io.Reader, reading bytes from the current Reader
 // incrementing index until enough bytes are read.
-func (gr *GroupReader) Read(p []byte) (n int, err error) {
-	lenP := len(p)
-	if lenP == 0 {
-		return 0, errors.New("given empty slice")
-	}
+func (gr *GroupReader) Read(p []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
-	gr.mtx.Lock()
-	defer gr.mtx.Unlock()
+// Open file if not open yet
 
-	// Open file if not open yet
-	if gr.curReader == nil {
-		if err = gr.openFile(gr.curIndex); err != nil {
-			return 0, err
-		}
-	}
+// Iterate over files until enough bytes are read
 
-	// Iterate over files until enough bytes are read
-	var nn int
-	for {
-		nn, err = gr.curReader.Read(p[n:])
-		n += nn
-		switch {
-		case err == io.EOF:
-			if n >= lenP {
-				return n, nil
-			}
-			// Open the next file
-			if err1 := gr.openFile(gr.curIndex + 1); err1 != nil {
-				return n, err1
-			}
-		case err != nil:
-			return n, err
-		case nn == 0: // empty file
-			return n, err
-		}
-	}
-}
+// Open the next file
+
+// empty file
 
 // IF index > gr.Group.maxIndex, returns io.EOF
 // CONTRACT: caller should hold gr.mtx
 func (gr *GroupReader) openFile(index int) error {
+	_ = "STUB: not implemented"
 	// Lock on Group to ensure that head doesn't move in the meanwhile.
-	gr.Group.mtx.Lock()
-	defer gr.Group.mtx.Unlock()
-
-	if index > gr.Group.maxIndex { //nolint:staticcheck
-		return io.EOF
-	}
-
-	curFilePath := filePathForIndex(gr.Head.Path, index, gr.Group.maxIndex) //nolint:staticcheck
-	curFile, err := os.OpenFile(curFilePath, os.O_RDONLY|os.O_CREATE, autoFilePerms)
-	if err != nil {
-		return err
-	}
-	curReader := bufio.NewReader(curFile)
-
-	// Update gr.cur*
-	if gr.curFile != nil {
-		gr.curFile.Close() // TODO return error?
-	}
-	gr.curIndex = index
-	gr.curFile = curFile
-	gr.curReader = curReader
-	gr.curLine = nil
 	return nil
 }
 
+//nolint:staticcheck
+
+//nolint:staticcheck
+
+// Update gr.cur*
+
+// TODO return error?
+
 // CurIndex returns cursor's file index.
-func (gr *GroupReader) CurIndex() int {
-	gr.mtx.Lock()
-	defer gr.mtx.Unlock()
-	return gr.curIndex
-}
+func (gr *GroupReader) CurIndex() int { _ = "STUB: not implemented"; return 0 }
 
 // SetIndex sets the cursor's file index to index by opening a file at this
 // position.
-func (gr *GroupReader) SetIndex(index int) error {
-	gr.mtx.Lock()
-	defer gr.mtx.Unlock()
-	return gr.openFile(index)
-}
+func (gr *GroupReader) SetIndex(index int) error { _ = "STUB: not implemented"; return nil }

@@ -5,11 +5,10 @@ package p2p
 
 import (
 	fmt "fmt"
+	math "math"
+
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
-	io "io"
-	math "math"
-	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -29,59 +28,31 @@ type NetAddress struct {
 	Port uint32 `protobuf:"varint,3,opt,name=port,proto3" json:"port,omitempty"`
 }
 
-func (m *NetAddress) Reset()         { *m = NetAddress{} }
-func (m *NetAddress) String() string { return proto.CompactTextString(m) }
-func (*NetAddress) ProtoMessage()    {}
-func (*NetAddress) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c8a29e659aeca578, []int{0}
-}
-func (m *NetAddress) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *NetAddress) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *NetAddress) String() string            { _ = "STUB: not implemented"; return "" }
+func (*NetAddress) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*NetAddress) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *NetAddress) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *NetAddress) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_NetAddress.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *NetAddress) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_NetAddress.Merge(m, src)
-}
-func (m *NetAddress) XXX_Size() int {
-	return m.Size()
-}
-func (m *NetAddress) XXX_DiscardUnknown() {
-	xxx_messageInfo_NetAddress.DiscardUnknown(m)
-}
+
+func (m *NetAddress) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *NetAddress) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *NetAddress) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_NetAddress proto.InternalMessageInfo
 
-func (m *NetAddress) GetID() string {
-	if m != nil {
-		return m.ID
-	}
-	return ""
-}
+func (m *NetAddress) GetID() string { _ = "STUB: not implemented"; return "" }
 
-func (m *NetAddress) GetIP() string {
-	if m != nil {
-		return m.IP
-	}
-	return ""
-}
+func (m *NetAddress) GetIP() string { _ = "STUB: not implemented"; return "" }
 
-func (m *NetAddress) GetPort() uint32 {
-	if m != nil {
-		return m.Port
-	}
-	return 0
-}
+func (m *NetAddress) GetPort() uint32 { _ = "STUB: not implemented"; return 0 }
 
 type ProtocolVersion struct {
 	P2P   uint64 `protobuf:"varint,1,opt,name=p2p,proto3" json:"p2p,omitempty"`
@@ -89,59 +60,31 @@ type ProtocolVersion struct {
 	App   uint64 `protobuf:"varint,3,opt,name=app,proto3" json:"app,omitempty"`
 }
 
-func (m *ProtocolVersion) Reset()         { *m = ProtocolVersion{} }
-func (m *ProtocolVersion) String() string { return proto.CompactTextString(m) }
-func (*ProtocolVersion) ProtoMessage()    {}
-func (*ProtocolVersion) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c8a29e659aeca578, []int{1}
-}
-func (m *ProtocolVersion) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *ProtocolVersion) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *ProtocolVersion) String() string            { _ = "STUB: not implemented"; return "" }
+func (*ProtocolVersion) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*ProtocolVersion) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *ProtocolVersion) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *ProtocolVersion) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ProtocolVersion.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *ProtocolVersion) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ProtocolVersion.Merge(m, src)
-}
-func (m *ProtocolVersion) XXX_Size() int {
-	return m.Size()
-}
-func (m *ProtocolVersion) XXX_DiscardUnknown() {
-	xxx_messageInfo_ProtocolVersion.DiscardUnknown(m)
-}
+
+func (m *ProtocolVersion) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *ProtocolVersion) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *ProtocolVersion) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_ProtocolVersion proto.InternalMessageInfo
 
-func (m *ProtocolVersion) GetP2P() uint64 {
-	if m != nil {
-		return m.P2P
-	}
-	return 0
-}
+func (m *ProtocolVersion) GetP2P() uint64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *ProtocolVersion) GetBlock() uint64 {
-	if m != nil {
-		return m.Block
-	}
-	return 0
-}
+func (m *ProtocolVersion) GetBlock() uint64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *ProtocolVersion) GetApp() uint64 {
-	if m != nil {
-		return m.App
-	}
-	return 0
-}
+func (m *ProtocolVersion) GetApp() uint64 { _ = "STUB: not implemented"; return 0 }
 
 type DefaultNodeInfo struct {
 	ProtocolVersion ProtocolVersion      `protobuf:"bytes,1,opt,name=protocol_version,json=protocolVersion,proto3" json:"protocol_version"`
@@ -154,93 +97,46 @@ type DefaultNodeInfo struct {
 	Other           DefaultNodeInfoOther `protobuf:"bytes,8,opt,name=other,proto3" json:"other"`
 }
 
-func (m *DefaultNodeInfo) Reset()         { *m = DefaultNodeInfo{} }
-func (m *DefaultNodeInfo) String() string { return proto.CompactTextString(m) }
-func (*DefaultNodeInfo) ProtoMessage()    {}
-func (*DefaultNodeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c8a29e659aeca578, []int{2}
-}
-func (m *DefaultNodeInfo) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *DefaultNodeInfo) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *DefaultNodeInfo) String() string            { _ = "STUB: not implemented"; return "" }
+func (*DefaultNodeInfo) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*DefaultNodeInfo) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *DefaultNodeInfo) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *DefaultNodeInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_DefaultNodeInfo.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *DefaultNodeInfo) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultNodeInfo.Merge(m, src)
-}
-func (m *DefaultNodeInfo) XXX_Size() int {
-	return m.Size()
-}
-func (m *DefaultNodeInfo) XXX_DiscardUnknown() {
-	xxx_messageInfo_DefaultNodeInfo.DiscardUnknown(m)
-}
+
+func (m *DefaultNodeInfo) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *DefaultNodeInfo) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *DefaultNodeInfo) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_DefaultNodeInfo proto.InternalMessageInfo
 
 func (m *DefaultNodeInfo) GetProtocolVersion() ProtocolVersion {
-	if m != nil {
-		return m.ProtocolVersion
-	}
-	return ProtocolVersion{}
+	_ = "STUB: not implemented"
+	return *new(ProtocolVersion)
 }
 
-func (m *DefaultNodeInfo) GetDefaultNodeID() string {
-	if m != nil {
-		return m.DefaultNodeID
-	}
-	return ""
-}
+func (m *DefaultNodeInfo) GetDefaultNodeID() string { _ = "STUB: not implemented"; return "" }
 
-func (m *DefaultNodeInfo) GetListenAddr() string {
-	if m != nil {
-		return m.ListenAddr
-	}
-	return ""
-}
+func (m *DefaultNodeInfo) GetListenAddr() string { _ = "STUB: not implemented"; return "" }
 
-func (m *DefaultNodeInfo) GetNetwork() string {
-	if m != nil {
-		return m.Network
-	}
-	return ""
-}
+func (m *DefaultNodeInfo) GetNetwork() string { _ = "STUB: not implemented"; return "" }
 
-func (m *DefaultNodeInfo) GetVersion() string {
-	if m != nil {
-		return m.Version
-	}
-	return ""
-}
+func (m *DefaultNodeInfo) GetVersion() string { _ = "STUB: not implemented"; return "" }
 
-func (m *DefaultNodeInfo) GetChannels() []byte {
-	if m != nil {
-		return m.Channels
-	}
-	return nil
-}
+func (m *DefaultNodeInfo) GetChannels() []byte { _ = "STUB: not implemented"; return nil }
 
-func (m *DefaultNodeInfo) GetMoniker() string {
-	if m != nil {
-		return m.Moniker
-	}
-	return ""
-}
+func (m *DefaultNodeInfo) GetMoniker() string { _ = "STUB: not implemented"; return "" }
 
 func (m *DefaultNodeInfo) GetOther() DefaultNodeInfoOther {
-	if m != nil {
-		return m.Other
-	}
-	return DefaultNodeInfoOther{}
+	_ = "STUB: not implemented"
+	return *new(DefaultNodeInfoOther)
 }
 
 type DefaultNodeInfoOther struct {
@@ -248,52 +144,32 @@ type DefaultNodeInfoOther struct {
 	RPCAddress string `protobuf:"bytes,2,opt,name=rpc_address,json=rpcAddress,proto3" json:"rpc_address,omitempty"`
 }
 
-func (m *DefaultNodeInfoOther) Reset()         { *m = DefaultNodeInfoOther{} }
-func (m *DefaultNodeInfoOther) String() string { return proto.CompactTextString(m) }
-func (*DefaultNodeInfoOther) ProtoMessage()    {}
+func (m *DefaultNodeInfoOther) Reset()         { _ = "STUB: not implemented"; return }
+func (m *DefaultNodeInfoOther) String() string { _ = "STUB: not implemented"; return "" }
+func (*DefaultNodeInfoOther) ProtoMessage()    { _ = "STUB: not implemented"; return }
 func (*DefaultNodeInfoOther) Descriptor() ([]byte, []int) {
-	return fileDescriptor_c8a29e659aeca578, []int{3}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *DefaultNodeInfoOther) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+
+func (m *DefaultNodeInfoOther) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *DefaultNodeInfoOther) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_DefaultNodeInfoOther.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *DefaultNodeInfoOther) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DefaultNodeInfoOther.Merge(m, src)
-}
-func (m *DefaultNodeInfoOther) XXX_Size() int {
-	return m.Size()
-}
-func (m *DefaultNodeInfoOther) XXX_DiscardUnknown() {
-	xxx_messageInfo_DefaultNodeInfoOther.DiscardUnknown(m)
-}
+
+func (m *DefaultNodeInfoOther) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *DefaultNodeInfoOther) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *DefaultNodeInfoOther) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_DefaultNodeInfoOther proto.InternalMessageInfo
 
-func (m *DefaultNodeInfoOther) GetTxIndex() string {
-	if m != nil {
-		return m.TxIndex
-	}
-	return ""
-}
+func (m *DefaultNodeInfoOther) GetTxIndex() string { _ = "STUB: not implemented"; return "" }
 
-func (m *DefaultNodeInfoOther) GetRPCAddress() string {
-	if m != nil {
-		return m.RPCAddress
-	}
-	return ""
-}
+func (m *DefaultNodeInfoOther) GetRPCAddress() string { _ = "STUB: not implemented"; return "" }
 
 func init() {
 	proto.RegisterType((*NetAddress)(nil), "tendermint.p2p.NetAddress")
@@ -339,1059 +215,83 @@ var fileDescriptor_c8a29e659aeca578 = []byte{
 	0x03, 0x00, 0x00,
 }
 
-func (m *NetAddress) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
+func (m *NetAddress) Marshal() (dAtA []byte, err error) { _ = "STUB: not implemented"; return nil, nil }
 
-func (m *NetAddress) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
+func (m *NetAddress) MarshalTo(dAtA []byte) (int, error) { _ = "STUB: not implemented"; return 0, nil }
 
 func (m *NetAddress) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.Port != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.Port))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.IP) > 0 {
-		i -= len(m.IP)
-		copy(dAtA[i:], m.IP)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.IP)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.ID) > 0 {
-		i -= len(m.ID)
-		copy(dAtA[i:], m.ID)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ID)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *ProtocolVersion) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *ProtocolVersion) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *ProtocolVersion) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.App != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.App))
-		i--
-		dAtA[i] = 0x18
-	}
-	if m.Block != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.Block))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.P2P != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.P2P))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *DefaultNodeInfo) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *DefaultNodeInfo) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *DefaultNodeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.Other.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x42
-	if len(m.Moniker) > 0 {
-		i -= len(m.Moniker)
-		copy(dAtA[i:], m.Moniker)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Moniker)))
-		i--
-		dAtA[i] = 0x3a
-	}
-	if len(m.Channels) > 0 {
-		i -= len(m.Channels)
-		copy(dAtA[i:], m.Channels)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Channels)))
-		i--
-		dAtA[i] = 0x32
-	}
-	if len(m.Version) > 0 {
-		i -= len(m.Version)
-		copy(dAtA[i:], m.Version)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Version)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.Network) > 0 {
-		i -= len(m.Network)
-		copy(dAtA[i:], m.Network)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.Network)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.ListenAddr) > 0 {
-		i -= len(m.ListenAddr)
-		copy(dAtA[i:], m.ListenAddr)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ListenAddr)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.DefaultNodeID) > 0 {
-		i -= len(m.DefaultNodeID)
-		copy(dAtA[i:], m.DefaultNodeID)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.DefaultNodeID)))
-		i--
-		dAtA[i] = 0x12
-	}
-	{
-		size, err := m.ProtocolVersion.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0xa
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *DefaultNodeInfoOther) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *DefaultNodeInfoOther) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *DefaultNodeInfoOther) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.RPCAddress) > 0 {
-		i -= len(m.RPCAddress)
-		copy(dAtA[i:], m.RPCAddress)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.RPCAddress)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.TxIndex) > 0 {
-		i -= len(m.TxIndex)
-		copy(dAtA[i:], m.TxIndex)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.TxIndex)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
-func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
-	offset -= sovTypes(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *NetAddress) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.ID)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.IP)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	if m.Port != 0 {
-		n += 1 + sovTypes(uint64(m.Port))
-	}
-	return n
-}
+func encodeVarintTypes(dAtA []byte, offset int, v uint64) int { _ = "STUB: not implemented"; return 0 }
 
-func (m *ProtocolVersion) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.P2P != 0 {
-		n += 1 + sovTypes(uint64(m.P2P))
-	}
-	if m.Block != 0 {
-		n += 1 + sovTypes(uint64(m.Block))
-	}
-	if m.App != 0 {
-		n += 1 + sovTypes(uint64(m.App))
-	}
-	return n
-}
+func (m *NetAddress) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *DefaultNodeInfo) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = m.ProtocolVersion.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	l = len(m.DefaultNodeID)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.ListenAddr)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.Network)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.Version)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.Channels)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.Moniker)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = m.Other.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	return n
-}
+func (m *ProtocolVersion) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *DefaultNodeInfoOther) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.TxIndex)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	l = len(m.RPCAddress)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	return n
-}
+func (m *DefaultNodeInfo) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func sovTypes(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozTypes(x uint64) (n int) {
-	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *NetAddress) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: NetAddress: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: NetAddress: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IP", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IP = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Port", wireType)
-			}
-			m.Port = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Port |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *DefaultNodeInfoOther) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *ProtocolVersion) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ProtocolVersion: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ProtocolVersion: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field P2P", wireType)
-			}
-			m.P2P = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.P2P |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Block", wireType)
-			}
-			m.Block = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Block |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field App", wireType)
-			}
-			m.App = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.App |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func sovTypes(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DefaultNodeInfo) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DefaultNodeInfo: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DefaultNodeInfo: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ProtocolVersion", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.ProtocolVersion.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DefaultNodeID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.DefaultNodeID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ListenAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ListenAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Network", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Network = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Version = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Channels", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Channels = append(m.Channels[:0], dAtA[iNdEx:postIndex]...)
-			if m.Channels == nil {
-				m.Channels = []byte{}
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Moniker", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Moniker = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 8:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Other", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.Other.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func sozTypes(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *DefaultNodeInfoOther) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: DefaultNodeInfoOther: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DefaultNodeInfoOther: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field TxIndex", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.TxIndex = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RPCAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthTypes
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RPCAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipTypes(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthTypes
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *NetAddress) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func skipTypes(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowTypes
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowTypes
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthTypes
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupTypes
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthTypes
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
+func (m *ProtocolVersion) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *DefaultNodeInfo) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func (m *DefaultNodeInfoOther) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
+func skipTypes(dAtA []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 var (
 	ErrInvalidLengthTypes        = fmt.Errorf("proto: negative length found during unmarshaling")

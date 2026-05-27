@@ -65,14 +65,8 @@ type ResultBlockResults struct {
 // the embedded struct
 func NewResultCommit(header *types.Header, commit *types.Commit,
 	canonical bool) *ResultCommit {
-
-	return &ResultCommit{
-		SignedHeader: types.SignedHeader{
-			Header: header,
-			Commit: commit,
-		},
-		CanonicalCommit: canonical,
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Info about the node's syncing state
@@ -105,12 +99,7 @@ type ResultStatus struct {
 }
 
 // Is TxIndexing enabled
-func (s *ResultStatus) TxIndexEnabled() bool {
-	if s == nil {
-		return false
-	}
-	return s.NodeInfo.Other.TxIndex == "on"
-}
+func (s *ResultStatus) TxIndexEnabled() bool { _ = "STUB: not implemented"; return false }
 
 // Info about peer connections
 type ResultNetInfo struct {

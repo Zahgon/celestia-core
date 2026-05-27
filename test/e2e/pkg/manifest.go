@@ -1,11 +1,7 @@
 package e2e
 
 import (
-	"fmt"
-	"os"
 	"time"
-
-	"github.com/BurntSushi/toml"
 )
 
 // Manifest represents a TOML testnet manifest.
@@ -205,20 +201,10 @@ type ManifestNode struct {
 }
 
 // Save saves the testnet manifest to a file.
-func (m Manifest) Save(file string) error {
-	f, err := os.Create(file)
-	if err != nil {
-		return fmt.Errorf("failed to create manifest file %q: %w", file, err)
-	}
-	return toml.NewEncoder(f).Encode(m)
-}
+func (m Manifest) Save(file string) error { _ = "STUB: not implemented"; return nil }
 
 // LoadManifest loads a testnet manifest from a file.
 func LoadManifest(file string) (Manifest, error) {
-	manifest := Manifest{}
-	_, err := toml.DecodeFile(file, &manifest)
-	if err != nil {
-		return manifest, fmt.Errorf("failed to load testnet manifest %q: %w", file, err)
-	}
-	return manifest, nil
+	_ = "STUB: not implemented"
+	return *new(Manifest), nil
 }

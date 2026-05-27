@@ -3,14 +3,7 @@ package schema
 import "github.com/cometbft/cometbft/libs/trace"
 
 // P2PTables returns the list of tables that are used for p2p tracing.
-func P2PTables() []string {
-	return []string{
-		PeersTable,
-		PendingBytesTable,
-		ReceivedBytesTable,
-		QueueLimitTable,
-	}
-}
+func P2PTables() []string { _ = "STUB: not implemented"; return nil }
 
 const (
 	// PeerUpdateTable is the name of the table that stores the p2p peer
@@ -38,13 +31,16 @@ type PeerUpdate struct {
 
 // Table returns the table name for the PeerUpdate struct.
 func (PeerUpdate) Table() string {
-	return PeersTable
+	_ = "STUB: not implemented"
+
+	// WritePeerUpdate writes a tracing point for a peer update using the predetermined
+	// schema for p2p tracing.
+	return ""
 }
 
-// WritePeerUpdate writes a tracing point for a peer update using the predetermined
-// schema for p2p tracing.
 func WritePeerUpdate(client trace.Tracer, peerID string, action P2PPeerUpdate, reason string) {
-	client.Write(PeerUpdate{PeerID: peerID, Action: string(action), Reason: reason})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -56,12 +52,11 @@ type PendingBytes struct {
 	Bytes  map[byte]int `json:"bytes"`
 }
 
-func (PendingBytes) Table() string {
-	return PendingBytesTable
-}
+func (PendingBytes) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WritePendingBytes(client trace.Tracer, peerID string, bytes map[byte]int) {
-	client.Write(PendingBytes{PeerID: peerID, Bytes: bytes})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -74,12 +69,11 @@ type ReceivedBytes struct {
 	Bytes   int    `json:"bytes"`
 }
 
-func (ReceivedBytes) Table() string {
-	return ReceivedBytesTable
-}
+func (ReceivedBytes) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteReceivedBytes(client trace.Tracer, peerID string, channel byte, bytes int) {
-	client.Write(ReceivedBytes{PeerID: peerID, Channel: channel, Bytes: bytes})
+	_ = "STUB: not implemented"
+	return
 }
 
 const (
@@ -92,14 +86,9 @@ type QueueLimit struct {
 	LimitHit bool   `json:"limit_hit"`
 }
 
-func (QueueLimit) Table() string {
-	return QueueLimitTable
-}
+func (QueueLimit) Table() string { _ = "STUB: not implemented"; return "" }
 
 func WriteQueueLimit(client trace.Tracer, channel byte, reactor string, limitHit bool) {
-	client.Write(QueueLimit{
-		Channel:  channel,
-		Reactor:  reactor,
-		LimitHit: limitHit,
-	})
+	_ = "STUB: not implemented"
+	return
 }

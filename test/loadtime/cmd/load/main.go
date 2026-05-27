@@ -1,12 +1,8 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/informalsystems/tm-load-test/pkg/loadtest"
-
-	"github.com/cometbft/cometbft/test/loadtime/payload"
 )
 
 // Ensure all of the interfaces are correctly satisfied.
@@ -44,30 +40,13 @@ func main() {
 }
 
 func (f *ClientFactory) ValidateConfig(cfg loadtest.Config) error {
-	psb, err := payload.MaxUnpaddedSize()
-	if err != nil {
-		return err
-	}
-	if psb > cfg.Size {
-		return fmt.Errorf("payload size exceeds configured size")
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
 func (f *ClientFactory) NewClient(cfg loadtest.Config) (loadtest.Client, error) {
-	return &TxGenerator{
-		id:    f.ID,
-		conns: uint64(cfg.Connections),
-		rate:  uint64(cfg.Rate),
-		size:  uint64(cfg.Size),
-	}, nil
+	_ = "STUB: not implemented"
+	return *new(loadtest.Client), nil
 }
 
-func (c *TxGenerator) GenerateTx() ([]byte, error) {
-	return payload.NewBytes(&payload.Payload{
-		Connections: c.conns,
-		Rate:        c.rate,
-		Size:        c.size,
-		Id:          c.id,
-	})
-}
+func (c *TxGenerator) GenerateTx() ([]byte, error) { _ = "STUB: not implemented"; return nil, nil }

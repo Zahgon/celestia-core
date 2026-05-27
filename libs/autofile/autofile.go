@@ -2,13 +2,8 @@ package autofile
 
 import (
 	"os"
-	"os/signal"
-	"path/filepath"
 	"sync"
-	"syscall"
 	"time"
-
-	cmtrand "github.com/cometbft/cometbft/libs/rand"
 )
 
 /* AutoFile usage
@@ -57,138 +52,41 @@ type AutoFile struct {
 // OpenAutoFile creates an AutoFile in the path (with random ID). If there is
 // an error, it will be of type *PathError or *ErrPermissionsChanged (if file's
 // permissions got changed (should be 0600)).
-func OpenAutoFile(path string) (*AutoFile, error) {
-	var err error
-	path, err = filepath.Abs(path)
-	if err != nil {
-		return nil, err
-	}
-	af := &AutoFile{
-		ID:               cmtrand.Str(12) + ":" + path,
-		Path:             path,
-		closeTicker:      time.NewTicker(autoFileClosePeriod),
-		closeTickerStopc: make(chan struct{}),
-	}
-	if err := af.openFile(); err != nil {
-		af.Close()
-		return nil, err
-	}
+func OpenAutoFile(path string) (*AutoFile, error) { _ = "STUB: not implemented"; return nil, nil }
 
-	// Close file on SIGHUP.
-	af.hupc = make(chan os.Signal, 1)
-	signal.Notify(af.hupc, syscall.SIGHUP)
-	go func() {
-		for range af.hupc {
-			_ = af.closeFile()
-		}
-	}()
-
-	go af.closeFileRoutine()
-
-	return af, nil
-}
+// Close file on SIGHUP.
 
 // Close shuts down the closing goroutine, SIGHUP handler and closes the
 // AutoFile.
-func (af *AutoFile) Close() error {
-	af.closeTicker.Stop()
-	close(af.closeTickerStopc)
-	if af.hupc != nil {
-		close(af.hupc)
-	}
-	return af.closeFile()
-}
+func (af *AutoFile) Close() error { _ = "STUB: not implemented"; return nil }
 
-func (af *AutoFile) closeFileRoutine() {
-	for {
-		select {
-		case <-af.closeTicker.C:
-			_ = af.closeFile()
-		case <-af.closeTickerStopc:
-			return
-		}
-	}
-}
+func (af *AutoFile) closeFileRoutine() { _ = "STUB: not implemented"; return }
 
-func (af *AutoFile) closeFile() (err error) {
-	af.mtx.Lock()
-	defer af.mtx.Unlock()
-
-	file := af.file
-	if file == nil {
-		return nil
-	}
-
-	af.file = nil
-	return file.Close()
-}
+func (af *AutoFile) closeFile() (err error) { _ = "STUB: not implemented"; return nil }
 
 // Write writes len(b) bytes to the AutoFile. It returns the number of bytes
 // written and an error, if any. Write returns a non-nil error when n !=
 // len(b).
 // Opens AutoFile if needed.
-func (af *AutoFile) Write(b []byte) (n int, err error) {
-	af.mtx.Lock()
-	defer af.mtx.Unlock()
-
-	if af.file == nil {
-		if err = af.openFile(); err != nil {
-			return
-		}
-	}
-
-	n, err = af.file.Write(b)
-	return
-}
+func (af *AutoFile) Write(b []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 // Sync commits the current contents of the file to stable storage. Typically,
 // this means flushing the file system's in-memory copy of recently written
 // data to disk.
 // Opens AutoFile if needed.
-func (af *AutoFile) Sync() error {
-	af.mtx.Lock()
-	defer af.mtx.Unlock()
+func (af *AutoFile) Sync() error { _ = "STUB: not implemented"; return nil }
 
-	if af.file == nil {
-		if err := af.openFile(); err != nil {
-			return err
-		}
-	}
-	return af.file.Sync()
-}
+func (af *AutoFile) openFile() error { _ = "STUB: not implemented"; return nil }
 
-func (af *AutoFile) openFile() error {
-	file, err := os.OpenFile(af.Path, os.O_RDWR|os.O_CREATE|os.O_APPEND, autoFilePerms)
-	if err != nil {
-		return err
-	}
-	// fileInfo, err := file.Stat()
-	// if err != nil {
-	// 	return err
-	// }
-	// if fileInfo.Mode() != autoFilePerms {
-	// 	return errors.NewErrPermissionsChanged(file.Name(), fileInfo.Mode(), autoFilePerms)
-	// }
-	af.file = file
-	return nil
-}
+// fileInfo, err := file.Stat()
+// if err != nil {
+// 	return err
+// }
+// if fileInfo.Mode() != autoFilePerms {
+// 	return errors.NewErrPermissionsChanged(file.Name(), fileInfo.Mode(), autoFilePerms)
+// }
 
 // Size returns the size of the AutoFile. It returns -1 and an error if fails
 // get stats or open file.
 // Opens AutoFile if needed.
-func (af *AutoFile) Size() (int64, error) {
-	af.mtx.Lock()
-	defer af.mtx.Unlock()
-
-	if af.file == nil {
-		if err := af.openFile(); err != nil {
-			return -1, err
-		}
-	}
-
-	stat, err := af.file.Stat()
-	if err != nil {
-		return -1, err
-	}
-	return stat.Size(), nil
-}
+func (af *AutoFile) Size() (int64, error) { _ = "STUB: not implemented"; return 0, nil }

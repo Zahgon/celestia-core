@@ -1,7 +1,6 @@
 package trace
 
 import (
-	"errors"
 	"os"
 
 	"github.com/cometbft/cometbft/config"
@@ -23,26 +22,19 @@ type Tracer interface {
 }
 
 func NewTracer(cfg *config.Config, logger log.Logger, chainID, nodeID string) (Tracer, error) {
-	switch cfg.Instrumentation.TraceType {
-	case "local":
-		return NewLocalTracer(cfg, logger, chainID, nodeID)
-	case "noop":
-		return NoOpTracer(), nil
-	default:
-		logger.Error("unknown tracer type, using noop", "type", cfg.Instrumentation.TraceType)
-		return NoOpTracer(), nil
-	}
+	_ = "STUB: not implemented"
+	return *new(Tracer), nil
 }
 
-func NoOpTracer() Tracer {
-	return &noOpTracer{}
-}
+func NoOpTracer() Tracer { _ = "STUB: not implemented"; return *new(Tracer) }
 
 type noOpTracer struct{}
 
-func (*noOpTracer) Write(_ Entry) {}
+func (*noOpTracer) Write(_ Entry) { _ = "STUB: not implemented"; return }
 func (*noOpTracer) ReadTable(_ string) (*os.File, error) {
-	return nil, errors.New("no-op tracer does not support reading")
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (*noOpTracer) IsCollecting(_ string) bool { return false }
-func (*noOpTracer) Stop()                      {}
+
+func (*noOpTracer) IsCollecting(_ string) bool { _ = "STUB: not implemented"; return false }
+func (*noOpTracer) Stop()                      { _ = "STUB: not implemented"; return }

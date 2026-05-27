@@ -4,16 +4,13 @@
 package types
 
 import (
-	encoding_binary "encoding/binary"
 	fmt "fmt"
+	math "math"
+	time "time"
+
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
 	_ "github.com/cosmos/gogoproto/types"
-	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
-	io "io"
-	math "math"
-	math_bits "math/bits"
-	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -33,51 +30,31 @@ type CanonicalBlockID struct {
 	PartSetHeader CanonicalPartSetHeader `protobuf:"bytes,2,opt,name=part_set_header,json=partSetHeader,proto3" json:"part_set_header"`
 }
 
-func (m *CanonicalBlockID) Reset()         { *m = CanonicalBlockID{} }
-func (m *CanonicalBlockID) String() string { return proto.CompactTextString(m) }
-func (*CanonicalBlockID) ProtoMessage()    {}
-func (*CanonicalBlockID) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8d1a1a84ff7267ed, []int{0}
-}
-func (m *CanonicalBlockID) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *CanonicalBlockID) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *CanonicalBlockID) String() string            { _ = "STUB: not implemented"; return "" }
+func (*CanonicalBlockID) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*CanonicalBlockID) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *CanonicalBlockID) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *CanonicalBlockID) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CanonicalBlockID.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *CanonicalBlockID) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CanonicalBlockID.Merge(m, src)
-}
-func (m *CanonicalBlockID) XXX_Size() int {
-	return m.Size()
-}
-func (m *CanonicalBlockID) XXX_DiscardUnknown() {
-	xxx_messageInfo_CanonicalBlockID.DiscardUnknown(m)
-}
+
+func (m *CanonicalBlockID) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *CanonicalBlockID) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalBlockID) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_CanonicalBlockID proto.InternalMessageInfo
 
-func (m *CanonicalBlockID) GetHash() []byte {
-	if m != nil {
-		return m.Hash
-	}
-	return nil
-}
+func (m *CanonicalBlockID) GetHash() []byte { _ = "STUB: not implemented"; return nil }
 
 func (m *CanonicalBlockID) GetPartSetHeader() CanonicalPartSetHeader {
-	if m != nil {
-		return m.PartSetHeader
-	}
-	return CanonicalPartSetHeader{}
+	_ = "STUB: not implemented"
+	return *new(CanonicalPartSetHeader)
 }
 
 type CanonicalPartSetHeader struct {
@@ -85,52 +62,35 @@ type CanonicalPartSetHeader struct {
 	Hash  []byte `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
 }
 
-func (m *CanonicalPartSetHeader) Reset()         { *m = CanonicalPartSetHeader{} }
-func (m *CanonicalPartSetHeader) String() string { return proto.CompactTextString(m) }
-func (*CanonicalPartSetHeader) ProtoMessage()    {}
+func (m *CanonicalPartSetHeader) Reset()         { _ = "STUB: not implemented"; return }
+func (m *CanonicalPartSetHeader) String() string { _ = "STUB: not implemented"; return "" }
+func (*CanonicalPartSetHeader) ProtoMessage()    { _ = "STUB: not implemented"; return }
 func (*CanonicalPartSetHeader) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8d1a1a84ff7267ed, []int{1}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
 func (m *CanonicalPartSetHeader) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
+	_ = "STUB: not implemented"
+	return nil
 }
+
 func (m *CanonicalPartSetHeader) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CanonicalPartSetHeader.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *CanonicalPartSetHeader) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CanonicalPartSetHeader.Merge(m, src)
-}
-func (m *CanonicalPartSetHeader) XXX_Size() int {
-	return m.Size()
-}
-func (m *CanonicalPartSetHeader) XXX_DiscardUnknown() {
-	xxx_messageInfo_CanonicalPartSetHeader.DiscardUnknown(m)
-}
+
+func (m *CanonicalPartSetHeader) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *CanonicalPartSetHeader) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalPartSetHeader) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_CanonicalPartSetHeader proto.InternalMessageInfo
 
-func (m *CanonicalPartSetHeader) GetTotal() uint32 {
-	if m != nil {
-		return m.Total
-	}
-	return 0
-}
+func (m *CanonicalPartSetHeader) GetTotal() uint32 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalPartSetHeader) GetHash() []byte {
-	if m != nil {
-		return m.Hash
-	}
-	return nil
-}
+func (m *CanonicalPartSetHeader) GetHash() []byte { _ = "STUB: not implemented"; return nil }
 
 type CanonicalProposal struct {
 	Type      SignedMsgType     `protobuf:"varint,1,opt,name=type,proto3,enum=tendermint.types.SignedMsgType" json:"type,omitempty"`
@@ -142,87 +102,45 @@ type CanonicalProposal struct {
 	ChainID   string            `protobuf:"bytes,7,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 }
 
-func (m *CanonicalProposal) Reset()         { *m = CanonicalProposal{} }
-func (m *CanonicalProposal) String() string { return proto.CompactTextString(m) }
-func (*CanonicalProposal) ProtoMessage()    {}
-func (*CanonicalProposal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8d1a1a84ff7267ed, []int{2}
-}
-func (m *CanonicalProposal) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *CanonicalProposal) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *CanonicalProposal) String() string            { _ = "STUB: not implemented"; return "" }
+func (*CanonicalProposal) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*CanonicalProposal) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *CanonicalProposal) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *CanonicalProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CanonicalProposal.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *CanonicalProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CanonicalProposal.Merge(m, src)
-}
-func (m *CanonicalProposal) XXX_Size() int {
-	return m.Size()
-}
-func (m *CanonicalProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_CanonicalProposal.DiscardUnknown(m)
-}
+
+func (m *CanonicalProposal) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *CanonicalProposal) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalProposal) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_CanonicalProposal proto.InternalMessageInfo
 
 func (m *CanonicalProposal) GetType() SignedMsgType {
-	if m != nil {
-		return m.Type
-	}
-	return UnknownType
+	_ = "STUB: not implemented"
+	return *new(SignedMsgType)
 }
 
-func (m *CanonicalProposal) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
-}
+func (m *CanonicalProposal) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalProposal) GetRound() int64 {
-	if m != nil {
-		return m.Round
-	}
-	return 0
-}
+func (m *CanonicalProposal) GetRound() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalProposal) GetPOLRound() int64 {
-	if m != nil {
-		return m.POLRound
-	}
-	return 0
-}
+func (m *CanonicalProposal) GetPOLRound() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalProposal) GetBlockID() *CanonicalBlockID {
-	if m != nil {
-		return m.BlockID
-	}
-	return nil
-}
+func (m *CanonicalProposal) GetBlockID() *CanonicalBlockID { _ = "STUB: not implemented"; return nil }
 
 func (m *CanonicalProposal) GetTimestamp() time.Time {
-	if m != nil {
-		return m.Timestamp
-	}
-	return time.Time{}
+	_ = "STUB: not implemented"
+	return *new(time.Time)
 }
 
-func (m *CanonicalProposal) GetChainID() string {
-	if m != nil {
-		return m.ChainID
-	}
-	return ""
-}
+func (m *CanonicalProposal) GetChainID() string { _ = "STUB: not implemented"; return "" }
 
 type CanonicalVote struct {
 	Type      SignedMsgType     `protobuf:"varint,1,opt,name=type,proto3,enum=tendermint.types.SignedMsgType" json:"type,omitempty"`
@@ -233,80 +151,40 @@ type CanonicalVote struct {
 	ChainID   string            `protobuf:"bytes,6,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 }
 
-func (m *CanonicalVote) Reset()         { *m = CanonicalVote{} }
-func (m *CanonicalVote) String() string { return proto.CompactTextString(m) }
-func (*CanonicalVote) ProtoMessage()    {}
-func (*CanonicalVote) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8d1a1a84ff7267ed, []int{3}
-}
-func (m *CanonicalVote) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
+func (m *CanonicalVote) Reset()                    { _ = "STUB: not implemented"; return }
+func (m *CanonicalVote) String() string            { _ = "STUB: not implemented"; return "" }
+func (*CanonicalVote) ProtoMessage()               { _ = "STUB: not implemented"; return }
+func (*CanonicalVote) Descriptor() ([]byte, []int) { _ = "STUB: not implemented"; return nil, nil }
+
+func (m *CanonicalVote) XXX_Unmarshal(b []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *CanonicalVote) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CanonicalVote.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
-func (m *CanonicalVote) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CanonicalVote.Merge(m, src)
-}
-func (m *CanonicalVote) XXX_Size() int {
-	return m.Size()
-}
-func (m *CanonicalVote) XXX_DiscardUnknown() {
-	xxx_messageInfo_CanonicalVote.DiscardUnknown(m)
-}
+
+func (m *CanonicalVote) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
+
+func (m *CanonicalVote) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalVote) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
 
 var xxx_messageInfo_CanonicalVote proto.InternalMessageInfo
 
 func (m *CanonicalVote) GetType() SignedMsgType {
-	if m != nil {
-		return m.Type
-	}
-	return UnknownType
+	_ = "STUB: not implemented"
+	return *new(SignedMsgType)
 }
 
-func (m *CanonicalVote) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
-}
+func (m *CanonicalVote) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalVote) GetRound() int64 {
-	if m != nil {
-		return m.Round
-	}
-	return 0
-}
+func (m *CanonicalVote) GetRound() int64 { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalVote) GetBlockID() *CanonicalBlockID {
-	if m != nil {
-		return m.BlockID
-	}
-	return nil
-}
+func (m *CanonicalVote) GetBlockID() *CanonicalBlockID { _ = "STUB: not implemented"; return nil }
 
-func (m *CanonicalVote) GetTimestamp() time.Time {
-	if m != nil {
-		return m.Timestamp
-	}
-	return time.Time{}
-}
+func (m *CanonicalVote) GetTimestamp() time.Time { _ = "STUB: not implemented"; return *new(time.Time) }
 
-func (m *CanonicalVote) GetChainID() string {
-	if m != nil {
-		return m.ChainID
-	}
-	return ""
-}
+func (m *CanonicalVote) GetChainID() string { _ = "STUB: not implemented"; return "" }
 
 // CanonicalVoteExtension provides us a way to serialize a vote extension from
 // a particular validator such that we can sign over those serialized bytes.
@@ -317,66 +195,39 @@ type CanonicalVoteExtension struct {
 	ChainId   string `protobuf:"bytes,4,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
 }
 
-func (m *CanonicalVoteExtension) Reset()         { *m = CanonicalVoteExtension{} }
-func (m *CanonicalVoteExtension) String() string { return proto.CompactTextString(m) }
-func (*CanonicalVoteExtension) ProtoMessage()    {}
+func (m *CanonicalVoteExtension) Reset()         { _ = "STUB: not implemented"; return }
+func (m *CanonicalVoteExtension) String() string { _ = "STUB: not implemented"; return "" }
+func (*CanonicalVoteExtension) ProtoMessage()    { _ = "STUB: not implemented"; return }
 func (*CanonicalVoteExtension) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8d1a1a84ff7267ed, []int{4}
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
 func (m *CanonicalVoteExtension) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *CanonicalVoteExtension) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_CanonicalVoteExtension.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *CanonicalVoteExtension) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_CanonicalVoteExtension.Merge(m, src)
-}
-func (m *CanonicalVoteExtension) XXX_Size() int {
-	return m.Size()
-}
-func (m *CanonicalVoteExtension) XXX_DiscardUnknown() {
-	xxx_messageInfo_CanonicalVoteExtension.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_CanonicalVoteExtension proto.InternalMessageInfo
-
-func (m *CanonicalVoteExtension) GetExtension() []byte {
-	if m != nil {
-		return m.Extension
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
 
-func (m *CanonicalVoteExtension) GetHeight() int64 {
-	if m != nil {
-		return m.Height
-	}
-	return 0
+func (m *CanonicalVoteExtension) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
-func (m *CanonicalVoteExtension) GetRound() int64 {
-	if m != nil {
-		return m.Round
-	}
-	return 0
-}
+func (m *CanonicalVoteExtension) XXX_Merge(src proto.Message) { _ = "STUB: not implemented"; return }
 
-func (m *CanonicalVoteExtension) GetChainId() string {
-	if m != nil {
-		return m.ChainId
-	}
-	return ""
-}
+func (m *CanonicalVoteExtension) XXX_Size() int { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalVoteExtension) XXX_DiscardUnknown() { _ = "STUB: not implemented"; return }
+
+var xxx_messageInfo_CanonicalVoteExtension proto.InternalMessageInfo
+
+func (m *CanonicalVoteExtension) GetExtension() []byte { _ = "STUB: not implemented"; return nil }
+
+func (m *CanonicalVoteExtension) GetHeight() int64 { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalVoteExtension) GetRound() int64 { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalVoteExtension) GetChainId() string { _ = "STUB: not implemented"; return "" }
 
 func init() {
 	proto.RegisterType((*CanonicalBlockID)(nil), "tendermint.types.CanonicalBlockID")
@@ -426,1231 +277,116 @@ var fileDescriptor_8d1a1a84ff7267ed = []byte{
 }
 
 func (m *CanonicalBlockID) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *CanonicalBlockID) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalBlockID) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	{
-		size, err := m.PartSetHeader.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintCanonical(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x12
-	if len(m.Hash) > 0 {
-		i -= len(m.Hash)
-		copy(dAtA[i:], m.Hash)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.Hash)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalPartSetHeader) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *CanonicalPartSetHeader) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalPartSetHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Hash) > 0 {
-		i -= len(m.Hash)
-		copy(dAtA[i:], m.Hash)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.Hash)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Total != 0 {
-		i = encodeVarintCanonical(dAtA, i, uint64(m.Total))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalProposal) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *CanonicalProposal) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.ChainID) > 0 {
-		i -= len(m.ChainID)
-		copy(dAtA[i:], m.ChainID)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.ChainID)))
-		i--
-		dAtA[i] = 0x3a
-	}
-	n2, err2 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.Timestamp, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Timestamp):])
-	if err2 != nil {
-		return 0, err2
-	}
-	i -= n2
-	i = encodeVarintCanonical(dAtA, i, uint64(n2))
-	i--
-	dAtA[i] = 0x32
-	if m.BlockID != nil {
-		{
-			size, err := m.BlockID.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintCanonical(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x2a
-	}
-	if m.POLRound != 0 {
-		i = encodeVarintCanonical(dAtA, i, uint64(m.POLRound))
-		i--
-		dAtA[i] = 0x20
-	}
-	if m.Round != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Round))
-		i--
-		dAtA[i] = 0x19
-	}
-	if m.Height != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Height))
-		i--
-		dAtA[i] = 0x11
-	}
-	if m.Type != 0 {
-		i = encodeVarintCanonical(dAtA, i, uint64(m.Type))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalVote) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *CanonicalVote) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalVote) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.ChainID) > 0 {
-		i -= len(m.ChainID)
-		copy(dAtA[i:], m.ChainID)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.ChainID)))
-		i--
-		dAtA[i] = 0x32
-	}
-	n4, err4 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(m.Timestamp, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Timestamp):])
-	if err4 != nil {
-		return 0, err4
-	}
-	i -= n4
-	i = encodeVarintCanonical(dAtA, i, uint64(n4))
-	i--
-	dAtA[i] = 0x2a
-	if m.BlockID != nil {
-		{
-			size, err := m.BlockID.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintCanonical(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.Round != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Round))
-		i--
-		dAtA[i] = 0x19
-	}
-	if m.Height != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Height))
-		i--
-		dAtA[i] = 0x11
-	}
-	if m.Type != 0 {
-		i = encodeVarintCanonical(dAtA, i, uint64(m.Type))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalVoteExtension) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 func (m *CanonicalVoteExtension) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func (m *CanonicalVoteExtension) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.ChainId) > 0 {
-		i -= len(m.ChainId)
-		copy(dAtA[i:], m.ChainId)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.ChainId)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.Round != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Round))
-		i--
-		dAtA[i] = 0x19
-	}
-	if m.Height != 0 {
-		i -= 8
-		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(m.Height))
-		i--
-		dAtA[i] = 0x11
-	}
-	if len(m.Extension) > 0 {
-		i -= len(m.Extension)
-		copy(dAtA[i:], m.Extension)
-		i = encodeVarintCanonical(dAtA, i, uint64(len(m.Extension)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	_ = "STUB: not implemented"
+	return 0, nil
 }
 
 func encodeVarintCanonical(dAtA []byte, offset int, v uint64) int {
-	offset -= sovCanonical(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-func (m *CanonicalBlockID) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Hash)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	l = m.PartSetHeader.Size()
-	n += 1 + l + sovCanonical(uint64(l))
-	return n
+	_ = "STUB: not implemented"
+	return 0
 }
 
-func (m *CanonicalPartSetHeader) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Total != 0 {
-		n += 1 + sovCanonical(uint64(m.Total))
-	}
-	l = len(m.Hash)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	return n
-}
+func (m *CanonicalBlockID) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalProposal) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Type != 0 {
-		n += 1 + sovCanonical(uint64(m.Type))
-	}
-	if m.Height != 0 {
-		n += 9
-	}
-	if m.Round != 0 {
-		n += 9
-	}
-	if m.POLRound != 0 {
-		n += 1 + sovCanonical(uint64(m.POLRound))
-	}
-	if m.BlockID != nil {
-		l = m.BlockID.Size()
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Timestamp)
-	n += 1 + l + sovCanonical(uint64(l))
-	l = len(m.ChainID)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	return n
-}
+func (m *CanonicalPartSetHeader) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalVote) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Type != 0 {
-		n += 1 + sovCanonical(uint64(m.Type))
-	}
-	if m.Height != 0 {
-		n += 9
-	}
-	if m.Round != 0 {
-		n += 9
-	}
-	if m.BlockID != nil {
-		l = m.BlockID.Size()
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	l = github_com_cosmos_gogoproto_types.SizeOfStdTime(m.Timestamp)
-	n += 1 + l + sovCanonical(uint64(l))
-	l = len(m.ChainID)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	return n
-}
+func (m *CanonicalProposal) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func (m *CanonicalVoteExtension) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.Extension)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	if m.Height != 0 {
-		n += 9
-	}
-	if m.Round != 0 {
-		n += 9
-	}
-	l = len(m.ChainId)
-	if l > 0 {
-		n += 1 + l + sovCanonical(uint64(l))
-	}
-	return n
-}
+func (m *CanonicalVote) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-func sovCanonical(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-func sozCanonical(x uint64) (n int) {
-	return sovCanonical(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *CanonicalBlockID) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: CanonicalBlockID: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CanonicalBlockID: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
-			if m.Hash == nil {
-				m.Hash = []byte{}
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PartSetHeader", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := m.PartSetHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCanonical(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *CanonicalVoteExtension) Size() (n int) { _ = "STUB: not implemented"; return 0 }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
+func sovCanonical(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func sozCanonical(x uint64) (n int) { _ = "STUB: not implemented"; return 0 }
+
+func (m *CanonicalBlockID) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *CanonicalPartSetHeader) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: CanonicalPartSetHeader: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CanonicalPartSetHeader: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Total", wireType)
-			}
-			m.Total = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Total |= uint32(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
-			if m.Hash == nil {
-				m.Hash = []byte{}
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCanonical(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
-func (m *CanonicalProposal) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: CanonicalProposal: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CanonicalProposal: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			m.Type = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Type |= SignedMsgType(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Height = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 3:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Round", wireType)
-			}
-			m.Round = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Round = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field POLRound", wireType)
-			}
-			m.POLRound = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.POLRound |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BlockID", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.BlockID == nil {
-				m.BlockID = &CanonicalBlockID{}
-			}
-			if err := m.BlockID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.Timestamp, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 7:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChainID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChainID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCanonical(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *CanonicalVote) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: CanonicalVote: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CanonicalVote: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
-			}
-			m.Type = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Type |= SignedMsgType(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Height = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 3:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Round", wireType)
-			}
-			m.Round = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Round = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BlockID", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.BlockID == nil {
-				m.BlockID = &CanonicalBlockID{}
-			}
-			if err := m.BlockID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Timestamp", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(&m.Timestamp, dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChainID", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChainID = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCanonical(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
+func (m *CanonicalProposal) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
 
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
+func (m *CanonicalVote) Unmarshal(dAtA []byte) error { _ = "STUB: not implemented"; return nil }
+
 func (m *CanonicalVoteExtension) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: CanonicalVoteExtension: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: CanonicalVoteExtension: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Extension", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Extension = append(m.Extension[:0], dAtA[iNdEx:postIndex]...)
-			if m.Extension == nil {
-				m.Extension = []byte{}
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Height", wireType)
-			}
-			m.Height = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Height = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 3:
-			if wireType != 1 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Round", wireType)
-			}
-			m.Round = 0
-			if (iNdEx + 8) > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Round = int64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
-			iNdEx += 8
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChainId", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChainId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipCanonical(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthCanonical
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
+	_ = "STUB: not implemented"
 	return nil
 }
-func skipCanonical(dAtA []byte) (n int, err error) {
-	l := len(dAtA)
-	iNdEx := 0
-	depth := 0
-	for iNdEx < l {
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return 0, ErrIntOverflowCanonical
-			}
-			if iNdEx >= l {
-				return 0, io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		wireType := int(wire & 0x7)
-		switch wireType {
-		case 0:
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				iNdEx++
-				if dAtA[iNdEx-1] < 0x80 {
-					break
-				}
-			}
-		case 1:
-			iNdEx += 8
-		case 2:
-			var length int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return 0, ErrIntOverflowCanonical
-				}
-				if iNdEx >= l {
-					return 0, io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				length |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if length < 0 {
-				return 0, ErrInvalidLengthCanonical
-			}
-			iNdEx += length
-		case 3:
-			depth++
-		case 4:
-			if depth == 0 {
-				return 0, ErrUnexpectedEndOfGroupCanonical
-			}
-			depth--
-		case 5:
-			iNdEx += 4
-		default:
-			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
-		}
-		if iNdEx < 0 {
-			return 0, ErrInvalidLengthCanonical
-		}
-		if depth == 0 {
-			return iNdEx, nil
-		}
-	}
-	return 0, io.ErrUnexpectedEOF
-}
+
+func skipCanonical(dAtA []byte) (n int, err error) { _ = "STUB: not implemented"; return 0, nil }
 
 var (
 	ErrInvalidLengthCanonical        = fmt.Errorf("proto: negative length found during unmarshaling")

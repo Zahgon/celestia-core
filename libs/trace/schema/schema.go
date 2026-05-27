@@ -11,15 +11,9 @@ func init() {
 }
 
 func AllTables() []string {
-	tables := []string{} //nolint:prealloc
-	tables = append(tables, MempoolTables()...)
-	tables = append(tables, ConsensusTables()...)
-	tables = append(tables, BlocksyncTables()...)
-	tables = append(tables, P2PTables()...)
-	tables = append(tables, ABCITable)
-	tables = append(tables, RecoveryTables()...)
-	tables = append(tables, MessageStatsTables()...)
-	return tables
+	_ = "STUB: not implemented"
+	//nolint:prealloc
+	return nil
 }
 
 const (
@@ -34,15 +28,4 @@ const (
 	Haves
 )
 
-func (t TransferType) String() string {
-	switch t {
-	case Download:
-		return "download"
-	case Upload:
-		return "upload"
-	case Haves:
-		return "haves"
-	default:
-		return "unknown"
-	}
-}
+func (t TransferType) String() string { _ = "STUB: not implemented"; return "" }

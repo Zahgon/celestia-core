@@ -2,7 +2,6 @@ package propagation
 
 import (
 	"context"
-	"errors"
 	"sync/atomic"
 
 	proptypes "github.com/cometbft/cometbft/consensus/propagation/types"
@@ -64,338 +63,165 @@ type partData struct {
 // newPeerState initializes and returns a new PeerState. This should be
 // called for each peer.
 func newPeerState(ctx context.Context, peer p2p.Peer, logger log.Logger) *PeerState {
-	ctx, cancel := context.WithCancel(ctx)
-	return &PeerState{
-		ctx:                 ctx,
-		cancel:              cancel,
-		mtx:                 &sync.RWMutex{},
-		state:               make(map[int64]map[int32]*partState),
-		peer:                peer,
-		logger:              logger,
-		receivedHaves:       make(chan request, 20_000),
-		receivedParts:       make(chan partData, 20_000),
-		canRequest:          make(chan struct{}, 1),
-		remainingRequests:   make(map[int64]map[int32]int),
-		consensusPeerState:  noOpPSE{},
-		unverifiedProposals: make(map[int64]*proptypes.CompactBlock),
-	}
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // SetConsensusPeerState sets the consensus peer state editor for this peer
 func (ps *PeerState) SetConsensusPeerState(editor PeerStateEditor) {
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-	ps.consensusPeerState = editor
+	_ = "STUB: not implemented"
+	return
 }
 
 // GetConsensusPeerState returns the consensus peer state editor if available
 func (ps *PeerState) GetConsensusPeerState() PeerStateEditor {
-	ps.mtx.Lock()
-	defer ps.mtx.Unlock()
-	return ps.consensusPeerState
+	_ = "STUB: not implemented"
+	return *new(PeerStateEditor)
 }
 
 // MaxUnverifiedProposalHeight returns the highest cached unverified proposal height.
 // Returns 0 if none exist.
-func (ps *PeerState) MaxUnverifiedProposalHeight() int64 {
-	ps.mtx.RLock()
-	defer ps.mtx.RUnlock()
-	var max int64
-	for h := range ps.unverifiedProposals {
-		if h > max {
-			max = h
-		}
-	}
-	return max
-}
+func (ps *PeerState) MaxUnverifiedProposalHeight() int64 { _ = "STUB: not implemented"; return 0 }
 
 // Initialize initializes the state for a given height and round in a
 // thread-safe way.
 func (d *PeerState) Initialize(height int64, round int32, size int) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	d.initialize(height, round, size)
+	_ = "STUB: not implemented"
+	return
 }
 
 // initialize initializes the state for a given height and round. This method is
 // not thread-safe.
 func (d *PeerState) initialize(height int64, round int32, size int) {
+	_ = "STUB: not implemented"
 	// Initialize the inner map if it doesn't exist
-	if d.state[height] == nil {
-		d.state[height] = make(map[int32]*partState)
-	}
-	if d.state[height][round] == nil {
-		d.state[height][round] = newpartState(size, height, round)
-	}
+	return
 }
 
-func (d *PeerState) IncreaseConcurrentReqs(add int64) {
-	d.concurrentReqs.Add(add)
-}
+func (d *PeerState) IncreaseConcurrentReqs(add int64) { _ = "STUB: not implemented"; return }
 
-func (d *PeerState) SetConcurrentReqs(count int64) {
-	d.concurrentReqs.Store(count)
-}
+func (d *PeerState) SetConcurrentReqs(count int64) { _ = "STUB: not implemented"; return }
 
 func (d *PeerState) DecreaseRemainingRequests(height int64, round int32, sub int) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	if d.remainingRequests[height] == nil {
-		return
-	}
-	remainingRequests := d.remainingRequests[height][round]
-	if remainingRequests == 0 {
-		return
-	}
-	if remainingRequests < sub {
-		d.remainingRequests[height][round] = 0
-		return
-	}
-	d.remainingRequests[height][round] -= sub
+	_ = "STUB: not implemented"
+	return
 }
 
 func (d *PeerState) SetRemainingRequests(height int64, round int32, count int) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	if d.remainingRequests[height] == nil {
-		d.remainingRequests[height] = make(map[int32]int)
-	}
-	d.remainingRequests[height][round] = count
+	_ = "STUB: not implemented"
+	return
 }
 
 func (d *PeerState) GetRemainingRequests(height int64, round int32) int {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	if d.remainingRequests[height] == nil {
-		return 0
-	}
-	return d.remainingRequests[height][round]
+	_ = "STUB: not implemented"
+	return 0
 }
 
-func (d *PeerState) DecreaseConcurrentReqs(sub int64) {
-	concurrentReqs := d.concurrentReqs.Load()
-	if concurrentReqs == 0 {
-		return
-	}
-	if concurrentReqs < sub {
-		d.concurrentReqs.Store(0)
-		return
-	}
-	d.concurrentReqs.Store(d.concurrentReqs.Load() - sub)
-}
+func (d *PeerState) DecreaseConcurrentReqs(sub int64) { _ = "STUB: not implemented"; return }
 
 // AddHaves sets the haves for a given height and round.
 func (d *PeerState) AddHaves(height int64, round int32, haves *bits.BitArray) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	d.initialize(height, round, haves.Size())
-	d.state[height][round].addHaves(haves)
+	_ = "STUB: not implemented"
+	return
 }
 
 // AddWants sets the wants for a given height and round.
 func (d *PeerState) AddWants(height int64, round int32, wants *bits.BitArray) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	d.initialize(height, round, wants.Size())
-	d.state[height][round].addWants(wants)
+	_ = "STUB: not implemented"
+	return
 }
 
 // AddRequests sets the requests for a given height and round.
 func (d *PeerState) AddRequests(height int64, round int32, requests *bits.BitArray) {
-	if requests == nil || requests.Size() == 0 {
-		d.logger.Error("peer state requests is nil or empty")
-		return
-	}
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	d.initialize(height, round, requests.Size())
-	d.state[height][round].addRequests(requests)
+	_ = "STUB: not implemented"
+	return
 }
 
 // SetHave sets the have bit for a given part.
 // Returns an error if the state is not initialized.
 func (d *PeerState) SetHave(height int64, round int32, part int) error {
-	d.mtx.RLock()
-	defer d.mtx.RUnlock()
-	if d.state == nil {
-		return errors.New("peer state: nil state")
-	}
-	if d.state[height] == nil {
-		return errors.New("peer state: height not found")
-	}
-	if d.state[height][round] == nil {
-		return errors.New("peer state: round not found")
-	}
-	d.state[height][round].setHave(part, true)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // SetWant sets the want bit for a given part.
 // Returns an error if the state is not initialized.
 func (d *PeerState) SetWant(height int64, round int32, part int, wants bool) error {
-	d.mtx.RLock()
-	defer d.mtx.RUnlock()
-	if d.state == nil {
-		return errors.New("peer state: nil state")
-	}
-	if d.state[height] == nil {
-		return errors.New("peer state: height not found")
-	}
-	if d.state[height][round] == nil {
-		return errors.New("peer state: round not found")
-	}
-	d.state[height][round].setWant(part, wants)
+	_ = "STUB: not implemented"
 	return nil
 }
 
 // GetHaves retrieves the haves for a given height and round.
 func (d *PeerState) GetHaves(height int64, round int32) (empty *bits.BitArray, has bool) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
+	_ = "STUB: not implemented"
+	return nil, false
+
 	// create the maps if they don't exist
-	hdata, has := d.state[height]
-	if !has {
-		return empty, false
-	}
-	rdata, has := hdata[round]
-	if !has {
-		return empty, false
-	}
-	return rdata.haves, true
 }
 
 // GetWants retrieves the wants for a given height and round.
 func (d *PeerState) GetWants(height int64, round int32) (empty *bits.BitArray, has bool) {
-	d.mtx.RLock()
-	defer d.mtx.RUnlock()
-	// create the maps if they don't exist
-	hdata, has := d.state[height]
-	if !has {
-		return empty, false
-	}
-	rdata, has := hdata[round]
-	if !has {
-		return empty, false
-	}
-	return rdata.wants, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
+
+// create the maps if they don't exist
 
 // GetRequests retrieves the requests for a given height and round.
 func (d *PeerState) GetRequests(height int64, round int32) (empty *bits.BitArray, has bool) {
-	d.mtx.RLock()
-	defer d.mtx.RUnlock()
-	// create the maps if they don't exist
-	hdata, has := d.state[height]
-	if !has {
-		return empty, false
-	}
-	rdata, has := hdata[round]
-	if !has {
-		return empty, false
-	}
-	return rdata.requests, true
+	_ = "STUB: not implemented"
+	return nil, false
 }
+
+// create the maps if they don't exist
 
 // WantsPart checks if the peer wants a given part.
 func (d *PeerState) WantsPart(height int64, round int32, part uint32) bool {
-	w, has := d.GetWants(height, round)
-	if !has {
-		return false
-	}
-	return w.GetIndex(int(part))
+	_ = "STUB: not implemented"
+	return false
 }
 
 // DeleteHeight removes all haves and wants for a given height.
-func (d *PeerState) DeleteHeight(height int64) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	delete(d.state, height)
-}
+func (d *PeerState) DeleteHeight(height int64) { _ = "STUB: not implemented"; return }
 
-func (d *PeerState) RequestsReady() {
-	select {
-	case d.canRequest <- struct{}{}:
-	default:
-	}
-}
+func (d *PeerState) RequestsReady() { _ = "STUB: not implemented"; return }
 
-func (d *PeerState) CanRequest() chan struct{} {
-	return d.canRequest
-}
+func (d *PeerState) CanRequest() chan struct{} { _ = "STUB: not implemented"; return nil }
 
 // prune removes all haves and wants for heights less than the given height,
 // while keeping the last keepRecentRounds for the current height.
-func (d *PeerState) prune(prunePastHeight int64) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	for height := range d.state {
-		if height < prunePastHeight {
-			delete(d.state, height)
-			delete(d.remainingRequests, height)
-		}
-	}
-	// Prune unverified proposals for heights <= prunePastHeight
-	for height := range d.unverifiedProposals {
-		if height <= prunePastHeight {
-			delete(d.unverifiedProposals, height)
-		}
-	}
-	// todo: prune rounds separately from heights
-}
+func (d *PeerState) prune(prunePastHeight int64) { _ = "STUB: not implemented"; return }
+
+// Prune unverified proposals for heights <= prunePastHeight
+
+// todo: prune rounds separately from heights
 
 // StoreUnverifiedProposal caches a compact block for a future height.
 // Returns true if stored, false if rejected (cache full with lower heights).
 func (d *PeerState) StoreUnverifiedProposal(cb *proptypes.CompactBlock) bool {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-
-	height := cb.Proposal.Height
-
-	// If we already have a proposal for this height, replace it (last write wins)
-	if _, exists := d.unverifiedProposals[height]; exists {
-		d.unverifiedProposals[height] = cb
-		return true
-	}
-
-	// If cache has room, store directly
-	if len(d.unverifiedProposals) < MaxUnverifiedProposals {
-		d.unverifiedProposals[height] = cb
-		return true
-	}
-
-	// Cache is full - find the highest height
-	var maxHeight int64 = -1
-	for h := range d.unverifiedProposals {
-		if h > maxHeight {
-			maxHeight = h
-		}
-	}
-
-	// Only store if this height is lower than the highest cached
-	// (we prioritize catching up on nearest heights first)
-	if height < maxHeight {
-		delete(d.unverifiedProposals, maxHeight)
-		d.unverifiedProposals[height] = cb
-		return true
-	}
-
-	// Reject - cache is full with lower heights
+	_ = "STUB: not implemented"
 	return false
 }
 
+// If we already have a proposal for this height, replace it (last write wins)
+
+// If cache has room, store directly
+
+// Cache is full - find the highest height
+
+// Only store if this height is lower than the highest cached
+// (we prioritize catching up on nearest heights first)
+
+// Reject - cache is full with lower heights
+
 // GetUnverifiedProposal returns cached compact block for height, or nil.
 func (d *PeerState) GetUnverifiedProposal(height int64) *proptypes.CompactBlock {
-	d.mtx.RLock()
-	defer d.mtx.RUnlock()
-	return d.unverifiedProposals[height]
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // DeleteUnverifiedProposal removes a cached compact block for a specific height.
-func (d *PeerState) DeleteUnverifiedProposal(height int64) {
-	d.mtx.Lock()
-	defer d.mtx.Unlock()
-	delete(d.unverifiedProposals, height)
-}
+func (d *PeerState) DeleteUnverifiedProposal(height int64) { _ = "STUB: not implemented"; return }
 
 type partState struct {
 	haves    *bits.BitArray
@@ -404,33 +230,17 @@ type partState struct {
 }
 
 // newpartState initializes and returns a new partState
-func newpartState(size int, _ int64, _ int32) *partState {
-	return &partState{
-		haves:    bits.NewBitArray(size),
-		wants:    bits.NewBitArray(size),
-		requests: bits.NewBitArray(size),
-	}
-}
+func newpartState(size int, _ int64, _ int32) *partState { _ = "STUB: not implemented"; return nil }
 
-func (p *partState) addHaves(haves *bits.BitArray) {
-	p.haves.AddBitArray(haves)
-}
+func (p *partState) addHaves(haves *bits.BitArray) { _ = "STUB: not implemented"; return }
 
-func (p *partState) addWants(wants *bits.BitArray) {
-	p.wants.AddBitArray(wants)
-}
+func (p *partState) addWants(wants *bits.BitArray) { _ = "STUB: not implemented"; return }
 
-func (p *partState) addRequests(requests *bits.BitArray) {
-	p.requests.AddBitArray(requests)
-}
+func (p *partState) addRequests(requests *bits.BitArray) { _ = "STUB: not implemented"; return }
 
 // SetHave sets the have bit for a given part.
 // TODO support setting the hash and the proof
-func (p *partState) setHave(index int, has bool) {
-	p.haves.SetIndex(index, has)
-}
+func (p *partState) setHave(index int, has bool) { _ = "STUB: not implemented"; return }
 
 // SetWant sets the want bit for a given part.
-func (p *partState) setWant(part int, wants bool) {
-	p.wants.SetIndex(part, wants)
-}
+func (p *partState) setWant(part int, wants bool) { _ = "STUB: not implemented"; return }

@@ -2,7 +2,6 @@ package state
 
 import (
 	"errors"
-	"fmt"
 )
 
 type (
@@ -62,66 +61,37 @@ type (
 	}
 )
 
-func (e ErrUnknownBlock) Error() string {
-	return fmt.Sprintf("could not find block #%d", e.Height)
-}
+func (e ErrUnknownBlock) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrBlockHashMismatch) Error() string {
-	return fmt.Sprintf(
-		"app block hash (%X) does not match core block hash (%X) for height %d",
-		e.AppHash,
-		e.CoreHash,
-		e.Height,
-	)
-}
+func (e ErrBlockHashMismatch) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrAppBlockHeightTooHigh) Error() string {
-	return fmt.Sprintf("app block height (%d) is higher than core (%d)", e.AppHeight, e.CoreHeight)
-}
+func (e ErrAppBlockHeightTooHigh) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrAppBlockHeightTooLow) Error() string {
-	return fmt.Sprintf("app block height (%d) is too far below block store base (%d)", e.AppHeight, e.StoreBase)
-}
+func (e ErrAppBlockHeightTooLow) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrLastStateMismatch) Error() string {
-	return fmt.Sprintf(
-		"latest CometBFT block (%d) LastAppHash (%X) does not match app's AppHash (%X)",
-		e.Height,
-		e.Core,
-		e.App,
-	)
-}
+func (e ErrLastStateMismatch) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrStateMismatch) Error() string {
-	return fmt.Sprintf(
-		"state after replay does not match saved state. Got ----\n%v\nExpected ----\n%v\n",
-		e.Got,
-		e.Expected,
-	)
-}
+func (e ErrStateMismatch) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrNoValSetForHeight) Error() string {
-	return fmt.Sprintf("could not find validator set for height #%d", e.Height)
-}
+func (e ErrNoValSetForHeight) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrNoConsensusParamsForHeight) Error() string {
-	return fmt.Sprintf("could not find consensus params for height #%d", e.Height)
-}
+func (e ErrNoConsensusParamsForHeight) Error() string { _ = "STUB: not implemented"; return "" }
 
-func (e ErrNoABCIResponsesForHeight) Error() string {
-	return fmt.Sprintf("could not find results for height #%d", e.Height)
-}
+func (e ErrNoABCIResponsesForHeight) Error() string { _ = "STUB: not implemented"; return "" }
 
 func (e ErrABCIResponseResponseUnmarshalForHeight) Error() string {
-	return fmt.Sprintf("could not decode results for height %d", e.Height)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (e ErrABCIResponseCorruptedOrSpecChangeForHeight) Error() string {
-	return fmt.Sprintf("failed to unmarshall FinalizeBlockResponse (also tried as legacy ABCI response) for height %d", e.Height)
+	_ = "STUB: not implemented"
+	return ""
 }
 
 func (e ErrABCIResponseCorruptedOrSpecChangeForHeight) Unwrap() error {
-	return e.Err
+	_ = "STUB: not implemented"
+	return nil
 }
 
 var ErrFinalizeBlockResponsesNotPersisted = errors.New("node is not persisting finalize block responses")

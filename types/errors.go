@@ -1,7 +1,5 @@
 package types
 
-import "fmt"
-
 type (
 	// ErrInvalidCommitHeight is returned when we encounter a commit with an
 	// unexpected height.
@@ -19,23 +17,15 @@ type (
 )
 
 func NewErrInvalidCommitHeight(expected, actual int64) ErrInvalidCommitHeight {
-	return ErrInvalidCommitHeight{
-		Expected: expected,
-		Actual:   actual,
-	}
+	_ = "STUB: not implemented"
+	return *new(ErrInvalidCommitHeight)
 }
 
-func (e ErrInvalidCommitHeight) Error() string {
-	return fmt.Sprintf("Invalid commit -- wrong height: %v vs %v", e.Expected, e.Actual)
-}
+func (e ErrInvalidCommitHeight) Error() string { _ = "STUB: not implemented"; return "" }
 
 func NewErrInvalidCommitSignatures(expected, actual int) ErrInvalidCommitSignatures {
-	return ErrInvalidCommitSignatures{
-		Expected: expected,
-		Actual:   actual,
-	}
+	_ = "STUB: not implemented"
+	return *new(ErrInvalidCommitSignatures)
 }
 
-func (e ErrInvalidCommitSignatures) Error() string {
-	return fmt.Sprintf("Invalid commit -- wrong set size: %v vs %v", e.Expected, e.Actual)
-}
+func (e ErrInvalidCommitSignatures) Error() string { _ = "STUB: not implemented"; return "" }

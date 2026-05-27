@@ -1,10 +1,8 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
-	"strings"
 
 	"github.com/cometbft/cometbft/libs/log"
 )
@@ -14,14 +12,12 @@ import (
 // interface on which the result objects are registered, and is popualted with
 // every RPCResponse
 func RegisterRPCFuncs(mux *http.ServeMux, funcMap map[string]*RPCFunc, logger log.Logger) {
+	_ = "STUB: not implemented"
 	// HTTP endpoints
-	for funcName, rpcFunc := range funcMap {
-		mux.HandleFunc("/"+funcName, makeHTTPHandler(rpcFunc, logger))
-	}
-
-	// JSONRPC endpoints
-	mux.HandleFunc("/", handleInvalidJSONRPCPaths(makeJSONRPCHandler(funcMap, logger)))
+	return
 }
+
+// JSONRPC endpoints
 
 type Option func(*RPCFunc)
 
@@ -31,22 +27,10 @@ type Option func(*RPCFunc)
 // `noCacheDefArgs` is a list of argument names that, if omitted or set to
 // their defaults when calling the RPC function, will skip the response
 // caching.
-func Cacheable(noCacheDefArgs ...string) Option {
-	return func(r *RPCFunc) {
-		r.cacheable = true
-		r.noCacheDefArgs = make(map[string]interface{})
-		for _, arg := range noCacheDefArgs {
-			r.noCacheDefArgs[arg] = nil
-		}
-	}
-}
+func Cacheable(noCacheDefArgs ...string) Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // Ws enables WebSocket communication.
-func Ws() Option {
-	return func(r *RPCFunc) {
-		r.ws = true
-	}
-}
+func Ws() Option { _ = "STUB: not implemented"; return *new(Option) }
 
 // RPCFunc contains the introspected type information for a function
 type RPCFunc struct {
@@ -62,93 +46,49 @@ type RPCFunc struct {
 // NewRPCFunc wraps a function for introspection.
 // f is the function, args are comma separated argument names
 func NewRPCFunc(f interface{}, args string, options ...Option) *RPCFunc {
-	return newRPCFunc(f, args, options...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // NewWSRPCFunc wraps a function for introspection and use in the websockets.
 func NewWSRPCFunc(f interface{}, args string, options ...Option) *RPCFunc {
-	options = append(options, Ws())
-	return newRPCFunc(f, args, options...)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // cacheableWithArgs returns whether or not a call to this function is cacheable,
 // given the specified arguments.
 func (f *RPCFunc) cacheableWithArgs(args []reflect.Value) bool {
-	if !f.cacheable {
-		return false
-	}
-	// Skip the context variable common to all RPC functions
-	for i := 1; i < len(f.args); i++ {
-		// f.argNames does not include the context variable
-		argName := f.argNames[i-1]
-		if _, hasDefault := f.noCacheDefArgs[argName]; hasDefault {
-			// Argument with default value was not supplied
-			if i >= len(args) {
-				return false
-			}
-			// Argument with default value is set to its zero value
-			if args[i].IsZero() {
-				return false
-			}
-		}
-	}
-	return true
+	_ = "STUB: not implemented"
+	return false
 }
 
+// Skip the context variable common to all RPC functions
+
+// f.argNames does not include the context variable
+
+// Argument with default value was not supplied
+
+// Argument with default value is set to its zero value
+
 func newRPCFunc(f interface{}, args string, options ...Option) *RPCFunc {
-	var argNames []string
-	if args != "" {
-		argNames = strings.Split(args, ",")
-	}
-
-	r := &RPCFunc{
-		f:        reflect.ValueOf(f),
-		args:     funcArgTypes(f),
-		returns:  funcReturnTypes(f),
-		argNames: argNames,
-	}
-
-	for _, opt := range options {
-		opt(r)
-	}
-
-	return r
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // return a function's argument types
-func funcArgTypes(f interface{}) []reflect.Type {
-	t := reflect.TypeOf(f)
-	n := t.NumIn()
-	typez := make([]reflect.Type, n)
-	for i := 0; i < n; i++ {
-		typez[i] = t.In(i)
-	}
-	return typez
-}
+func funcArgTypes(f interface{}) []reflect.Type { _ = "STUB: not implemented"; return nil }
 
 // return a function's return types
-func funcReturnTypes(f interface{}) []reflect.Type {
-	t := reflect.TypeOf(f)
-	n := t.NumOut()
-	typez := make([]reflect.Type, n)
-	for i := 0; i < n; i++ {
-		typez[i] = t.Out(i)
-	}
-	return typez
-}
+func funcReturnTypes(f interface{}) []reflect.Type { _ = "STUB: not implemented"; return nil }
 
 //-------------------------------------------------------------
 
 // NOTE: assume returns is result struct and error. If error is not nil, return it
 func unreflectResult(returns []reflect.Value) (interface{}, error) {
-	errV := returns[1]
-	if errV.Interface() != nil {
-		return nil, fmt.Errorf("%v", errV.Interface())
-	}
-	rv := returns[0]
-	// the result is a registered interface,
-	// we need a pointer to it so we can marshal with type byte
-	rvp := reflect.New(rv.Type())
-	rvp.Elem().Set(rv)
-	return rvp.Interface(), nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// the result is a registered interface,
+// we need a pointer to it so we can marshal with type byte

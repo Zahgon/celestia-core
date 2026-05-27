@@ -7,6 +7,6 @@ import (
 
 // UnsafeFlushMempool removes all transactions from the mempool.
 func (env *Environment) UnsafeFlushMempool(*rpctypes.Context) (*ctypes.ResultUnsafeFlushMempool, error) {
-	env.Mempool.Flush()
-	return &ctypes.ResultUnsafeFlushMempool{}, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }

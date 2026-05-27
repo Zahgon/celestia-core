@@ -21,95 +21,35 @@ type BlockIndexer struct {
 
 // Has provides a mock function with given fields: height
 func (_m *BlockIndexer) Has(height int64) (bool, error) {
-	ret := _m.Called(height)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Has")
-	}
-
-	var r0 bool
-	var r1 error
-	if rf, ok := ret.Get(0).(func(int64) (bool, error)); ok {
-		return rf(height)
-	}
-	if rf, ok := ret.Get(0).(func(int64) bool); ok {
-		r0 = rf(height)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	if rf, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = rf(height)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return false, nil
 }
 
 // Index provides a mock function with given fields: _a0
 func (_m *BlockIndexer) Index(_a0 types.EventDataNewBlockEvents) error {
-	ret := _m.Called(_a0)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Index")
-	}
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(types.EventDataNewBlockEvents) error); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // Search provides a mock function with given fields: ctx, q
 func (_m *BlockIndexer) Search(ctx context.Context, q *query.Query) ([]int64, error) {
-	ret := _m.Called(ctx, q)
-
-	if len(ret) == 0 {
-		panic("no return value specified for Search")
-	}
-
-	var r0 []int64
-	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *query.Query) ([]int64, error)); ok {
-		return rf(ctx, q)
-	}
-	if rf, ok := ret.Get(0).(func(context.Context, *query.Query) []int64); ok {
-		r0 = rf(ctx, q)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]int64)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(context.Context, *query.Query) error); ok {
-		r1 = rf(ctx, q)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
 // SetLogger provides a mock function with given fields: l
 func (_m *BlockIndexer) SetLogger(l log.Logger) {
-	_m.Called(l)
+	_ = "STUB: not implemented"
+
+	// NewBlockIndexer creates a new instance of BlockIndexer. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+	// The first argument is typically a *testing.T value.
+	return
 }
 
-// NewBlockIndexer creates a new instance of BlockIndexer. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
-// The first argument is typically a *testing.T value.
 func NewBlockIndexer(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *BlockIndexer {
-	mock := &BlockIndexer{}
-	mock.Mock.Test(t)
-
-	t.Cleanup(func() { mock.AssertExpectations(t) })
-
-	return mock
+	_ = "STUB: not implemented"
+	return nil
 }

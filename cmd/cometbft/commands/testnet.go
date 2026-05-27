@@ -1,22 +1,9 @@
 package commands
 
 import (
-	"fmt"
-	"net"
-	"os"
-	"path/filepath"
-	"strings"
-
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 
 	cfg "github.com/cometbft/cometbft/config"
-	"github.com/cometbft/cometbft/libs/bytes"
-	cmtrand "github.com/cometbft/cometbft/libs/rand"
-	"github.com/cometbft/cometbft/p2p"
-	"github.com/cometbft/cometbft/privval"
-	"github.com/cometbft/cometbft/types"
-	cmttime "github.com/cometbft/cometbft/types/time"
 )
 
 var (
@@ -94,185 +81,30 @@ Example:
 	RunE: testnetFiles,
 }
 
-func testnetFiles(*cobra.Command, []string) error {
-	if len(hostnames) > 0 && len(hostnames) != (nValidators+nNonValidators) {
-		return fmt.Errorf(
-			"testnet needs precisely %d hostnames (number of validators plus non-validators) if --hostname parameter is used",
-			nValidators+nNonValidators,
-		)
-	}
+func testnetFiles(*cobra.Command, []string) error { _ = "STUB: not implemented"; return nil }
 
-	config := cfg.DefaultConfig()
+// overwrite default config if set and valid
 
-	// overwrite default config if set and valid
-	if configFile != "" {
-		viper.SetConfigFile(configFile)
-		if err := viper.ReadInConfig(); err != nil {
-			return err
-		}
-		if err := viper.Unmarshal(config); err != nil {
-			return err
-		}
-		if err := config.ValidateBasic(); err != nil {
-			return err
-		}
-	}
+//nolint:staticcheck
+//nolint:staticcheck
 
-	genVals := make([]types.GenesisValidator, nValidators)
+// Generate genesis doc from generated validators
 
-	for i := 0; i < nValidators; i++ {
-		nodeDirName := fmt.Sprintf("%s%d", nodeDirPrefix, i)
-		nodeDir := filepath.Join(outputDir, nodeDirName)
-		config.SetRoot(nodeDir)
+// Write genesis file.
 
-		err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-		err = os.MkdirAll(filepath.Join(nodeDir, "data"), nodeDirPerm)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
+//nolint:staticcheck
 
-		if err := initFilesWithConfig(config); err != nil {
-			return err
-		}
+// Gather persistent peer addresses.
 
-		pvKeyFile := filepath.Join(nodeDir, config.BaseConfig.PrivValidatorKey)     //nolint:staticcheck
-		pvStateFile := filepath.Join(nodeDir, config.BaseConfig.PrivValidatorState) //nolint:staticcheck
-		pv := privval.LoadFilePV(pvKeyFile, pvStateFile)
+// Overwrite default config.
 
-		pubKey, err := pv.GetPubKey()
-		if err != nil {
-			return fmt.Errorf("can't get pubkey: %w", err)
-		}
-		genVals[i] = types.GenesisValidator{
-			Address: pubKey.Address(),
-			PubKey:  pubKey,
-			Power:   1,
-			Name:    nodeDirName,
-		}
-	}
-
-	for i := 0; i < nNonValidators; i++ {
-		nodeDir := filepath.Join(outputDir, fmt.Sprintf("%s%d", nodeDirPrefix, i+nValidators))
-		config.SetRoot(nodeDir)
-
-		err := os.MkdirAll(filepath.Join(nodeDir, "config"), nodeDirPerm)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-
-		err = os.MkdirAll(filepath.Join(nodeDir, "data"), nodeDirPerm)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-
-		if err := initFilesWithConfig(config); err != nil {
-			return err
-		}
-	}
-
-	// Generate genesis doc from generated validators
-	genDoc := &types.GenesisDoc{
-		ChainID:         "chain-" + cmtrand.Str(6),
-		ConsensusParams: types.DefaultConsensusParams(),
-		GenesisTime:     cmttime.Now(),
-		InitialHeight:   initialHeight,
-		Validators:      genVals,
-	}
-
-	// Write genesis file.
-	for i := 0; i < nValidators+nNonValidators; i++ {
-		nodeDir := filepath.Join(outputDir, fmt.Sprintf("%s%d", nodeDirPrefix, i))
-		if err := genDoc.SaveAs(filepath.Join(nodeDir, config.BaseConfig.Genesis)); err != nil { //nolint:staticcheck
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-	}
-
-	// Gather persistent peer addresses.
-	var (
-		persistentPeers string
-		err             error
-	)
-	if populatePersistentPeers {
-		persistentPeers, err = persistentPeersString(config)
-		if err != nil {
-			_ = os.RemoveAll(outputDir)
-			return err
-		}
-	}
-
-	// Overwrite default config.
-	for i := 0; i < nValidators+nNonValidators; i++ {
-		nodeDir := filepath.Join(outputDir, fmt.Sprintf("%s%d", nodeDirPrefix, i))
-		config.SetRoot(nodeDir)
-		config.P2P.AddrBookStrict = false
-		config.P2P.AllowDuplicateIP = true
-		if populatePersistentPeers {
-			config.P2P.PersistentPeers = persistentPeers
-		}
-		config.Moniker = moniker(i)
-
-		cfg.WriteConfigFile(filepath.Join(nodeDir, "config", "config.toml"), config)
-	}
-
-	fmt.Printf("Successfully initialized %v node directories\n", nValidators+nNonValidators)
-	return nil
-}
-
-func hostnameOrIP(i int) string {
-	if len(hostnames) > 0 && i < len(hostnames) {
-		return hostnames[i]
-	}
-	if startingIPAddress == "" {
-		return fmt.Sprintf("%s%d%s", hostnamePrefix, i, hostnameSuffix)
-	}
-	ip := net.ParseIP(startingIPAddress)
-	ip = ip.To4()
-	if ip == nil {
-		fmt.Printf("%v: non ipv4 address\n", startingIPAddress)
-		os.Exit(1)
-	}
-
-	for j := 0; j < i; j++ {
-		ip[3]++
-	}
-	return ip.String()
-}
+func hostnameOrIP(i int) string { _ = "STUB: not implemented"; return "" }
 
 func persistentPeersString(config *cfg.Config) (string, error) {
-	persistentPeers := make([]string, nValidators+nNonValidators)
-	for i := 0; i < nValidators+nNonValidators; i++ {
-		nodeDir := filepath.Join(outputDir, fmt.Sprintf("%s%d", nodeDirPrefix, i))
-		config.SetRoot(nodeDir)
-		nodeKey, err := p2p.LoadNodeKey(config.NodeKeyFile())
-		if err != nil {
-			return "", err
-		}
-		persistentPeers[i] = p2p.IDAddressString(nodeKey.ID(), fmt.Sprintf("%s:%d", hostnameOrIP(i), p2pPort))
-	}
-	return strings.Join(persistentPeers, ","), nil
+	_ = "STUB: not implemented"
+	return "", nil
 }
 
-func moniker(i int) string {
-	if randomMonikers {
-		return randomMoniker()
-	}
-	if len(hostnames) > 0 && i < len(hostnames) {
-		return hostnames[i]
-	}
-	if startingIPAddress == "" {
-		return fmt.Sprintf("%s%d%s", hostnamePrefix, i, hostnameSuffix)
-	}
-	return randomMoniker()
-}
+func moniker(i int) string { _ = "STUB: not implemented"; return "" }
 
-func randomMoniker() string {
-	return bytes.HexBytes(cmtrand.Bytes(8)).String()
-}
+func randomMoniker() string { _ = "STUB: not implemented"; return "" }

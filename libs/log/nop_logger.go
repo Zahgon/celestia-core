@@ -6,13 +6,11 @@ type nopLogger struct{}
 var _ Logger = (*nopLogger)(nil)
 
 // NewNopLogger returns a logger that doesn't do anything.
-func NewNopLogger() Logger { return &nopLogger{} }
+func NewNopLogger() Logger { _ = "STUB: not implemented"; return *new(Logger) }
 
-func (nopLogger) Trace(string, ...interface{}) {}
-func (nopLogger) Info(string, ...interface{})  {}
-func (nopLogger) Debug(string, ...interface{}) {}
-func (nopLogger) Error(string, ...interface{}) {}
+func (nopLogger) Trace(string, ...interface{}) { _ = "STUB: not implemented"; return }
+func (nopLogger) Info(string, ...interface{})  { _ = "STUB: not implemented"; return }
+func (nopLogger) Debug(string, ...interface{}) { _ = "STUB: not implemented"; return }
+func (nopLogger) Error(string, ...interface{}) { _ = "STUB: not implemented"; return }
 
-func (l *nopLogger) With(...interface{}) Logger {
-	return l
-}
+func (l *nopLogger) With(...interface{}) Logger { _ = "STUB: not implemented"; return *new(Logger) }

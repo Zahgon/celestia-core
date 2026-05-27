@@ -1,13 +1,5 @@
 package merkle
 
-import (
-	"encoding/hex"
-	"errors"
-	"fmt"
-	"net/url"
-	"strings"
-)
-
 /*
 
 	For generalized Merkle proofs, each layer of the proof may require an
@@ -64,47 +56,17 @@ type Key struct {
 type KeyPath []Key
 
 func (pth KeyPath) AppendKey(key []byte, enc keyEncoding) KeyPath {
-	return append(pth, Key{key, enc})
+	_ = "STUB: not implemented"
+	return *new(KeyPath)
 }
 
-func (pth KeyPath) String() string {
-	res := ""
-	for _, key := range pth {
-		switch key.enc {
-		case KeyEncodingURL:
-			res += "/" + url.PathEscape(string(key.name))
-		case KeyEncodingHex:
-			res += "/x:" + fmt.Sprintf("%X", key.name)
-		default:
-			panic("unexpected key encoding type")
-		}
-	}
-	return res
-}
+func (pth KeyPath) String() string { _ = "STUB: not implemented"; return "" }
 
 // Decode a path to a list of keys. Path must begin with `/`.
 // Each key must use a known encoding.
 func KeyPathToKeys(path string) (keys [][]byte, err error) {
-	if path == "" || path[0] != '/' {
-		return nil, errors.New("key path string must start with a forward slash '/'")
-	}
-	parts := strings.Split(path[1:], "/")
-	keys = make([][]byte, len(parts))
-	for i, part := range parts {
-		if strings.HasPrefix(part, "x:") {
-			hexPart := part[2:]
-			key, err := hex.DecodeString(hexPart)
-			if err != nil {
-				return nil, fmt.Errorf("decoding hex-encoded part #%d: /%s: %w", i, part, err)
-			}
-			keys[i] = key
-		} else {
-			key, err := url.PathUnescape(part)
-			if err != nil {
-				return nil, fmt.Errorf("decoding url-encoded part #%d: /%s: %w", i, part, err)
-			}
-			keys[i] = []byte(key) // TODO Test this with random bytes, I'm not sure that it works for arbitrary bytes...
-		}
-	}
-	return keys, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
+
+// TODO Test this with random bytes, I'm not sure that it works for arbitrary bytes...

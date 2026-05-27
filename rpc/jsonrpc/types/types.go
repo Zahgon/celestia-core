@@ -3,12 +3,7 @@ package types
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"reflect"
-	"strings"
-
-	cmtjson "github.com/cometbft/cometbft/libs/json"
 )
 
 // a wrapper to emulate a sum type: jsonrpcid = string | int
@@ -20,30 +15,28 @@ type jsonrpcid interface {
 // JSONRPCStringID a wrapper for JSON-RPC string IDs
 type JSONRPCStringID string
 
-func (JSONRPCStringID) isJSONRPCID()      {}
-func (id JSONRPCStringID) String() string { return string(id) }
+func (JSONRPCStringID) isJSONRPCID() { _ = "STUB: not implemented"; return }
+func (id JSONRPCStringID) String() string {
+	_ = "STUB: not implemented"
 
-// JSONRPCIntID a wrapper for JSON-RPC integer IDs
+	// JSONRPCIntID a wrapper for JSON-RPC integer IDs
+	return ""
+}
+
 type JSONRPCIntID int
 
-func (JSONRPCIntID) isJSONRPCID()      {}
-func (id JSONRPCIntID) String() string { return fmt.Sprintf("%d", id) }
+func (JSONRPCIntID) isJSONRPCID()      { _ = "STUB: not implemented"; return }
+func (id JSONRPCIntID) String() string { _ = "STUB: not implemented"; return "" }
 
 func idFromInterface(idInterface interface{}) (jsonrpcid, error) {
-	switch id := idInterface.(type) {
-	case string:
-		return JSONRPCStringID(id), nil
-	case float64:
-		// json.Unmarshal uses float64 for all numbers
-		// (https://golang.org/pkg/encoding/json/#Unmarshal),
-		// but the JSONRPC2.0 spec says the id SHOULD NOT contain
-		// decimals - so we truncate the decimals here.
-		return JSONRPCIntID(int(id)), nil
-	default:
-		typ := reflect.TypeOf(id)
-		return nil, fmt.Errorf("json-rpc ID (%v) is of unknown type (%v)", id, typ)
-	}
+	_ = "STUB: not implemented"
+	return *new(jsonrpcid), nil
 }
+
+// json.Unmarshal uses float64 for all numbers
+// (https://golang.org/pkg/encoding/json/#Unmarshal),
+// but the JSONRPC2.0 spec says the id SHOULD NOT contain
+// decimals - so we truncate the decimals here.
 
 //----------------------------------------
 // REQUEST
@@ -56,82 +49,27 @@ type RPCRequest struct {
 }
 
 // UnmarshalJSON custom JSON unmarshalling due to jsonrpcid being string or int
-func (req *RPCRequest) UnmarshalJSON(data []byte) error {
-	unsafeReq := struct {
-		JSONRPC string          `json:"jsonrpc"`
-		ID      interface{}     `json:"id,omitempty"`
-		Method  string          `json:"method"`
-		Params  json.RawMessage `json:"params"` // must be map[string]interface{} or []interface{}
-	}{}
+func (req *RPCRequest) UnmarshalJSON(data []byte) error { _ = "STUB: not implemented"; return nil }
 
-	err := json.Unmarshal(data, &unsafeReq)
-	if err != nil {
-		return err
-	}
+// must be map[string]interface{} or []interface{}
 
-	if unsafeReq.ID == nil { // notification
-		return nil
-	}
-
-	req.JSONRPC = unsafeReq.JSONRPC
-	req.Method = unsafeReq.Method
-	req.Params = unsafeReq.Params
-	id, err := idFromInterface(unsafeReq.ID)
-	if err != nil {
-		return err
-	}
-	req.ID = id
-
-	return nil
-}
+// notification
 
 func NewRPCRequest(id jsonrpcid, method string, params json.RawMessage) RPCRequest {
-	return RPCRequest{
-		JSONRPC: "2.0",
-		ID:      id,
-		Method:  method,
-		Params:  params,
-	}
+	_ = "STUB: not implemented"
+	return *new(RPCRequest)
 }
 
-func (req RPCRequest) String() string {
-	return fmt.Sprintf("RPCRequest{%s %s/%X}", req.ID, req.Method, req.Params)
-}
+func (req RPCRequest) String() string { _ = "STUB: not implemented"; return "" }
 
 func MapToRequest(id jsonrpcid, method string, params map[string]interface{}) (RPCRequest, error) {
-	var paramsMap = make(map[string]json.RawMessage, len(params))
-	for name, value := range params {
-		valueJSON, err := cmtjson.Marshal(value)
-		if err != nil {
-			return RPCRequest{}, err
-		}
-		paramsMap[name] = valueJSON
-	}
-
-	payload, err := json.Marshal(paramsMap)
-	if err != nil {
-		return RPCRequest{}, err
-	}
-
-	return NewRPCRequest(id, method, payload), nil
+	_ = "STUB: not implemented"
+	return *new(RPCRequest), nil
 }
 
 func ArrayToRequest(id jsonrpcid, method string, params []interface{}) (RPCRequest, error) {
-	var paramsMap = make([]json.RawMessage, len(params))
-	for i, value := range params {
-		valueJSON, err := cmtjson.Marshal(value)
-		if err != nil {
-			return RPCRequest{}, err
-		}
-		paramsMap[i] = valueJSON
-	}
-
-	payload, err := json.Marshal(paramsMap)
-	if err != nil {
-		return RPCRequest{}, err
-	}
-
-	return NewRPCRequest(id, method, payload), nil
+	_ = "STUB: not implemented"
+	return *new(RPCRequest), nil
 }
 
 //----------------------------------------
@@ -143,13 +81,7 @@ type RPCError struct {
 	Data    string `json:"data,omitempty"`
 }
 
-func (err RPCError) Error() string {
-	const baseFormat = "RPC error %v - %s"
-	if err.Data != "" {
-		return fmt.Sprintf(baseFormat+": %s", err.Code, err.Message, err.Data)
-	}
-	return fmt.Sprintf(baseFormat, err.Code, err.Message)
-}
+func (err RPCError) Error() string { _ = "STUB: not implemented"; return "" }
 
 type RPCResponse struct {
 	JSONRPC string          `json:"jsonrpc"`
@@ -159,91 +91,53 @@ type RPCResponse struct {
 }
 
 // UnmarshalJSON custom JSON unmarshalling due to jsonrpcid being string or int
-func (resp *RPCResponse) UnmarshalJSON(data []byte) error {
-	unsafeResp := &struct {
-		JSONRPC string          `json:"jsonrpc"`
-		ID      interface{}     `json:"id,omitempty"`
-		Result  json.RawMessage `json:"result,omitempty"`
-		Error   *RPCError       `json:"error,omitempty"`
-	}{}
-	err := json.Unmarshal(data, &unsafeResp)
-	if err != nil {
-		return err
-	}
-	resp.JSONRPC = unsafeResp.JSONRPC
-	resp.Error = unsafeResp.Error
-	resp.Result = unsafeResp.Result
-	if unsafeResp.ID == nil {
-		return nil
-	}
-	id, err := idFromInterface(unsafeResp.ID)
-	if err != nil {
-		return err
-	}
-	resp.ID = id
-	return nil
-}
+func (resp *RPCResponse) UnmarshalJSON(data []byte) error { _ = "STUB: not implemented"; return nil }
 
 func NewRPCSuccessResponse(id jsonrpcid, res interface{}) RPCResponse {
-	var rawMsg json.RawMessage
-
-	if res != nil {
-		var js []byte
-		js, err := cmtjson.Marshal(res)
-		if err != nil {
-			return RPCInternalError(id, fmt.Errorf("error marshaling response: %w", err))
-		}
-		rawMsg = json.RawMessage(js)
-	}
-
-	return RPCResponse{JSONRPC: "2.0", ID: id, Result: rawMsg}
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 func NewRPCErrorResponse(id jsonrpcid, code int, msg string, data string) RPCResponse {
-	return RPCResponse{
-		JSONRPC: "2.0",
-		ID:      id,
-		Error:   &RPCError{Code: code, Message: msg, Data: data},
-	}
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
-func (resp RPCResponse) String() string {
-	if resp.Error == nil {
-		return fmt.Sprintf("RPCResponse{%s %X}", resp.ID, resp.Result)
-	}
-	return fmt.Sprintf("RPCResponse{%s %v}", resp.ID, resp.Error)
-}
+func (resp RPCResponse) String() string { _ = "STUB: not implemented"; return "" }
 
 // From the JSON-RPC 2.0 spec:
 //
 //	If there was an error in detecting the id in the Request object (e.g. Parse
 //	error/Invalid Request), it MUST be Null.
-func RPCParseError(err error) RPCResponse {
-	return NewRPCErrorResponse(nil, -32700, "Parse error. Invalid JSON", err.Error())
-}
+func RPCParseError(err error) RPCResponse { _ = "STUB: not implemented"; return *new(RPCResponse) }
 
 // From the JSON-RPC 2.0 spec:
 //
 //	If there was an error in detecting the id in the Request object (e.g. Parse
 //	error/Invalid Request), it MUST be Null.
 func RPCInvalidRequestError(id jsonrpcid, err error) RPCResponse {
-	return NewRPCErrorResponse(id, -32600, "Invalid Request", err.Error())
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 func RPCMethodNotFoundError(id jsonrpcid) RPCResponse {
-	return NewRPCErrorResponse(id, -32601, "Method not found", "")
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 func RPCInvalidParamsError(id jsonrpcid, err error) RPCResponse {
-	return NewRPCErrorResponse(id, -32602, "Invalid params", err.Error())
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 func RPCInternalError(id jsonrpcid, err error) RPCResponse {
-	return NewRPCErrorResponse(id, -32603, "Internal error", err.Error())
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 func RPCServerError(id jsonrpcid, err error) RPCResponse {
-	return NewRPCErrorResponse(id, -32000, "Server error", err.Error())
+	_ = "STUB: not implemented"
+	return *new(RPCResponse)
 }
 
 //----------------------------------------
@@ -284,14 +178,7 @@ type Context struct {
 // WS:
 //
 //	result of GetRemoteAddr
-func (ctx *Context) RemoteAddr() string {
-	if ctx.HTTPReq != nil {
-		return ctx.HTTPReq.RemoteAddr
-	} else if ctx.WSConn != nil {
-		return ctx.WSConn.GetRemoteAddr()
-	}
-	return ""
-}
+func (ctx *Context) RemoteAddr() string { _ = "STUB: not implemented"; return "" }
 
 // Context returns the request's context.
 // The returned context is always non-nil; it defaults to the background context.
@@ -304,12 +191,8 @@ func (ctx *Context) RemoteAddr() string {
 //
 //	The context is canceled when the client's connections closes.
 func (ctx *Context) Context() context.Context {
-	if ctx.HTTPReq != nil {
-		return ctx.HTTPReq.Context()
-	} else if ctx.WSConn != nil {
-		return ctx.WSConn.Context()
-	}
-	return context.Background()
+	_ = "STUB: not implemented"
+	return *new(context.Context)
 }
 
 //----------------------------------------
@@ -318,10 +201,4 @@ func (ctx *Context) Context() context.Context {
 // Determine if its a unix or tcp socket.
 // If tcp, must specify the port; `0.0.0.0` will return incorrectly as "unix" since there's no port
 // TODO: deprecate
-func SocketType(listenAddr string) string {
-	socketType := "unix"
-	if len(strings.Split(listenAddr, ":")) >= 2 {
-		socketType = "tcp"
-	}
-	return socketType
-}
+func SocketType(listenAddr string) string { _ = "STUB: not implemented"; return "" }

@@ -1,13 +1,11 @@
 package privval
 
 import (
-	"fmt"
 	"net"
 	"sync/atomic"
 	"time"
 
 	"github.com/cometbft/cometbft/libs/log"
-	"github.com/cometbft/cometbft/libs/service"
 	cmtsync "github.com/cometbft/cometbft/libs/sync"
 	privvalproto "github.com/cometbft/cometbft/proto/tendermint/privval"
 )
@@ -20,8 +18,11 @@ type SignerListenerEndpointOption func(*SignerListenerEndpoint)
 //
 // Default: 5s
 func SignerListenerEndpointTimeoutReadWrite(timeout time.Duration) SignerListenerEndpointOption {
-	return func(sl *SignerListenerEndpoint) { sl.signerEndpoint.timeoutReadWrite = timeout } //nolint:staticcheck
+	_ = "STUB: not implemented"
+	return *new(SignerListenerEndpointOption)
 }
+
+//nolint:staticcheck
 
 // SignerListenerEndpoint listens for an external process to dial in and keeps
 // the connection alive by dropping and reconnecting.
@@ -49,183 +50,66 @@ func NewSignerListenerEndpoint(
 	listener net.Listener,
 	options ...SignerListenerEndpointOption,
 ) *SignerListenerEndpoint {
-	sl := &SignerListenerEndpoint{
-		listener:      listener,
-		timeoutAccept: defaultTimeoutAcceptSeconds * time.Second,
-	}
-
-	sl.BaseService = *service.NewBaseService(logger, "SignerListenerEndpoint", sl)
-	sl.signerEndpoint.timeoutReadWrite = defaultTimeoutReadWriteSeconds * time.Second //nolint:staticcheck
-
-	for _, optionFunc := range options {
-		optionFunc(sl)
-	}
-
-	return sl
-}
-
-// OnStart implements service.Service.
-func (sl *SignerListenerEndpoint) OnStart() error {
-	sl.connectRequestCh = make(chan struct{}, 1) // Buffer of 1 to allow `serviceLoop` to re-trigger itself.
-	sl.connectionAvailableCh = make(chan net.Conn)
-
-	// NOTE: ping timeout must be less than read/write timeout.
-	sl.pingInterval = time.Duration(sl.signerEndpoint.timeoutReadWrite.Milliseconds()*2/3) * time.Millisecond //nolint:staticcheck
-	sl.pingTimer = time.NewTicker(sl.pingInterval)
-
-	go sl.serviceLoop()
-	go sl.pingLoop()
-
-	sl.connectRequestCh <- struct{}{}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
+//nolint:staticcheck
+
+// OnStart implements service.Service.
+func (sl *SignerListenerEndpoint) OnStart() error { _ = "STUB: not implemented"; return nil }
+
+// Buffer of 1 to allow `serviceLoop` to re-trigger itself.
+
+// NOTE: ping timeout must be less than read/write timeout.
+//nolint:staticcheck
+
 // OnStop implements service.Service
-func (sl *SignerListenerEndpoint) OnStop() {
-	sl.instanceMtx.Lock()
-	defer sl.instanceMtx.Unlock()
-	_ = sl.Close()
+func (sl *SignerListenerEndpoint) OnStop() { _ = "STUB: not implemented"; return }
 
-	// Stop listening
-	if sl.listener != nil {
-		if err := sl.listener.Close(); err != nil {
-			sl.Logger.Error("Closing Listener", "err", err)
-			sl.listener = nil
-		}
-	}
-
-	sl.pingTimer.Stop()
-}
+// Stop listening
 
 // WaitForConnection waits maxWait for a connection or returns a timeout error
 func (sl *SignerListenerEndpoint) WaitForConnection(maxWait time.Duration) error {
-	sl.instanceMtx.Lock()
-	defer sl.instanceMtx.Unlock()
-	return sl.ensureConnection(maxWait)
+	_ = "STUB: not implemented"
+	return nil
 }
 
 // SendRequest ensures there is a connection, sends a request and waits for a response
 func (sl *SignerListenerEndpoint) SendRequest(request privvalproto.Message) (*privvalproto.Message, error) {
-	sl.instanceMtx.Lock()
-	defer sl.instanceMtx.Unlock()
-
-	err := sl.ensureConnection(sl.timeoutAccept)
-	if err != nil {
-		return nil, err
-	}
-
-	err = sl.WriteMessage(request)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := sl.ReadMessage()
-	if err != nil {
-		return nil, err
-	}
-
-	// Reset pingTimer to avoid sending unnecessary pings.
-	sl.pingTimer.Reset(sl.pingInterval)
-
-	return &res, nil
+	_ = "STUB: not implemented"
+	return nil, nil
 }
 
+// Reset pingTimer to avoid sending unnecessary pings.
+
 func (sl *SignerListenerEndpoint) ensureConnection(maxWait time.Duration) error {
-	if sl.IsConnected() {
-		return nil
-	}
-
-	// Is there a connection ready? then use it
-	if sl.GetAvailableConnection(sl.connectionAvailableCh) {
-		return nil
-	}
-
-	// block until connected or timeout
-	sl.Logger.Info("SignerListener: Blocking for connection")
-	sl.triggerConnect()
-	err := sl.WaitConnection(sl.connectionAvailableCh, maxWait)
-	if err != nil {
-		return err
-	}
-
+	_ = "STUB: not implemented"
 	return nil
 }
 
+// Is there a connection ready? then use it
+
+// block until connected or timeout
+
 func (sl *SignerListenerEndpoint) acceptNewConnection() (net.Conn, error) {
-	if !sl.IsRunning() || sl.listener == nil {
-		return nil, fmt.Errorf("endpoint is closing")
-	}
-
-	// wait for a new conn
-	sl.Logger.Info("SignerListener: Listening for new connection")
-	conn, err := sl.listener.Accept()
-	if err != nil {
-		sl.acceptFailCount.Add(1)
-		return nil, err
-	}
-
-	sl.acceptFailCount.Store(0)
-	return conn, nil
+	_ = "STUB: not implemented"
+	return *new(net.Conn), nil
 }
 
-func (sl *SignerListenerEndpoint) triggerConnect() {
-	select {
-	case sl.connectRequestCh <- struct{}{}:
-	default:
-	}
-}
+// wait for a new conn
 
-func (sl *SignerListenerEndpoint) triggerReconnect() {
-	sl.DropConnection()
-	sl.triggerConnect()
-}
+func (sl *SignerListenerEndpoint) triggerConnect() { _ = "STUB: not implemented"; return }
 
-func (sl *SignerListenerEndpoint) serviceLoop() {
-	for {
-		select {
-		case <-sl.connectRequestCh:
-			// On start, listen timeouts can queue a duplicate connect request to queue
-			// while the first request connects.  Drop duplicate request.
-			if sl.IsConnected() {
-				sl.Logger.Debug("SignerListener: Connected. Drop Listen Request")
-				continue
-			}
+func (sl *SignerListenerEndpoint) triggerReconnect() { _ = "STUB: not implemented"; return }
 
-			// Listen for remote signer
-			conn, err := sl.acceptNewConnection()
-			if err != nil {
-				sl.Logger.Error("SignerListener: Error accepting connection", "err", err, "failures", sl.acceptFailCount.Load())
-				sl.triggerConnect()
-				continue
-			}
+func (sl *SignerListenerEndpoint) serviceLoop() { _ = "STUB: not implemented"; return }
 
-			// We have a good connection, wait for someone that needs one otherwise cancellation
-			sl.Logger.Info("SignerListener: Connected")
-			select {
-			case sl.connectionAvailableCh <- conn:
-			case <-sl.Quit():
-				return
-			}
-		case <-sl.Quit():
-			return
-		}
-	}
-}
+// On start, listen timeouts can queue a duplicate connect request to queue
+// while the first request connects.  Drop duplicate request.
 
-func (sl *SignerListenerEndpoint) pingLoop() {
-	for {
-		select {
-		case <-sl.pingTimer.C:
-			{
-				_, err := sl.SendRequest(mustWrapMsg(&privvalproto.PingRequest{}))
-				if err != nil {
-					sl.Logger.Error("SignerListener: Ping timeout")
-					sl.triggerReconnect()
-				}
-			}
-		case <-sl.Quit():
-			return
-		}
-	}
-}
+// Listen for remote signer
+
+// We have a good connection, wait for someone that needs one otherwise cancellation
+
+func (sl *SignerListenerEndpoint) pingLoop() { _ = "STUB: not implemented"; return }

@@ -2,7 +2,6 @@ package mempool
 
 import (
 	"crypto/sha256"
-	"fmt"
 	"math"
 
 	abci "github.com/cometbft/cometbft/abci/types"
@@ -137,35 +136,15 @@ type PostCheckFunc func(*types.CachedTx, *abci.ResponseCheckTx) error
 // PreCheckMaxBytes checks that the size of the transaction is smaller or equal
 // to the expected maxBytes.
 func PreCheckMaxBytes(maxBytes int64) PreCheckFunc {
-	return func(tx *types.CachedTx) error {
-		txSize := types.ComputeProtoSizeForTxs([]types.Tx{tx.Tx})
-
-		if txSize > maxBytes {
-			return fmt.Errorf("tx size is too big: %d, max: %d", txSize, maxBytes)
-		}
-
-		return nil
-	}
+	_ = "STUB: not implemented"
+	return *new(PreCheckFunc)
 }
 
 // PostCheckMaxGas checks that the wanted gas is smaller or equal to the passed
 // maxGas. Returns nil if maxGas is -1.
 func PostCheckMaxGas(maxGas int64) PostCheckFunc {
-	return func(tx *types.CachedTx, res *abci.ResponseCheckTx) error {
-		if maxGas == -1 {
-			return nil
-		}
-		if res.GasWanted < 0 {
-			return fmt.Errorf("gas wanted %d is negative",
-				res.GasWanted)
-		}
-		if res.GasWanted > maxGas {
-			return fmt.Errorf("gas wanted %d is greater than max gas %d",
-				res.GasWanted, maxGas)
-		}
-
-		return nil
-	}
+	_ = "STUB: not implemented"
+	return *new(PostCheckFunc)
 }
 
 // TxKey is the fixed length array key used as an index.
